@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+	xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd
+http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd">
+
+	<changeSet id="202108110801000" author="svoboda-vlad">
+		<createTable tableName="user">
+			<column name="id" type="int" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="username" type="varchar(255)">
+				<constraints unique="true" nullable="false" />
+			</column>
+			<column name="password" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="login_provider" type="varchar(255)" />
+			<column name="family_name" type="varchar(255)" />
+			<column name="given_name" type="varchar(255)" />			
+			<column name="last_login_date_time" type="timestamp" />
+			<column name="previous_login_date_time" type="timestamp" />
+		</createTable>
+		<createTable tableName="role">
+			<column name="id" type="int" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="name" type="varchar(255)">
+				<constraints unique="true" nullable="false" />
+			</column>
+		</createTable>
+		<createTable tableName="user_roles">
+			<column name="user_id" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="role_id" type="int">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+		<addPrimaryKey columnNames="user_id, role_id"
+			constraintName="pk_user_roles" tableName="user_roles" />
+		<addForeignKeyConstraint
+			baseColumnNames="user_id" baseTableName="user_roles"
+			constraintName="fk_user_roles_user_id" referencedColumnNames="id"
+			referencedTableName="user" />
+		<addForeignKeyConstraint
+			baseColumnNames="role_id" baseTableName="user_roles"
+			constraintName="fk_user_roles_role_id" referencedColumnNames="id"
+			referencedTableName="role" />
+		<insert tableName="role">
+			<column name="name" value="ROLE_USER" />
+		</insert>
+		<insert tableName="role">
+			<column name="name" value="ROLE_ADMIN" />
+		</insert>
+	</changeSet>
+</databaseChangeLog>
