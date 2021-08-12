@@ -20,7 +20,7 @@ http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibas
 			</column>
 			<column name="login_provider" type="varchar(255)" />
 			<column name="family_name" type="varchar(255)" />
-			<column name="given_name" type="varchar(255)" />			
+			<column name="given_name" type="varchar(255)" />
 			<column name="last_login_date_time" type="timestamp" />
 			<column name="previous_login_date_time" type="timestamp" />
 		</createTable>
@@ -56,5 +56,21 @@ http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibas
 		<insert tableName="role">
 			<column name="name" value="ROLE_ADMIN" />
 		</insert>
+	</changeSet>
+	<changeSet id="20210812104700" author="svoboda-vlad">
+		<createTable tableName="processing_parameters_default">
+			<column name="id" type="int" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="time_diff_group" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="resize_width" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="resize_height" type="int">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
 	</changeSet>
 </databaseChangeLog>
