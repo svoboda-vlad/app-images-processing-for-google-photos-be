@@ -16,8 +16,6 @@ import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 
-import svobodavlad.imagesprocessing.parametersdefault.ProcessingParametersDefault;
-import svobodavlad.imagesprocessing.parametersdefault.ProcessingParametersDefaultRepository;
 import svobodavlad.imagesprocessing.security.AuthenticationService;
 import svobodavlad.imagesprocessing.security.Role;
 import svobodavlad.imagesprocessing.security.RoleRepository;
@@ -38,9 +36,6 @@ public class ProcessingParametersDefaultControllerTest {
 	private PasswordEncoder encoder;
 
 	@Autowired
-	private ProcessingParametersDefaultRepository parametersRepository;
-
-	@Autowired
 	private UserRepository userRepository;
 
 	@Autowired
@@ -57,9 +52,6 @@ public class ProcessingParametersDefaultControllerTest {
 
 	@BeforeEach
 	void initData() {
-		ProcessingParametersDefault parameters = new ProcessingParametersDefault(1800, 1000, 1000);
-		parametersRepository.save(parameters);
-
 		User user = new User(USERNAME, encoder.encode(PASSWORD), LoginProvider.INTERNAL, "User 1", "User 1");
 		user = userRepository.save(user);
 		Optional<Role> optRole1 = roleRepository.findByName(ROLE_USER);
@@ -71,19 +63,18 @@ public class ProcessingParametersDefaultControllerTest {
 
 	@AfterEach
 	void cleanData() {
-		parametersRepository.deleteAll();
 		userRepository.deleteAll();
 	}
 
 	@Test
-	void testGetCurrentUserOk200() throws Exception {
+	void testGetProcessingParametersDefaultOk200() throws Exception {
 		String requestUrl = "/admin/parameters-default";
 		int expectedStatus = 200;
 		String expectedJson = "{\"id\":1,\"timeDiffGroup\":1800,\"resizeWidth\":1000,\"resizeHeight\":1000}";
 
 		this.mvc.perform(get(requestUrl).header("Authorization", generateAuthorizationHeader(USERNAME))
 				.accept(MediaType.APPLICATION_JSON)).andExpect(status().is(expectedStatus))
-				.andExpect(content().json(expectedJson));
+				.andExpect(content().json(expectedJson));		
 	}
-
+	
 }

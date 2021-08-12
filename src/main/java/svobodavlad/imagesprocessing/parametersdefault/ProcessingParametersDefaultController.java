@@ -21,6 +21,7 @@ public class ProcessingParametersDefaultController {
 	@GetMapping(PARAMETERS_DEFAULT_URL)
 	public ResponseEntity<ProcessingParametersDefault> getProcessingParametersDefault() {
 		List<ProcessingParametersDefault> parametersList = parametersRepository.findAll();
+		if (parametersList.isEmpty()) return ResponseEntity.notFound().build();
 		return ResponseEntity.ok(parametersList.get(0));
 	}
 
