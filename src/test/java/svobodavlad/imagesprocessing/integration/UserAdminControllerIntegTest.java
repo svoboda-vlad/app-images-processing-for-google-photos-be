@@ -6,7 +6,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.Optional;
 
-import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,8 +20,8 @@ import svobodavlad.imagesprocessing.security.AuthenticationService;
 import svobodavlad.imagesprocessing.security.Role;
 import svobodavlad.imagesprocessing.security.RoleRepository;
 import svobodavlad.imagesprocessing.security.User;
-import svobodavlad.imagesprocessing.security.UserRepository;
 import svobodavlad.imagesprocessing.security.User.LoginProvider;
+import svobodavlad.imagesprocessing.security.UserRepository;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -73,7 +72,7 @@ class UserAdminControllerIntegTest {
 		String expectedJson = "[{\"username\":\"user2\",\"givenName\":\"User 2\",\"familyName\":\"User 2\",\"lastLoginDateTime\":null,\"previousLoginDateTime\":null,\"userRoles\":[{\"role\":{\"name\":\"ROLE_USER\"}}]},"
 				+ "{\"username\":\"user1\",\"givenName\":\"User 1\",\"familyName\":\"User 1\",\"lastLoginDateTime\":null,\"previousLoginDateTime\":null,\"userRoles\":[{\"role\":{\"name\":\"ROLE_USER\"}},{\"role\":{\"name\":\"ROLE_ADMIN\"}}]}]";
 
-		User user2 = new User("user2", StringUtils.repeat("A", 60), LoginProvider.INTERNAL, "User 2", "User 2");
+		User user2 = new User("user2", "A".repeat(60), LoginProvider.INTERNAL, "User 2", "User 2");
 		userRepository.save(user2);
 		Optional<Role> optRole1 = roleRepository.findByName(ROLE_USER);
 		user2.addRole(optRole1.get());

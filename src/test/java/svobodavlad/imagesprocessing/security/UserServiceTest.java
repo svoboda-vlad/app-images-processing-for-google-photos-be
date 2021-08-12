@@ -8,18 +8,11 @@ import java.util.Optional;
 
 import javax.persistence.EntityExistsException;
 
-import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
-import svobodavlad.imagesprocessing.security.Role;
-import svobodavlad.imagesprocessing.security.RoleRepository;
-import svobodavlad.imagesprocessing.security.User;
-import svobodavlad.imagesprocessing.security.UserInfo;
-import svobodavlad.imagesprocessing.security.UserRepository;
-import svobodavlad.imagesprocessing.security.UserService;
 import svobodavlad.imagesprocessing.security.User.LoginProvider;
 
 @SpringBootTest
@@ -41,7 +34,7 @@ public class UserServiceTest {
 	@Test
 	void testRegisterUserNewUser() {
 		Role role = new Role(USER_ROLE_NAME);
-		User user = new User("user", StringUtils.repeat("A", 60), LoginProvider.INTERNAL, "User", "User");
+		User user = new User("user", "A".repeat(60), LoginProvider.INTERNAL, "User", "User");
 		user.addRole(role);
 
 		given(roleRepository.findByName(USER_ROLE_NAME)).willReturn(Optional.of(role));
@@ -54,7 +47,7 @@ public class UserServiceTest {
 	@Test
 	void testRegisterUserAlreadyExistsException() {
 		Role role = new Role(USER_ROLE_NAME);
-		User user = new User("user", StringUtils.repeat("A", 60), LoginProvider.INTERNAL, "User", "User");
+		User user = new User("user", "A".repeat(60), LoginProvider.INTERNAL, "User", "User");
 
 		given(roleRepository.findByName(USER_ROLE_NAME)).willReturn(Optional.of(role));
 		given(userRepository.findByUsername("user")).willReturn(Optional.of(user));
@@ -67,7 +60,7 @@ public class UserServiceTest {
 
 	@Test
 	void testRegisterUserDefaultRoleNotFound() {
-		User user = new User("user", StringUtils.repeat("A", 60), LoginProvider.INTERNAL, "User", "User");
+		User user = new User("user", "A".repeat(60), LoginProvider.INTERNAL, "User", "User");
 
 		given(roleRepository.findByName(USER_ROLE_NAME)).willReturn(Optional.empty());
 
@@ -79,7 +72,7 @@ public class UserServiceTest {
 	@Test
 	void testUpdateLastLoginDateTime() {
 		String username = "user";
-		User user = new User("user", StringUtils.repeat("A", 60), LoginProvider.INTERNAL, "User", "User");
+		User user = new User("user", "A".repeat(60), LoginProvider.INTERNAL, "User", "User");
 
 		given(userRepository.findByUsername(username)).willReturn(Optional.of(user));
 		given(userRepository.save(user)).willReturn(user);
@@ -90,7 +83,7 @@ public class UserServiceTest {
 	@Test
 	void testUpdateUserOkUserExists() {
 		String username = "user";
-		User user = new User("user", StringUtils.repeat("A", 60), LoginProvider.INTERNAL, "User", "User");
+		User user = new User("user", "A".repeat(60), LoginProvider.INTERNAL, "User", "User");
 		UserInfo userInfo = new UserInfo("user", "User", "User");
 
 		given(userRepository.findByUsername(username)).willReturn(Optional.of(user));
@@ -102,7 +95,7 @@ public class UserServiceTest {
 	void testRegisterUserNewAdminUser() {
 		Role role1 = new Role(USER_ROLE_NAME);
 		Role role2 = new Role(ADMIN_ROLE_NAME);
-		User user = new User("user", StringUtils.repeat("A", 60), LoginProvider.INTERNAL, "User", "User");
+		User user = new User("user", "A".repeat(60), LoginProvider.INTERNAL, "User", "User");
 		user.addRole(role1);
 		user.addRole(role2);
 
@@ -116,7 +109,7 @@ public class UserServiceTest {
 
 	@Test
 	void testRegisterAdminUserAdminRoleNotFound() {
-		User user = new User("user", StringUtils.repeat("A", 60), LoginProvider.INTERNAL, "User", "User");
+		User user = new User("user", "A".repeat(60), LoginProvider.INTERNAL, "User", "User");
 
 		Role role1 = new Role(USER_ROLE_NAME);
 		given(roleRepository.findByName(USER_ROLE_NAME)).willReturn(Optional.of(role1));

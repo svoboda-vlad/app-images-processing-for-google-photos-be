@@ -14,8 +14,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import svobodavlad.imagesprocessing.security.User;
-import svobodavlad.imagesprocessing.security.UserRepository;
 import svobodavlad.imagesprocessing.security.User.LoginProvider;
 
 @SpringBootTest

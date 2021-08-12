@@ -25,13 +25,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 
-import svobodavlad.imagesprocessing.security.AuthenticationService;
-import svobodavlad.imagesprocessing.security.Role;
-import svobodavlad.imagesprocessing.security.User;
-import svobodavlad.imagesprocessing.security.UserInfo;
-import svobodavlad.imagesprocessing.security.UserRegister;
-import svobodavlad.imagesprocessing.security.UserRepository;
-import svobodavlad.imagesprocessing.security.UserService;
 import svobodavlad.imagesprocessing.security.User.LoginProvider;
 
 @SpringBootTest
