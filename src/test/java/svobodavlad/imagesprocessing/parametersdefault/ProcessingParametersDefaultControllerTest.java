@@ -1,27 +1,28 @@
-package svobodavlad.imagesprocessing.integration;
+package svobodavlad.imagesprocessing.parametersdefault;
 
+import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.util.Optional;
+import java.util.ArrayList;
+import java.util.List;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 
 import svobodavlad.imagesprocessing.security.AuthenticationService;
 import svobodavlad.imagesprocessing.security.Role;
-import svobodavlad.imagesprocessing.security.RoleRepository;
 import svobodavlad.imagesprocessing.security.User;
-import svobodavlad.imagesprocessing.security.User.LoginProvider;
-import svobodavlad.imagesprocessing.security.UserRepository;
+import svobodavlad.imagesprocessing.security.UserRegister;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -31,15 +32,15 @@ public class ProcessingParametersDefaultControllerTest {
 
 	@Autowired
 	private MockMvc mvc;
-
-	@Autowired
+	
+	@MockBean
+	private ProcessingParametersDefaultRepository parametersRepository;
+	
+	@MockBean
+	private UserDetailsService userDetailsService;
+	
+	@MockBean
 	private PasswordEncoder encoder;
-
-	@Autowired
-	private UserRepository userRepository;
-
-	@Autowired
-	private RoleRepository roleRepository;
 
 	private static final String USERNAME = "user1";
 	private static final String PASSWORD = "pass123";
@@ -51,26 +52,25 @@ public class ProcessingParametersDefaultControllerTest {
 	}
 
 	@BeforeEach
-	void initData() {
-		User user = new User(USERNAME, encoder.encode(PASSWORD), LoginProvider.INTERNAL, "User 1", "User 1");
-		user = userRepository.save(user);
-		Optional<Role> optRole1 = roleRepository.findByName(ROLE_USER);
-		Optional<Role> optRole2 = roleRepository.findByName(ROLE_ADMIN);
-		user.addRole(optRole1.get());
-		user.addRole(optRole2.get());
-		userRepository.save(user);
-	}
-
-	@AfterEach
-	void cleanData() {
-		userRepository.deleteAll();
+	private void initData() {
+		given(encoder.encode(PASSWORD)).willReturn("A".repeat(60));
+		UserRegister userRegister = new UserRegister(USERNAME, PASSWORD, "user", "user");
+		User user = userRegister.toUserInternal(encoder);
+		user.addRole(new Role(ROLE_USER));
+		user.addRole(new Role(ROLE_ADMIN));
+		given(userDetailsService.loadUserByUsername(USERNAME)).willReturn(user);
 	}
 
 	@Test
 	void testGetProcessingParametersDefaultOk200() throws Exception {
 		String requestUrl = "/admin/parameters-default";
 		int expectedStatus = 200;
-		String expectedJson = "{\"id\":1,\"timeDiffGroup\":1800,\"resizeWidth\":1000,\"resizeHeight\":1000}";
+		String expectedJson = "{\"id\":0,\"timeDiffGroup\":1800,\"resizeWidth\":1000,\"resizeHeight\":1000}";
+		
+		List<ProcessingParametersDefault> parametersList = new ArrayList<ProcessingParametersDefault>();
+		parametersList.add(new ProcessingParametersDefault(1800, 1000, 1000));
+		
+		given(parametersRepository.findAll()).willReturn(parametersList);
 
 		this.mvc.perform(get(requestUrl).header("Authorization", generateAuthorizationHeader(USERNAME))
 				.accept(MediaType.APPLICATION_JSON)).andExpect(status().is(expectedStatus))
