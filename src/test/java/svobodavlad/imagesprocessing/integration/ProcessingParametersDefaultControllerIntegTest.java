@@ -4,8 +4,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.util.Optional;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,15 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
-
-import svobodavlad.imagesprocessing.security.AuthenticationService;
-import svobodavlad.imagesprocessing.security.Role;
-import svobodavlad.imagesprocessing.security.RoleRepository;
-import svobodavlad.imagesprocessing.security.User;
-import svobodavlad.imagesprocessing.security.User.LoginProvider;
-import svobodavlad.imagesprocessing.security.UserRepository;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -31,35 +21,18 @@ public class ProcessingParametersDefaultControllerIntegTest {
 
 	@Autowired
 	private MockMvc mvc;
-
+	
 	@Autowired
-	private PasswordEncoder encoder;
-
-	@Autowired
-	private UserRepository userRepository;
-
-	@Autowired
-	private RoleRepository roleRepository;
-
-	private static final String USERNAME = "user1";
-	private static final String PASSWORD = "pass123";
-	private static final String ROLE_USER = "ROLE_USER";
-	private static final String ROLE_ADMIN = "ROLE_ADMIN";
-
+	private SecurityTestUtil securityTestUtil;
+	
 	@BeforeEach
 	void initData() {
-		User user = new User(USERNAME, encoder.encode(PASSWORD), LoginProvider.INTERNAL, "User 1", "User 1");
-		user = userRepository.save(user);
-		Optional<Role> optRole1 = roleRepository.findByName(ROLE_USER);
-		Optional<Role> optRole2 = roleRepository.findByName(ROLE_ADMIN);
-		user.addRole(optRole1.get());
-		user.addRole(optRole2.get());
-		userRepository.save(user);
+		securityTestUtil.saveAdminUser();
 	}
 
 	@AfterEach
 	void cleanData() {
-		userRepository.deleteAll();
+		securityTestUtil.deleteAllUsers();
 	}
 
 	@Test
@@ -68,7 +41,7 @@ public class ProcessingParametersDefaultControllerIntegTest {
 		int expectedStatus = 200;
 		String expectedJson = "{\"id\":1,\"timeDiffGroup\":1800,\"resizeWidth\":1000,\"resizeHeight\":1000}";
 
-		this.mvc.perform(get(requestUrl).header("Authorization", AuthenticationService.createBearerToken(USERNAME))
+		this.mvc.perform(get(requestUrl).header("Authorization", securityTestUtil.createBearerTokenAdminUser())
 				.accept(MediaType.APPLICATION_JSON)).andExpect(status().is(expectedStatus))
 				.andExpect(content().json(expectedJson));		
 	}
