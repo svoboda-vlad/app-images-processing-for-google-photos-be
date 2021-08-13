@@ -16,9 +16,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 
+import svobodavlad.imagesprocessing.integration.SecurityMockUtil;
+import svobodavlad.imagesprocessing.integration.SecurityTestUtil;
 import svobodavlad.imagesprocessing.security.User.LoginProvider;
 
 @SpringBootTest
@@ -35,22 +36,12 @@ class UserAdminControllerTest {
 	@MockBean
 	private UserDetailsService userDetailsService;
 
-	@MockBean
-	private PasswordEncoder encoder;
-
-	private static final String USERNAME = "user1";
-	private static final String PASSWORD = "pass123";
 	private static final String ROLE_USER = "ROLE_USER";
 	private static final String ROLE_ADMIN = "ROLE_ADMIN";
 
 	@BeforeEach
 	private void initData() {
-		given(encoder.encode(PASSWORD)).willReturn("A".repeat(60));
-		UserRegister userRegister = new UserRegister(USERNAME, PASSWORD, "user", "user");
-		User user = userRegister.toUserInternal(encoder);
-		user.addRole(new Role(ROLE_USER));
-		user.addRole(new Role(ROLE_ADMIN));
-		given(userDetailsService.loadUserByUsername(USERNAME)).willReturn(user);
+		given(userDetailsService.loadUserByUsername(SecurityMockUtil.getMockedAdminUser().getUsername())).willReturn(SecurityMockUtil.getMockedAdminUser());
 	}
 
 	@Test
@@ -68,7 +59,7 @@ class UserAdminControllerTest {
 
 		given(userRepository.findAll()).willReturn(new ArrayList<User>(List.of(user1, user2)));
 
-		this.mvc.perform(get(requestUrl).header("Authorization", AuthenticationService.createBearerToken(USERNAME))
+		this.mvc.perform(get(requestUrl).header("Authorization", SecurityTestUtil.createBearerTokenAdminUser())
 				.accept(MediaType.APPLICATION_JSON)).andExpect(status().is(expectedStatus))
 				.andExpect(content().json(expectedJson));
 	}

@@ -60,15 +60,15 @@ public class SecurityTestUtil {
 		userRepository.deleteAll();
 	}
 
-	public String createBearerTokenAdminUser() {
+	public static String createBearerTokenAdminUser() {
 		return AuthenticationService.createBearerToken(ADMIN_USERNAME);
 	}
 	
-	public String createBearerTokenDefaultUser() {
+	public static String createBearerTokenDefaultUser() {
 		return AuthenticationService.createBearerToken(DEFAULT_USERNAME);
 	}
 
-	public String createBearerTokenForUsername(String username) {
+	public static String createBearerTokenForUsername(String username) {
 		return AuthenticationService.createBearerToken(username);
 	}	
 	

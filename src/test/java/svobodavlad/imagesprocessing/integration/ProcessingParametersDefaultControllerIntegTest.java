@@ -41,7 +41,7 @@ public class ProcessingParametersDefaultControllerIntegTest {
 		int expectedStatus = 200;
 		String expectedJson = "{\"id\":1,\"timeDiffGroup\":1800,\"resizeWidth\":1000,\"resizeHeight\":1000}";
 
-		this.mvc.perform(get(requestUrl).header("Authorization", securityTestUtil.createBearerTokenAdminUser())
+		this.mvc.perform(get(requestUrl).header("Authorization", SecurityTestUtil.createBearerTokenAdminUser())
 				.accept(MediaType.APPLICATION_JSON)).andExpect(status().is(expectedStatus))
 				.andExpect(content().json(expectedJson));		
 	}
