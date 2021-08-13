@@ -47,10 +47,6 @@ public class ProcessingParametersDefaultControllerTest {
 	private static final String ROLE_USER = "ROLE_USER";
 	private static final String ROLE_ADMIN = "ROLE_ADMIN";	
 
-	private String generateAuthorizationHeader(String username) {
-		return "Bearer " + AuthenticationService.generateToken(username);
-	}
-
 	@BeforeEach
 	private void initData() {
 		given(encoder.encode(PASSWORD)).willReturn("A".repeat(60));
@@ -72,7 +68,7 @@ public class ProcessingParametersDefaultControllerTest {
 		
 		given(parametersRepository.findAll()).willReturn(parametersList);
 
-		this.mvc.perform(get(requestUrl).header("Authorization", generateAuthorizationHeader(USERNAME))
+		this.mvc.perform(get(requestUrl).header("Authorization", AuthenticationService.createBearerToken(USERNAME))
 				.accept(MediaType.APPLICATION_JSON)).andExpect(status().is(expectedStatus))
 				.andExpect(content().json(expectedJson));		
 	}

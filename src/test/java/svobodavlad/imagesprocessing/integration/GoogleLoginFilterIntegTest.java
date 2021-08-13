@@ -54,10 +54,6 @@ class GoogleLoginFilterIntegTest {
 	@MockBean
 	private GoogleIdTokenVerifier googleIdTokenVerifier;
 
-	private String generateAuthorizationHeader(String username) {
-		return "Bearer " + AuthenticationService.generateToken(username);
-	}
-
 	@BeforeEach
 	void initData() {
 		User user = new User("user321", encoder.encode("user321"), LoginProvider.GOOGLE, "User 321", "User 321");
@@ -118,7 +114,7 @@ class GoogleLoginFilterIntegTest {
 				+ optUser.get().getLastLoginDateTime() + "\",\"previousLoginDateTime\":\""
 				+ optUser.get().getLastLoginDateTime() + "\"}";
 
-		this.mvc.perform(get(requestUrl).header("Authorization", generateAuthorizationHeader("user322"))
+		this.mvc.perform(get(requestUrl).header("Authorization", AuthenticationService.createBearerToken("user322"))
 				.accept(MediaType.APPLICATION_JSON)).andExpect(status().is(expectedStatus))
 				.andExpect(content().json(expectedJson));
 

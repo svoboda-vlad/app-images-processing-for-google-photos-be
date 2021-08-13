@@ -47,10 +47,6 @@ class UserControllerIntegTest {
 	private static final String USERNAME_INVALID = "user2";
 	private static final String USERNAME_NEW = "usernew";
 
-	private String generateAuthorizationHeader(String username) {
-		return "Bearer " + AuthenticationService.generateToken(username);
-	}
-
 	@BeforeEach
 	void initData() {
 		User user = new User(USERNAME, encoder.encode(PASSWORD), LoginProvider.INTERNAL, "User 1", "User 1");
@@ -71,7 +67,7 @@ class UserControllerIntegTest {
 		int expectedStatus = 200;
 		String expectedJson = "{\"username\":\"user1\",\"givenName\":\"User 1\",\"familyName\":\"User 1\",\"userRoles\":[{\"role\":{\"name\":\"ROLE_USER\"}}],\"lastLoginDateTime\":null,\"previousLoginDateTime\":null}";
 
-		this.mvc.perform(get(requestUrl).header("Authorization", generateAuthorizationHeader(USERNAME))
+		this.mvc.perform(get(requestUrl).header("Authorization", AuthenticationService.createBearerToken(USERNAME))
 				.accept(MediaType.APPLICATION_JSON)).andExpect(status().is(expectedStatus))
 				.andExpect(content().json(expectedJson));
 	}
@@ -92,7 +88,7 @@ class UserControllerIntegTest {
 		int expectedStatus = 404;
 		String expectedJson = "";
 
-		this.mvc.perform(get(requestUrl).header("Authorization", generateAuthorizationHeader(USERNAME_INVALID))
+		this.mvc.perform(get(requestUrl).header("Authorization", AuthenticationService.createBearerToken(USERNAME_INVALID))
 				.accept(MediaType.APPLICATION_JSON)).andExpect(status().is(expectedStatus))
 				.andExpect(content().string(expectedJson));
 	}
@@ -103,7 +99,7 @@ class UserControllerIntegTest {
 		int expectedStatus = 404;
 		String expectedJson = "";
 
-		this.mvc.perform(get(requestUrl).header("Authorization", generateAuthorizationHeader(USERNAME) + "xxx")
+		this.mvc.perform(get(requestUrl).header("Authorization", AuthenticationService.createBearerToken(USERNAME) + "xxx")
 				.accept(MediaType.APPLICATION_JSON)).andExpect(status().is(expectedStatus))
 				.andExpect(content().string(expectedJson));
 
@@ -123,7 +119,7 @@ class UserControllerIntegTest {
 		expectedStatus = 200;
 		expectedJson = "{\"username\":\"usernew\",\"givenName\":\"Test 1\",\"familyName\":\"Test 1\",\"userRoles\":[{\"role\":{\"name\":\"ROLE_USER\"}}],\"lastLoginDateTime\":null,\"previousLoginDateTime\":null}";
 
-		this.mvc.perform(get(requestUrl).header("Authorization", generateAuthorizationHeader(USERNAME_NEW))
+		this.mvc.perform(get(requestUrl).header("Authorization", AuthenticationService.createBearerToken(USERNAME_NEW))
 				.accept(MediaType.APPLICATION_JSON)).andExpect(status().is(expectedStatus))
 				.andExpect(content().json(expectedJson));
 
@@ -147,7 +143,7 @@ class UserControllerIntegTest {
 		int expectedStatus = 200;
 		String expectedJson = "{\"username\":\"user1\",\"givenName\":\"User X\",\"familyName\":\"User Y\",\"userRoles\":[{\"role\":{\"name\":\"ROLE_USER\"}}],\"lastLoginDateTime\":null,\"previousLoginDateTime\":null}";
 
-		this.mvc.perform(put(requestUrl).header("Authorization", generateAuthorizationHeader(USERNAME))
+		this.mvc.perform(put(requestUrl).header("Authorization", AuthenticationService.createBearerToken(USERNAME))
 				.content(requestJson).contentType(MediaType.APPLICATION_JSON)).andExpect(status().is(expectedStatus))
 				.andExpect(content().json(expectedJson));
 	}
@@ -159,7 +155,7 @@ class UserControllerIntegTest {
 		int expectedStatus = 400;
 		String expectedJson = "";
 
-		this.mvc.perform(put(requestUrl).header("Authorization", generateAuthorizationHeader(USERNAME))
+		this.mvc.perform(put(requestUrl).header("Authorization", AuthenticationService.createBearerToken(USERNAME))
 				.content(requestJson).contentType(MediaType.APPLICATION_JSON)).andExpect(status().is(expectedStatus))
 				.andExpect(content().string(expectedJson));
 	}
@@ -170,7 +166,7 @@ class UserControllerIntegTest {
 		int expectedStatus = 204;
 		String expectedJson = "";
 
-		this.mvc.perform(delete(requestUrl).header("Authorization", generateAuthorizationHeader(USERNAME)))
+		this.mvc.perform(delete(requestUrl).header("Authorization", AuthenticationService.createBearerToken(USERNAME)))
 				.andExpect(status().is(expectedStatus)).andExpect(content().string(expectedJson));
 	}
 

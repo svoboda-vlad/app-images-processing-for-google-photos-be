@@ -53,10 +53,6 @@ class UserControllerTest {
 	private static final String USERNAME_NEW = "usernew";
 	private static final String PASSWORD_NEW = "pass123new";
 
-	private String generateAuthorizationHeader(String username) {
-		return "Bearer " + AuthenticationService.generateToken(username);
-	}
-
 	@Test
 	void testGetCurrentUserOk200() throws Exception {
 		String requestUrl = "/user";
@@ -69,7 +65,7 @@ class UserControllerTest {
 		given(userDetailsService.loadUserByUsername(USERNAME)).willReturn(user);
 		given(userRepository.findByUsername(USERNAME)).willReturn(Optional.of(user));
 
-		this.mvc.perform(get(requestUrl).header("Authorization", generateAuthorizationHeader(USERNAME))
+		this.mvc.perform(get(requestUrl).header("Authorization", AuthenticationService.createBearerToken(USERNAME))
 				.accept(MediaType.APPLICATION_JSON)).andExpect(status().is(expectedStatus))
 				.andExpect(content().json(expectedJson));
 	}
@@ -93,7 +89,7 @@ class UserControllerTest {
 		given(userDetailsService.loadUserByUsername(USERNAME_INVALID))
 				.willThrow(new UsernameNotFoundException("User not found."));
 
-		this.mvc.perform(get(requestUrl).header("Authorization", generateAuthorizationHeader(USERNAME_INVALID))
+		this.mvc.perform(get(requestUrl).header("Authorization", AuthenticationService.createBearerToken(USERNAME_INVALID))
 				.accept(MediaType.APPLICATION_JSON)).andExpect(status().is(expectedStatus))
 				.andExpect(content().string(expectedJson));
 	}
@@ -104,7 +100,7 @@ class UserControllerTest {
 		int expectedStatus = 404;
 		String expectedJson = "";
 
-		this.mvc.perform(get(requestUrl).header("Authorization", generateAuthorizationHeader(USERNAME) + "xxx")
+		this.mvc.perform(get(requestUrl).header("Authorization", AuthenticationService.createBearerToken(USERNAME) + "xxx")
 				.accept(MediaType.APPLICATION_JSON)).andExpect(status().is(expectedStatus))
 				.andExpect(content().string(expectedJson));
 	}
@@ -159,7 +155,7 @@ class UserControllerTest {
 
 		given(userService.updateUser(userInfo)).willReturn(userInfo.toUser(user));
 
-		this.mvc.perform(put(requestUrl).header("Authorization", generateAuthorizationHeader(USERNAME))
+		this.mvc.perform(put(requestUrl).header("Authorization", AuthenticationService.createBearerToken(USERNAME))
 				.content(requestJson).contentType(MediaType.APPLICATION_JSON)).andExpect(status().is(expectedStatus))
 				.andExpect(content().json(expectedJson));
 	}
@@ -176,7 +172,7 @@ class UserControllerTest {
 
 		given(userDetailsService.loadUserByUsername(USERNAME)).willReturn(user);
 
-		this.mvc.perform(put(requestUrl).header("Authorization", generateAuthorizationHeader(USERNAME))
+		this.mvc.perform(put(requestUrl).header("Authorization", AuthenticationService.createBearerToken(USERNAME))
 				.content(requestJson).contentType(MediaType.APPLICATION_JSON)).andExpect(status().is(expectedStatus))
 				.andExpect(content().string(expectedJson));
 	}
@@ -194,7 +190,7 @@ class UserControllerTest {
 		given(userDetailsService.loadUserByUsername(USERNAME)).willReturn(user);
 		given(userRepository.findByUsername(USERNAME)).willReturn(Optional.of(user));
 
-		this.mvc.perform(delete(requestUrl).header("Authorization", generateAuthorizationHeader(USERNAME)))
+		this.mvc.perform(delete(requestUrl).header("Authorization", AuthenticationService.createBearerToken(USERNAME)))
 				.andExpect(status().is(expectedStatus)).andExpect(content().string(expectedJson));
 
 		verify(userRepository, times(1)).deleteById(1L);

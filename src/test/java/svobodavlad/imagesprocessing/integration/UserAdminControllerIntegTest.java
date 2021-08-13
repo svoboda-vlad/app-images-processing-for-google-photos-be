@@ -45,10 +45,6 @@ class UserAdminControllerIntegTest {
 	private static final String ROLE_USER = "ROLE_USER";
 	private static final String ROLE_ADMIN = "ROLE_ADMIN";
 
-	private String generateAuthorizationHeader(String username) {
-		return "Bearer " + AuthenticationService.generateToken(username);
-	}
-
 	@BeforeEach
 	void initData() {
 		User user = new User(USERNAME, encoder.encode(PASSWORD), LoginProvider.INTERNAL, "User 1", "User 1");
@@ -78,7 +74,7 @@ class UserAdminControllerIntegTest {
 		user2.addRole(optRole1.get());
 		userRepository.save(user2);
 
-		this.mvc.perform(get(requestUrl).header("Authorization", generateAuthorizationHeader(USERNAME))
+		this.mvc.perform(get(requestUrl).header("Authorization", AuthenticationService.createBearerToken(USERNAME))
 				.accept(MediaType.APPLICATION_JSON)).andExpect(status().is(expectedStatus))
 				.andExpect(content().json(expectedJson));
 	}

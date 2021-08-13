@@ -40,7 +40,7 @@ public class AuthenticationService {
 	private final UserDetailsService userDetailsService;
 
 	static public void addToken(HttpServletResponse res, String username) {
-		String jwtToken = PREFIX + " " + generateToken(username);
+		String jwtToken = PREFIX + " " + createBearerToken(username);
 		res.addHeader("Authorization", jwtToken);
 		res.addHeader("Access-Control-Expose-Headers", "Authorization");
 	}
@@ -89,10 +89,14 @@ public class AuthenticationService {
 		return null;
 	}
 
-	public static String generateToken(String username) {
+	private static String generateToken(String username) {
 		Date expirationDateTime = Date
 				.from(LocalDateTime.now().plusMinutes(EXPIRY_MINS).atZone(ZoneId.systemDefault()).toInstant());
 		return Jwts.builder().setSubject(username).setExpiration(expirationDateTime).signWith(SIGNINGKEY).compact();
+	}
+	
+	public static String createBearerToken(String username) {
+		return PREFIX + " " + generateToken(username);
 	}
 
 }

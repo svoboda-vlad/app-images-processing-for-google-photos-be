@@ -44,11 +44,7 @@ public class ProcessingParametersDefaultControllerIntegTest {
 	private static final String USERNAME = "user1";
 	private static final String PASSWORD = "pass123";
 	private static final String ROLE_USER = "ROLE_USER";
-	private static final String ROLE_ADMIN = "ROLE_ADMIN";	
-
-	private String generateAuthorizationHeader(String username) {
-		return "Bearer " + AuthenticationService.generateToken(username);
-	}
+	private static final String ROLE_ADMIN = "ROLE_ADMIN";
 
 	@BeforeEach
 	void initData() {
@@ -72,7 +68,7 @@ public class ProcessingParametersDefaultControllerIntegTest {
 		int expectedStatus = 200;
 		String expectedJson = "{\"id\":1,\"timeDiffGroup\":1800,\"resizeWidth\":1000,\"resizeHeight\":1000}";
 
-		this.mvc.perform(get(requestUrl).header("Authorization", generateAuthorizationHeader(USERNAME))
+		this.mvc.perform(get(requestUrl).header("Authorization", AuthenticationService.createBearerToken(USERNAME))
 				.accept(MediaType.APPLICATION_JSON)).andExpect(status().is(expectedStatus))
 				.andExpect(content().json(expectedJson));		
 	}
