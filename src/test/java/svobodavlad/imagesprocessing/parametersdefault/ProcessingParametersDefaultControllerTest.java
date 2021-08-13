@@ -1,4 +1,4 @@
-package svobodavlad.imagesprocessing.security;
+package svobodavlad.imagesprocessing.parametersdefault;
 
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -20,24 +20,21 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import svobodavlad.imagesprocessing.integration.SecurityMockUtil;
 import svobodavlad.imagesprocessing.integration.SecurityTestUtil;
-import svobodavlad.imagesprocessing.security.User.LoginProvider;
 
 @SpringBootTest
 @AutoConfigureMockMvc
+//@Transactional - removed due to false positive tests (error in production: detached entity passed to persist)
 //@WithMockUser - not needed
-class UserAdminControllerTest {
+public class ProcessingParametersDefaultControllerTest {
 
 	@Autowired
 	private MockMvc mvc;
-
+	
 	@MockBean
-	private UserRepository userRepository;
-
+	private ProcessingParametersDefaultRepository parametersRepository;
+	
 	@MockBean
 	private UserDetailsService userDetailsService;
-
-	private static final String ROLE_USER = "ROLE_USER";
-	private static final String ROLE_ADMIN = "ROLE_ADMIN";
 
 	@BeforeEach
 	private void initData() {
@@ -45,23 +42,19 @@ class UserAdminControllerTest {
 	}
 
 	@Test
-	void testgetAllUsersOk200() throws Exception {
-		String requestUrl = "/admin/users";
+	void testGetProcessingParametersDefaultOk200() throws Exception {
+		String requestUrl = "/admin/parameters-default";
 		int expectedStatus = 200;
-		String expectedJson = "[{\"username\":\"user1\",\"givenName\":\"User 1\",\"familyName\":\"User 1\",\"lastLoginDateTime\":null,\"previousLoginDateTime\":null,\"userRoles\":[{\"role\":{\"id\":0,\"name\":\"ROLE_USER\"}}]},"
-				+ "{\"username\":\"user2\",\"givenName\":\"User 2\",\"familyName\":\"User 2\",\"lastLoginDateTime\":null,\"previousLoginDateTime\":null,\"userRoles\":[{\"role\":{\"id\":0,\"name\":\"ROLE_USER\"}},{\"role\":{\"id\":0,\"name\":\"ROLE_ADMIN\"}}]}]";
-
-		User user1 = new User("user1", "A".repeat(60), LoginProvider.INTERNAL, "User 1", "User 1");
-		user1.addRole(new Role(ROLE_USER));
-		User user2 = new User("user2", "A".repeat(60), LoginProvider.INTERNAL, "User 2", "User 2");
-		user2.addRole(new Role(ROLE_USER));
-		user2.addRole(new Role(ROLE_ADMIN));
-
-		given(userRepository.findAll()).willReturn(new ArrayList<User>(List.of(user1, user2)));
+		String expectedJson = "{\"id\":0,\"timeDiffGroup\":1800,\"resizeWidth\":1000,\"resizeHeight\":1000}";
+		
+		List<ProcessingParametersDefault> parametersList = new ArrayList<ProcessingParametersDefault>();
+		parametersList.add(new ProcessingParametersDefault(1800, 1000, 1000));
+		
+		given(parametersRepository.findAll()).willReturn(parametersList);
 
 		this.mvc.perform(get(requestUrl).header("Authorization", SecurityTestUtil.createBearerTokenAdminUser())
 				.accept(MediaType.APPLICATION_JSON)).andExpect(status().is(expectedStatus))
-				.andExpect(content().json(expectedJson));
+				.andExpect(content().json(expectedJson));		
 	}
-
+	
 }

@@ -1,10 +1,11 @@
 package svobodavlad.imagesprocessing.integration;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import java.util.Optional;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,15 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
-
-import svobodavlad.imagesprocessing.security.AuthenticationService;
-import svobodavlad.imagesprocessing.security.Role;
-import svobodavlad.imagesprocessing.security.RoleRepository;
-import svobodavlad.imagesprocessing.security.User;
-import svobodavlad.imagesprocessing.security.UserRepository;
-import svobodavlad.imagesprocessing.security.User.LoginProvider;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -33,36 +26,17 @@ class UserControllerIntegTest {
 	private MockMvc mvc;
 
 	@Autowired
-	private PasswordEncoder encoder;
-
-	@Autowired
-	private UserRepository userRepository;
-
-	@Autowired
-	private RoleRepository roleRepository;
-
-	private static final String USERNAME = "user1";
-	private static final String PASSWORD = "pass123";
-	private static final String ROLE_USER = "ROLE_USER";
-	private static final String USERNAME_INVALID = "user2";
-	private static final String USERNAME_NEW = "usernew";
-
-	private String generateAuthorizationHeader(String username) {
-		return "Bearer " + AuthenticationService.generateToken(username);
-	}
-
+	private SecurityTestUtil securityTestUtil;
+	
 	@BeforeEach
 	void initData() {
-		User user = new User(USERNAME, encoder.encode(PASSWORD), LoginProvider.INTERNAL, "User 1", "User 1");
-		Optional<Role> optRole = roleRepository.findByName(ROLE_USER);
-		user = userRepository.save(user);
-		user.addRole(optRole.get());
-		userRepository.save(user);
+		securityTestUtil.saveAdminUser();
+		securityTestUtil.saveDefaultUser();
 	}
 
 	@AfterEach
 	void cleanData() {
-		userRepository.deleteAll();
+		securityTestUtil.deleteAllUsers();
 	}
 
 	@Test
@@ -71,7 +45,7 @@ class UserControllerIntegTest {
 		int expectedStatus = 200;
 		String expectedJson = "{\"username\":\"user1\",\"givenName\":\"User 1\",\"familyName\":\"User 1\",\"userRoles\":[{\"role\":{\"name\":\"ROLE_USER\"}}],\"lastLoginDateTime\":null,\"previousLoginDateTime\":null}";
 
-		this.mvc.perform(get(requestUrl).header("Authorization", generateAuthorizationHeader(USERNAME))
+		this.mvc.perform(get(requestUrl).header("Authorization", SecurityTestUtil.createBearerTokenDefaultUser())
 				.accept(MediaType.APPLICATION_JSON)).andExpect(status().is(expectedStatus))
 				.andExpect(content().json(expectedJson));
 	}
@@ -92,7 +66,7 @@ class UserControllerIntegTest {
 		int expectedStatus = 404;
 		String expectedJson = "";
 
-		this.mvc.perform(get(requestUrl).header("Authorization", generateAuthorizationHeader(USERNAME_INVALID))
+		this.mvc.perform(get(requestUrl).header("Authorization", SecurityTestUtil.createBearerTokenForUsername("invaliduser"))
 				.accept(MediaType.APPLICATION_JSON)).andExpect(status().is(expectedStatus))
 				.andExpect(content().string(expectedJson));
 	}
@@ -103,7 +77,7 @@ class UserControllerIntegTest {
 		int expectedStatus = 404;
 		String expectedJson = "";
 
-		this.mvc.perform(get(requestUrl).header("Authorization", generateAuthorizationHeader(USERNAME) + "xxx")
+		this.mvc.perform(get(requestUrl).header("Authorization", SecurityTestUtil.createBearerTokenDefaultUser() + "xxx")
 				.accept(MediaType.APPLICATION_JSON)).andExpect(status().is(expectedStatus))
 				.andExpect(content().string(expectedJson));
 
@@ -123,7 +97,7 @@ class UserControllerIntegTest {
 		expectedStatus = 200;
 		expectedJson = "{\"username\":\"usernew\",\"givenName\":\"Test 1\",\"familyName\":\"Test 1\",\"userRoles\":[{\"role\":{\"name\":\"ROLE_USER\"}}],\"lastLoginDateTime\":null,\"previousLoginDateTime\":null}";
 
-		this.mvc.perform(get(requestUrl).header("Authorization", generateAuthorizationHeader(USERNAME_NEW))
+		this.mvc.perform(get(requestUrl).header("Authorization", SecurityTestUtil.createBearerTokenForUsername("usernew"))
 				.accept(MediaType.APPLICATION_JSON)).andExpect(status().is(expectedStatus))
 				.andExpect(content().json(expectedJson));
 
@@ -147,7 +121,7 @@ class UserControllerIntegTest {
 		int expectedStatus = 200;
 		String expectedJson = "{\"username\":\"user1\",\"givenName\":\"User X\",\"familyName\":\"User Y\",\"userRoles\":[{\"role\":{\"name\":\"ROLE_USER\"}}],\"lastLoginDateTime\":null,\"previousLoginDateTime\":null}";
 
-		this.mvc.perform(put(requestUrl).header("Authorization", generateAuthorizationHeader(USERNAME))
+		this.mvc.perform(put(requestUrl).header("Authorization", SecurityTestUtil.createBearerTokenDefaultUser())
 				.content(requestJson).contentType(MediaType.APPLICATION_JSON)).andExpect(status().is(expectedStatus))
 				.andExpect(content().json(expectedJson));
 	}
@@ -159,7 +133,7 @@ class UserControllerIntegTest {
 		int expectedStatus = 400;
 		String expectedJson = "";
 
-		this.mvc.perform(put(requestUrl).header("Authorization", generateAuthorizationHeader(USERNAME))
+		this.mvc.perform(put(requestUrl).header("Authorization", SecurityTestUtil.createBearerTokenDefaultUser())
 				.content(requestJson).contentType(MediaType.APPLICATION_JSON)).andExpect(status().is(expectedStatus))
 				.andExpect(content().string(expectedJson));
 	}
@@ -170,7 +144,7 @@ class UserControllerIntegTest {
 		int expectedStatus = 204;
 		String expectedJson = "";
 
-		this.mvc.perform(delete(requestUrl).header("Authorization", generateAuthorizationHeader(USERNAME)))
+		this.mvc.perform(delete(requestUrl).header("Authorization", SecurityTestUtil.createBearerTokenDefaultUser()))
 				.andExpect(status().is(expectedStatus)).andExpect(content().string(expectedJson));
 	}
 

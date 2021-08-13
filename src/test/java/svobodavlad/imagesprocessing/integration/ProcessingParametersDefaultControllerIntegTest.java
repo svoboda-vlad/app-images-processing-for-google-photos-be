@@ -15,19 +15,19 @@ import org.springframework.test.web.servlet.MockMvc;
 
 @SpringBootTest
 @AutoConfigureMockMvc
+//@Transactional - removed due to false positive tests (error in production: detached entity passed to persist)
 //@WithMockUser - not needed
-class UserAdminControllerIntegTest {
+public class ProcessingParametersDefaultControllerIntegTest {
 
 	@Autowired
 	private MockMvc mvc;
-
+	
 	@Autowired
 	private SecurityTestUtil securityTestUtil;
 	
 	@BeforeEach
 	void initData() {
 		securityTestUtil.saveAdminUser();
-		securityTestUtil.saveDefaultUser();
 	}
 
 	@AfterEach
@@ -36,15 +36,14 @@ class UserAdminControllerIntegTest {
 	}
 
 	@Test
-	void testGetAllUsersOk200() throws Exception {
-		String requestUrl = "/admin/users";
+	void testGetProcessingParametersDefaultOk200() throws Exception {
+		String requestUrl = "/admin/parameters-default";
 		int expectedStatus = 200;
-		String expectedJson = "[{\"username\":\"user1\",\"givenName\":\"User 1\",\"familyName\":\"User 1\",\"lastLoginDateTime\":null,\"previousLoginDateTime\":null,\"userRoles\":[{\"role\":{\"name\":\"ROLE_USER\"}}]},"
-				+ "{\"username\":\"admin\",\"givenName\":\"Administrator\",\"familyName\":\"Administrator\",\"lastLoginDateTime\":null,\"previousLoginDateTime\":null,\"userRoles\":[{\"role\":{\"name\":\"ROLE_USER\"}},{\"role\":{\"name\":\"ROLE_ADMIN\"}}]}]";
+		String expectedJson = "{\"id\":1,\"timeDiffGroup\":1800,\"resizeWidth\":1000,\"resizeHeight\":1000}";
 
 		this.mvc.perform(get(requestUrl).header("Authorization", SecurityTestUtil.createBearerTokenAdminUser())
 				.accept(MediaType.APPLICATION_JSON)).andExpect(status().is(expectedStatus))
-				.andExpect(content().json(expectedJson));
+				.andExpect(content().json(expectedJson));		
 	}
-
+	
 }
