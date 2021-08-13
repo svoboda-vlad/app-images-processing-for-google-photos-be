@@ -20,7 +20,7 @@ Returned JWT token:
 Authorization: Bearer abcdef
 ```
 
-## REST API endpoints
+## REST API endpoints - domain
 http://localhost:8080/
 
 Example of POST request with JWT token:
@@ -37,6 +37,10 @@ Response:
 {"id":6,"currencyCode":"EUR","country":"EMU","rateQty":1}
 ```
 
+restricted (administrator):
+- GET "/admin/parameters-default" (ProcessingParametersDefaultController)
+
+## REST API endpoints - security + administration
 unrestricted:
 - POST "/login" (LoginFilter)
 - POST "/google-login" (GoogleLoginFilter)
@@ -64,7 +68,13 @@ H2 console
 
 Heroku: [https://images-proc-for-google-photos.herokuapp.com/h2-console](https://images-proc-for-google-photos.herokuapp.com/h2-console)
 
-## Models
+
+## Models - domain
+
+ProcessingParametersDefault - id (long), timeDiffGroup (int, min = 60, max = 86400), resizeWidth (int, min = 1, max = 10000), resizeHeight (int, min = 1, max = 10000)
+- GET "/admin/parameters-default": {"timeDiffGroup":1800,"resizeWidth":1000,"resizeHeight":1000}
+
+## Models - security
 
 User - id (long), username (String, min = 1, max = 255), password (String, min = 60, max = 60), lastLoginDateTime (LocalDateTime), previousLoginDateTime (LocalDateTime), loginProvider (LoginProvider - enum - INTERNAL, GOOGLE), givenName (String, min = 1, max = 255), familyName (String, min = 1, max = 255)
 - no endpoint
@@ -94,7 +104,10 @@ H2 in-memory database + liquibase
 
 JDBC URL: "jdbc:h2:mem:testdb"
 
-Database tables:
+Database tables - domain:
+- processing_parameters_default - id (int PRIMARY KEY), time_diff_group (int NOT NULL), resize_width (int NOT NULL), resize_height (int NOT NULL)
+
+Database tables - security:
 - user - id (int PRIMARY KEY), username (VARCHAR(255) NOT NULL UNIQUE), password (VARCHAR(255) NOT NULL), last_login_date_time (TIMESTAMP), previous_login_date_time (TIMESTAMP), login_provider(VARCHAR(255), given_name(VARCHAR(255), family_name(VARCHAR(255))
 - user_roles - user_id (int NOT NULL), role_id (int NOT NULL), user_id + role_id - PRIMARY KEY
 - role - id (int PRIMARY KEY), name (VARCHAR(255) NOT NULL UNIQUE) - default values: "ROLE_USER", "ROLE_ADMIN"
@@ -188,6 +201,10 @@ spring.h2.console.enabled=false
 SPRING_PROFILES_ACTIVE=prod
 
 DATABASE_URL=...
+
+ADMIN_USERNAME=...
+
+ADMIN_PASSWORD=...
 
 ## Maven build
 
