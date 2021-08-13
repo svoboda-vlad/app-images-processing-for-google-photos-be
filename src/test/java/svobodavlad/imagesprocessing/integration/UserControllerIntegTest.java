@@ -45,7 +45,7 @@ class UserControllerIntegTest {
 		int expectedStatus = 200;
 		String expectedJson = "{\"username\":\"user1\",\"givenName\":\"User 1\",\"familyName\":\"User 1\",\"userRoles\":[{\"role\":{\"name\":\"ROLE_USER\"}}],\"lastLoginDateTime\":null,\"previousLoginDateTime\":null}";
 
-		this.mvc.perform(get(requestUrl).header("Authorization", securityTestUtil.createBearerTokenAdminUser())
+		this.mvc.perform(get(requestUrl).header("Authorization", securityTestUtil.createBearerTokenDefaultUser())
 				.accept(MediaType.APPLICATION_JSON)).andExpect(status().is(expectedStatus))
 				.andExpect(content().json(expectedJson));
 	}
@@ -77,7 +77,7 @@ class UserControllerIntegTest {
 		int expectedStatus = 404;
 		String expectedJson = "";
 
-		this.mvc.perform(get(requestUrl).header("Authorization", securityTestUtil.createBearerTokenAdminUser() + "xxx")
+		this.mvc.perform(get(requestUrl).header("Authorization", securityTestUtil.createBearerTokenDefaultUser() + "xxx")
 				.accept(MediaType.APPLICATION_JSON)).andExpect(status().is(expectedStatus))
 				.andExpect(content().string(expectedJson));
 
@@ -121,7 +121,7 @@ class UserControllerIntegTest {
 		int expectedStatus = 200;
 		String expectedJson = "{\"username\":\"user1\",\"givenName\":\"User X\",\"familyName\":\"User Y\",\"userRoles\":[{\"role\":{\"name\":\"ROLE_USER\"}}],\"lastLoginDateTime\":null,\"previousLoginDateTime\":null}";
 
-		this.mvc.perform(put(requestUrl).header("Authorization", securityTestUtil.createBearerTokenAdminUser())
+		this.mvc.perform(put(requestUrl).header("Authorization", securityTestUtil.createBearerTokenDefaultUser())
 				.content(requestJson).contentType(MediaType.APPLICATION_JSON)).andExpect(status().is(expectedStatus))
 				.andExpect(content().json(expectedJson));
 	}
@@ -133,7 +133,7 @@ class UserControllerIntegTest {
 		int expectedStatus = 400;
 		String expectedJson = "";
 
-		this.mvc.perform(put(requestUrl).header("Authorization", securityTestUtil.createBearerTokenAdminUser())
+		this.mvc.perform(put(requestUrl).header("Authorization", securityTestUtil.createBearerTokenDefaultUser())
 				.content(requestJson).contentType(MediaType.APPLICATION_JSON)).andExpect(status().is(expectedStatus))
 				.andExpect(content().string(expectedJson));
 	}
@@ -144,7 +144,7 @@ class UserControllerIntegTest {
 		int expectedStatus = 204;
 		String expectedJson = "";
 
-		this.mvc.perform(delete(requestUrl).header("Authorization", securityTestUtil.createBearerTokenAdminUser()))
+		this.mvc.perform(delete(requestUrl).header("Authorization", securityTestUtil.createBearerTokenDefaultUser()))
 				.andExpect(status().is(expectedStatus)).andExpect(content().string(expectedJson));
 	}
 
