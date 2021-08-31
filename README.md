@@ -55,6 +55,7 @@ restricted:
 
 restricted (administrator):
 - GET "/admin/users" (UserAdminController)
+- GET + PUT "/admin/parameters-default" (ProcessingParametersDefaultController)
 
 Swagger / OpenAPI
 

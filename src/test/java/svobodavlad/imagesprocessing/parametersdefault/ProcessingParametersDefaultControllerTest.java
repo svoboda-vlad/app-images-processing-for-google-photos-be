@@ -2,11 +2,13 @@ package svobodavlad.imagesprocessing.parametersdefault;
 
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -45,16 +47,74 @@ public class ProcessingParametersDefaultControllerTest {
 	void testGetProcessingParametersDefaultOk200() throws Exception {
 		String requestUrl = "/admin/parameters-default";
 		int expectedStatus = 200;
-		String expectedJson = "{\"id\":0,\"timeDiffGroup\":1800,\"resizeWidth\":1000,\"resizeHeight\":1000}";
+		String expectedJson = "{\"id\":1,\"timeDiffGroup\":1800,\"resizeWidth\":1000,\"resizeHeight\":1000}";
 		
 		List<ProcessingParametersDefault> parametersList = new ArrayList<ProcessingParametersDefault>();
-		parametersList.add(new ProcessingParametersDefault(1800, 1000, 1000));
+		ProcessingParametersDefault parameters = new ProcessingParametersDefault(1800, 1000, 1000);
+		parameters.setId(1);
+		parametersList.add(parameters);
 		
 		given(parametersRepository.findAll()).willReturn(parametersList);
 
 		this.mvc.perform(get(requestUrl).header("Authorization", SecurityTestUtil.createBearerTokenAdminUser())
 				.accept(MediaType.APPLICATION_JSON)).andExpect(status().is(expectedStatus))
 				.andExpect(content().json(expectedJson));		
+	}
+	
+	@Test
+	void testGetProcessingParametersDefaultNotFound404() throws Exception {
+		String requestUrl = "/admin/parameters-default";
+		int expectedStatus = 404;
+		String expectedJson = "";
+		
+		given(parametersRepository.findAll()).willReturn(new ArrayList<ProcessingParametersDefault>());
+
+		this.mvc.perform(get(requestUrl).header("Authorization", SecurityTestUtil.createBearerTokenAdminUser())
+				.accept(MediaType.APPLICATION_JSON)).andExpect(status().is(expectedStatus))
+				.andExpect(content().string(expectedJson));		
+	}	
+	
+	@Test
+	void testUpdateProcessingParametersDefaultOk200() throws Exception {
+		String requestUrl = "/admin/parameters-default";
+		String requestJson = "{\"id\":1,\"timeDiffGroup\":3600,\"resizeWidth\":1000,\"resizeHeight\":1000}";
+		int expectedStatus = 200;
+		String expectedJson = "{\"id\":1,\"timeDiffGroup\":3600,\"resizeWidth\":1000,\"resizeHeight\":1000}";
+		
+		ProcessingParametersDefault parameters = new ProcessingParametersDefault(3600, 1000, 1000);
+		parameters.setId(1);
+		given(parametersRepository.findById(1L)).willReturn(Optional.of(parameters));
+		given(parametersRepository.save(parameters)).willReturn(parameters);
+
+		this.mvc.perform(put(requestUrl).content(requestJson).header("Authorization", SecurityTestUtil.createBearerTokenAdminUser())
+				.contentType(MediaType.APPLICATION_JSON)).andExpect(status().is(expectedStatus))
+				.andExpect(content().json(expectedJson));		
+	}	
+	
+	@Test
+	void testUpdateProcessingParametersDefaultBadRequest400() throws Exception {
+		String requestUrl = "/admin/parameters-default";
+		String requestJson = "{\"id\":2,\"timeDiffGroup\":3600,\"resizeWidth\":1000,\"resizeHeight\":1000}";
+		int expectedStatus = 400;
+		String expectedJson = "";
+		
+		given(parametersRepository.findById(2L)).willReturn(Optional.empty());
+
+		this.mvc.perform(put(requestUrl).content(requestJson).header("Authorization", SecurityTestUtil.createBearerTokenAdminUser())
+				.contentType(MediaType.APPLICATION_JSON)).andExpect(status().is(expectedStatus))
+				.andExpect(content().string(expectedJson));
+	}
+	
+	@Test
+	void testUpdateProcessingParametersDefaultNotFound404() throws Exception {
+		String requestUrl = "/admin/parameters-default";
+		String requestJson = "{\"timeDiffGroup\":3600,\"resizeWidth\":1000,\"resizeHeight\":1000}";
+		int expectedStatus = 400;
+		String expectedJson = "";
+		
+		this.mvc.perform(put(requestUrl).content(requestJson).header("Authorization", SecurityTestUtil.createBearerTokenAdminUser())
+				.contentType(MediaType.APPLICATION_JSON)).andExpect(status().is(expectedStatus))
+				.andExpect(content().string(expectedJson));
 	}
 	
 }
