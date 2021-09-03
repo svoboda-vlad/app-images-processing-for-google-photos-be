@@ -24,6 +24,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -50,6 +52,7 @@ public class User implements UserDetails {
     @NotNull
     @Size(min = 60, max = 60)
     @NonNull
+    @JsonIgnore
     private String password;
 
     @NotNull

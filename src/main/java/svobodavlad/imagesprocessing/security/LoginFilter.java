@@ -41,18 +41,18 @@ public class LoginFilter extends AbstractAuthenticationProcessingFilter {
 	@Override
 	public Authentication attemptAuthentication(HttpServletRequest req, HttpServletResponse res)
 			throws AuthenticationException, IOException {
-		User user = resolveUser(req);
+		LoginUser loginUser = resolveUser(req);
 
-		if (user == null)
+		if (loginUser == null)
 			throw new BadCredentialsException("");
 
-		Optional<User> optUser = userRepository.findByUsername(user.getUsername());
+		Optional<User> optUser = userRepository.findByUsername(loginUser.getUsername());
 		if (optUser.isPresent()) {
 			if (optUser.get().getLoginProvider() != LoginProvider.INTERNAL)
 				throw new BadCredentialsException("");
 		}
-		return getAuthenticationManager()
-				.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
+		return getAuthenticationManager().authenticate(
+				new UsernamePasswordAuthenticationToken(loginUser.getUsername(), loginUser.getPassword()));
 	}
 
 	@Override
@@ -62,9 +62,9 @@ public class LoginFilter extends AbstractAuthenticationProcessingFilter {
 		userService.updateLastLoginDateTime(auth.getName());
 	}
 
-	private User resolveUser(HttpServletRequest request) {
+	private LoginUser resolveUser(HttpServletRequest request) {
 		try {
-			return new ObjectMapper().readValue(request.getInputStream(), User.class);
+			return new ObjectMapper().readValue(request.getInputStream(), LoginUser.class);
 		} catch (Exception e) {
 			log.info("Username and password parsing from request body failed: {}.", e.getMessage());
 		}

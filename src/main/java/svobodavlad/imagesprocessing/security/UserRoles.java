@@ -5,7 +5,6 @@ import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
@@ -28,16 +27,16 @@ public class UserRoles implements Serializable {
 	@Id
 	// lazy fetching disabled - primary key
 	// @ManyToOne(fetch = FetchType.LAZY)
+	// @JoinColumn(name = "user_id") - specified by default
 	@ManyToOne
-	@JoinColumn(name = "user_id")
 	@JsonIgnore // to avoid infinite recursion
 	private User user;
 
 	@Id
 	// lazy fetching disabled - primary key
 	// @ManyToOne(fetch = FetchType.LAZY)
+	// @JoinColumn(name = "role_id") - specified by default	
 	@ManyToOne
-	@JoinColumn(name = "role_id")
 	private Role role;
 
 }

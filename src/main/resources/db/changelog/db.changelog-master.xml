@@ -73,4 +73,27 @@ http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibas
 			</column>
 		</createTable>
 	</changeSet>
+	<changeSet id="20210903102600" author="svoboda-vlad">
+		<createTable tableName="processing_parameters_user">
+			<column name="id" type="int" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="time_diff_group" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="resize_width" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="resize_height" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="user_id" type="int">
+				<constraints nullable="false" />
+			</column>			
+		</createTable>
+		<addForeignKeyConstraint
+			baseColumnNames="user_id" baseTableName="processing_parameters_user"
+			constraintName="fk_processing_parameters_user_user_id" referencedColumnNames="id"
+			referencedTableName="user" />
+	</changeSet>
 </databaseChangeLog>
