@@ -14,8 +14,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import svobodavlad.imagesprocessing.parametersdefault.ProcessingParametersDefault;
-import svobodavlad.imagesprocessing.parametersdefault.ProcessingParametersDefaultRepository;
+import svobodavlad.imagesprocessing.parameters.ProcessingParametersDefault;
+import svobodavlad.imagesprocessing.parameters.ProcessingParametersDefaultRepository;
 
 @SpringBootTest
 @AutoConfigureMockMvc

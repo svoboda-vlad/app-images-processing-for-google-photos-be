@@ -1,10 +1,9 @@
-package svobodavlad.imagesprocessing.parametersdefault;
+package svobodavlad.imagesprocessing.parameters;
 
 import java.util.List;
 
 import javax.validation.Valid;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -35,9 +34,9 @@ public class ProcessingParametersDefaultController {
     // @PutMapping(PARAMETERS_DEFAULT_URL + "/{id}")
     // public ResponseEntity<ProcessingParametersDefault> updateProcessingParametersDefault(@Valid @RequestBody ProcessingParametersDefault parameters, @PathVariable long id) throws URISyntaxException { 
 	public ResponseEntity<ProcessingParametersDefault> updateProcessingParametersDefault(@Valid @RequestBody ProcessingParametersDefault parameters) {		
-        if (parameters.getId() == 0L) return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        if (parameters.getId() == 0L) return ResponseEntity.badRequest().build();
         // if (id != parameters.getId()) return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        if (parametersRepository.findById(parameters.getId()).isEmpty()) return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        if (parametersRepository.findById(parameters.getId()).isEmpty()) return ResponseEntity.badRequest().build();
         return ResponseEntity.ok(parametersRepository.save(parameters));
 		
 	}

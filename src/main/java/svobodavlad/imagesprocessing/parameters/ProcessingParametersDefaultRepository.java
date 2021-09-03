@@ -1,4 +1,4 @@
-package svobodavlad.imagesprocessing.parametersdefault;
+package svobodavlad.imagesprocessing.parameters;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

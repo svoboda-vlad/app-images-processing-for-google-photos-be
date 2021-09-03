@@ -5,7 +5,6 @@ import java.util.Optional;
 import javax.persistence.EntityExistsException;
 import javax.validation.Valid;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -36,9 +35,9 @@ public class UserController {
 		try {
 			userService.registerUser(user);
 		} catch (EntityExistsException e) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+			return ResponseEntity.badRequest().build();
 		}
-		return ResponseEntity.status(HttpStatus.CREATED).build();
+		return ResponseEntity.created(null).build();
 	}
 
 	@Operation(security = { @SecurityRequirement(name = "bearer-key") })
@@ -46,7 +45,7 @@ public class UserController {
 	public ResponseEntity<UserInfo> getUserInfo() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		if (authentication == null)
-			return new ResponseEntity<UserInfo>(HttpStatus.NOT_FOUND);
+			return ResponseEntity.notFound().build();
 		Optional<User> optUser = userRepository.findByUsername(authentication.getName());
 		return ResponseEntity.ok(optUser.get().toUserInfo());
 	}
@@ -56,7 +55,7 @@ public class UserController {
 	public ResponseEntity<UserInfo> updateUser(@Valid @RequestBody UserInfo userInfo) {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		if (!authentication.getName().equals(userInfo.getUsername()))
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+			return ResponseEntity.badRequest().build();
 		return ResponseEntity.ok(userService.updateUser(userInfo).toUserInfo());
 	}
 
