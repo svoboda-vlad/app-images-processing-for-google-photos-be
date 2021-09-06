@@ -48,7 +48,7 @@ public class ProcessingParametersDefaultControllerIntegTest {
 	void testGetProcessingParametersDefaultOk200() throws Exception {		
 		String requestUrl = "/admin/parameters-default";
 		int expectedStatus = 200;
-		String expectedJson = "{\"id\":" + parametersRepository.findAll().get(0).getId() + ",\"timeDiffGroup\":1800,\"resizeWidth\":1000,\"resizeHeight\":1000}";
+		String expectedJson = "{\"timeDiffGroup\":1800,\"resizeWidth\":1000,\"resizeHeight\":1000}";
 
 		this.mvc.perform(get(requestUrl).header("Authorization", SecurityTestUtil.createBearerTokenAdminUser())
 				.accept(MediaType.APPLICATION_JSON)).andExpect(status().is(expectedStatus))
@@ -71,25 +71,12 @@ public class ProcessingParametersDefaultControllerIntegTest {
 	@Test
 	void testUpdateProcessingParametersDefaultOk200() throws Exception {
 		String requestUrl = "/admin/parameters-default";
-		String requestJson = "{\"id\":" + parametersRepository.findAll().get(0).getId() + ",\"timeDiffGroup\":3600,\"resizeWidth\":1000,\"resizeHeight\":1000}";
+		String requestJson = "{\"timeDiffGroup\":3600,\"resizeWidth\":1000,\"resizeHeight\":1000}";
 		int expectedStatus = 200;
-		String expectedJson = "{\"id\":" + parametersRepository.findAll().get(0).getId() + ",\"timeDiffGroup\":3600,\"resizeWidth\":1000,\"resizeHeight\":1000}";
+		String expectedJson = "{\"timeDiffGroup\":3600,\"resizeWidth\":1000,\"resizeHeight\":1000}";
 
 		this.mvc.perform(put(requestUrl).content(requestJson).header("Authorization", SecurityTestUtil.createBearerTokenAdminUser())
 				.contentType(MediaType.APPLICATION_JSON)).andExpect(status().is(expectedStatus))
 				.andExpect(content().json(expectedJson));
 	}
-	
-	@Test
-	void testUpdateProcessingParametersDefaultBadRequest400() throws Exception {
-		String requestUrl = "/admin/parameters-default";
-		String requestJson = "{\"id\":9999,\"timeDiffGroup\":3600,\"resizeWidth\":1000,\"resizeHeight\":1000}";
-		int expectedStatus = 400;
-		String expectedJson = "";
-
-		this.mvc.perform(put(requestUrl).content(requestJson).header("Authorization", SecurityTestUtil.createBearerTokenAdminUser())
-				.contentType(MediaType.APPLICATION_JSON)).andExpect(status().is(expectedStatus))
-				.andExpect(content().string(expectedJson));
-	}	
-	
 }

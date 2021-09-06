@@ -56,5 +56,9 @@ public class ProcessingParametersUser implements Serializable {
 	@OneToOne(fetch = FetchType.LAZY)
 	@JsonIgnore
 	private User user;
+	
+	public ProcessingParametersUserTemplate toProcessingParametersUserTemplate() {
+		return new ProcessingParametersUserTemplate(this.getTimeDiffGroup(), this.getResizeWidth(), this.getResizeHeight());
+	}
 
 }

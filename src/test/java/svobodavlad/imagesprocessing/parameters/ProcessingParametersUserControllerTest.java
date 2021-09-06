@@ -2,6 +2,7 @@ package svobodavlad.imagesprocessing.parameters;
 
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -49,10 +50,10 @@ public class ProcessingParametersUserControllerTest {
 	}
 
 	@Test
-	void testGetProcessingParametersUserOk200() throws Exception {
+	void testGetProcessingParametersUserTemplateOk200() throws Exception {
 		String requestUrl = "/parameters";
 		int expectedStatus = 200;
-		String expectedJson = "{\"id\":1,\"timeDiffGroup\":1800,\"resizeWidth\":1000,\"resizeHeight\":1000}";
+		String expectedJson = "{\"timeDiffGroup\":1800,\"resizeWidth\":1000,\"resizeHeight\":1000}";
 		
 		ProcessingParametersUser parameters = new ProcessingParametersUser(1800, 1000, 1000, mockedUser);
 		parameters.setId(1);
@@ -63,6 +64,58 @@ public class ProcessingParametersUserControllerTest {
 		this.mvc.perform(get(requestUrl).header("Authorization", SecurityTestUtil.createBearerTokenDefaultUser())
 				.accept(MediaType.APPLICATION_JSON)).andExpect(status().is(expectedStatus))
 				.andExpect(content().json(expectedJson));		
+	}
+	
+	@Test
+	void testGetProcessingParametersUserTemplateNoParametersNotFound404() throws Exception {
+		String requestUrl = "/parameters";
+		int expectedStatus = 404;
+		String expectedJson = "";
+		
+		given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
+		given(parametersRepository.findByUser(mockedUser)).willReturn(Optional.empty());
+
+		this.mvc.perform(get(requestUrl).header("Authorization", SecurityTestUtil.createBearerTokenDefaultUser())
+				.accept(MediaType.APPLICATION_JSON)).andExpect(status().is(expectedStatus))
+				.andExpect(content().string(expectedJson));
+	}
+
+	@Test
+	void testUpdateProcessingParametersUserTemplateOk200() throws Exception {
+		String requestUrl = "/parameters";
+		String requestJson = "{\"timeDiffGroup\":3600,\"resizeWidth\":1000,\"resizeHeight\":1000}";
+		int expectedStatus = 200;
+		String expectedJson = "{\"timeDiffGroup\":3600,\"resizeWidth\":1000,\"resizeHeight\":1000}";
+		
+		ProcessingParametersUser parameters = new ProcessingParametersUser(3600, 1000, 1000, mockedUser);
+		parameters.setId(1);
+		
+		given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
+		given(parametersRepository.findByUser(mockedUser)).willReturn(Optional.of(parameters));
+		given(parametersRepository.save(parameters)).willReturn(parameters);
+		
+		this.mvc.perform(put(requestUrl).content(requestJson).header("Authorization", SecurityTestUtil.createBearerTokenDefaultUser())
+				.contentType(MediaType.APPLICATION_JSON)).andExpect(status().is(expectedStatus))
+				.andExpect(content().json(expectedJson));
+	}	
+	
+	
+	@Test
+	void testUpdateProcessingParametersDefaultNotFound404() throws Exception {
+		String requestUrl = "/parameters";
+		String requestJson = "{\"timeDiffGroup\":3600,\"resizeWidth\":1000,\"resizeHeight\":1000}";
+		int expectedStatus = 404;
+		String expectedJson = "";
+		
+		ProcessingParametersUser parameters = new ProcessingParametersUser(3600, 1000, 1000, mockedUser);
+		parameters.setId(1);
+		
+		given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
+		given(parametersRepository.findByUser(mockedUser)).willReturn(Optional.empty());
+		
+		this.mvc.perform(put(requestUrl).content(requestJson).header("Authorization", SecurityTestUtil.createBearerTokenDefaultUser())
+				.contentType(MediaType.APPLICATION_JSON)).andExpect(status().is(expectedStatus))
+				.andExpect(content().string(expectedJson));
 	}
 	
 }

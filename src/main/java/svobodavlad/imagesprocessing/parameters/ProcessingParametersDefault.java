@@ -43,5 +43,9 @@ public class ProcessingParametersDefault implements Serializable {
 	@NonNull
 	@Min(1) @Max(10000)
 	private int resizeHeight;
+	
+	public ProcessingParametersDefaultTemplate toProcessingParametersDefaultTemplate() {
+		return new ProcessingParametersDefaultTemplate(this.getTimeDiffGroup(), this.getResizeWidth(), this.getResizeHeight());
+	}	
 
 }

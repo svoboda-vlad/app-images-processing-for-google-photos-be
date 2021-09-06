@@ -23,22 +23,25 @@ public class ProcessingParametersDefaultController {
 
 	@Operation(security = { @SecurityRequirement(name = "bearer-key") })
 	@GetMapping(PARAMETERS_DEFAULT_URL)
-	public ResponseEntity<ProcessingParametersDefault> getProcessingParametersDefault() {
+	public ResponseEntity<ProcessingParametersDefaultTemplate> getProcessingParametersDefaultTemplate() {
 		List<ProcessingParametersDefault> parametersList = parametersRepository.findAll();
 		if (parametersList.isEmpty()) return ResponseEntity.notFound().build();
-		return ResponseEntity.ok(parametersList.get(0));
+		return ResponseEntity.ok(parametersList.get(0).toProcessingParametersDefaultTemplate());
 	}
 	
 	@Operation(security = { @SecurityRequirement(name = "bearer-key") })
 	@PutMapping(PARAMETERS_DEFAULT_URL)
     // @PutMapping(PARAMETERS_DEFAULT_URL + "/{id}")
-    // public ResponseEntity<ProcessingParametersDefault> updateProcessingParametersDefault(@Valid @RequestBody ProcessingParametersDefault parameters, @PathVariable long id) throws URISyntaxException { 
-	public ResponseEntity<ProcessingParametersDefault> updateProcessingParametersDefault(@Valid @RequestBody ProcessingParametersDefault parameters) {		
-        if (parameters.getId() == 0L) return ResponseEntity.badRequest().build();
+    // public ResponseEntity<ProcessingParametersDefaultTemplate> updateProcessingParametersDefaultTemplate(@Valid @RequestBody ProcessingParametersDefaultTemplate parameters, @PathVariable long id) throws URISyntaxException { 
+	public ResponseEntity<ProcessingParametersDefaultTemplate> updateProcessingParametersDefaultTemplate(@Valid @RequestBody ProcessingParametersDefaultTemplate parametersTemplate) {		
+        // if (parameters.getId() == 0L) return ResponseEntity.badRequest().build();
         // if (id != parameters.getId()) return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        if (parametersRepository.findById(parameters.getId()).isEmpty()) return ResponseEntity.badRequest().build();
-        return ResponseEntity.ok(parametersRepository.save(parameters));
-		
+        // if (parametersRepository.findById(parameters.getId()).isEmpty()) return ResponseEntity.badRequest().build();
+		List<ProcessingParametersDefault> optParameters = parametersRepository.findAll();
+		if (optParameters.isEmpty()) return ResponseEntity.notFound().build();
+		ProcessingParametersDefault parameters = parametersTemplate.toProcessingParametersDefault(optParameters.get(0));
+		parameters = parametersRepository.save(parameters);
+		return ResponseEntity.ok(parameters.toProcessingParametersDefaultTemplate());		
 	}
 
 }
