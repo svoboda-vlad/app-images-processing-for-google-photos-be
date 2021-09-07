@@ -36,7 +36,7 @@ public class SecurityTestUtil {
 	private static final String DEFAULT_GIVEN_NAME = "User 1";
 	private static final String DEFAULT_FAMILY_NAME = "User 1";
 
-	public void saveAdminUser() {
+	public User saveAdminUser() {
 		User user = new User(ADMIN_USERNAME, encoder.encode(ADMIN_PASSWORD), LoginProvider.INTERNAL, ADMIN_GIVEN_NAME,
 				ADMIN_FAMILY_NAME);
 		user = userRepository.save(user);
@@ -44,20 +44,16 @@ public class SecurityTestUtil {
 		Optional<Role> optRole2 = roleRepository.findByName(ROLE_ADMIN);
 		user.addRole(optRole1.get());
 		user.addRole(optRole2.get());
-		userRepository.save(user);
+		return userRepository.save(user);
 	}
 	
-	public void saveDefaultUser() {
+	public User saveDefaultUser() {
 		User user = new User(DEFAULT_USERNAME, encoder.encode(DEFAULT_PASSWORD), LoginProvider.INTERNAL, DEFAULT_GIVEN_NAME,
 				DEFAULT_FAMILY_NAME);
 		user = userRepository.save(user);
 		Optional<Role> optRole1 = roleRepository.findByName(ROLE_USER);
 		user.addRole(optRole1.get());
-		userRepository.save(user);
-	}
-
-	public void deleteAllUsers() {
-		userRepository.deleteAll();
+		return userRepository.save(user);
 	}
 
 	public static String createBearerTokenAdminUser() {

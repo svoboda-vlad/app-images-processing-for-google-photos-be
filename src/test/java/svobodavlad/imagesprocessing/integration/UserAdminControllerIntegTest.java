@@ -4,7 +4,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,11 +11,13 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
 
 import svobodavlad.imagesprocessing.testutil.SecurityTestUtil;
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@Transactional
 //@WithMockUser - not needed
 class UserAdminControllerIntegTest {
 
@@ -30,11 +31,6 @@ class UserAdminControllerIntegTest {
 	void initData() {
 		securityTestUtil.saveAdminUser();
 		securityTestUtil.saveDefaultUser();
-	}
-
-	@AfterEach
-	void cleanData() {
-		securityTestUtil.deleteAllUsers();
 	}
 
 	@Test

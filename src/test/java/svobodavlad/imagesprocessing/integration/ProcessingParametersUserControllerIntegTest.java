@@ -14,15 +14,16 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
-import svobodavlad.imagesprocessing.parameters.ProcessingParametersDefault;
-import svobodavlad.imagesprocessing.parameters.ProcessingParametersDefaultRepository;
+import svobodavlad.imagesprocessing.parameters.ProcessingParametersUser;
+import svobodavlad.imagesprocessing.parameters.ProcessingParametersUserRepository;
+import svobodavlad.imagesprocessing.security.User;
 import svobodavlad.imagesprocessing.testutil.SecurityTestUtil;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
 //@WithMockUser - not needed
-public class ProcessingParametersDefaultControllerIntegTest {
+public class ProcessingParametersUserControllerIntegTest {
 
 	@Autowired
 	private MockMvc mvc;
@@ -31,60 +32,60 @@ public class ProcessingParametersDefaultControllerIntegTest {
 	private SecurityTestUtil securityTestUtil;
 	
 	@Autowired
-	private ProcessingParametersDefaultRepository parametersRepository;
-	
+	private ProcessingParametersUserRepository parametersRepository;
+		
 	@BeforeEach
 	void initData() {
-		securityTestUtil.saveAdminUser();
-		parametersRepository.save(new ProcessingParametersDefault(1800, 1000, 1000));
+		User defaultUser = securityTestUtil.saveDefaultUser();
+		parametersRepository.save(new ProcessingParametersUser(1800, 1000, 1000, defaultUser));
 	}
 
 	@Test
-	void testGetProcessingParametersDefaultTemplateOk200() throws Exception {		
-		String requestUrl = "/admin/parameters-default";
+	void testGetProcessingParametersUserTemplateOk200() throws Exception {		
+		String requestUrl = "/parameters";
 		int expectedStatus = 200;
 		String expectedJson = "{\"timeDiffGroup\":1800,\"resizeWidth\":1000,\"resizeHeight\":1000}";
 
-		this.mvc.perform(get(requestUrl).header("Authorization", SecurityTestUtil.createBearerTokenAdminUser())
+		this.mvc.perform(get(requestUrl).header("Authorization", SecurityTestUtil.createBearerTokenDefaultUser())
 				.accept(MediaType.APPLICATION_JSON)).andExpect(status().is(expectedStatus))
 				.andExpect(content().json(expectedJson));		
 	}
 	
 	@Test
-	void testGetProcessingParametersDefaultTemplateNotFound404() throws Exception {
-		String requestUrl = "/admin/parameters-default";
+	void testGetProcessingParametersUserTemplateNotFound404() throws Exception {
+		String requestUrl = "/parameters";
 		int expectedStatus = 404;
 		String expectedJson = "";
 		
-		parametersRepository.deleteAll();		
+		parametersRepository.deleteAll();
 
-		this.mvc.perform(get(requestUrl).header("Authorization", SecurityTestUtil.createBearerTokenAdminUser())
+		this.mvc.perform(get(requestUrl).header("Authorization", SecurityTestUtil.createBearerTokenDefaultUser())
 				.accept(MediaType.APPLICATION_JSON)).andExpect(status().is(expectedStatus))
 				.andExpect(content().string(expectedJson));		
 	}	
 
 	@Test
-	void testUpdateProcessingParametersDefaultTemplateOk200() throws Exception {
-		String requestUrl = "/admin/parameters-default";
+	void testUpdateProcessingParametersUserTemplateOk200() throws Exception {
+		String requestUrl = "/parameters";
 		String requestJson = "{\"timeDiffGroup\":3600,\"resizeWidth\":1000,\"resizeHeight\":1000}";
 		int expectedStatus = 200;
 		String expectedJson = "{\"timeDiffGroup\":3600,\"resizeWidth\":1000,\"resizeHeight\":1000}";
 
-		this.mvc.perform(put(requestUrl).content(requestJson).header("Authorization", SecurityTestUtil.createBearerTokenAdminUser())
+		this.mvc.perform(put(requestUrl).content(requestJson).header("Authorization", SecurityTestUtil.createBearerTokenDefaultUser())
 				.contentType(MediaType.APPLICATION_JSON)).andExpect(status().is(expectedStatus))
 				.andExpect(content().json(expectedJson));
 	}
 	
 	@Test
-	void testUpdateProcessingParametersDefaultTemplateNotFound404() throws Exception {
-		String requestUrl = "/admin/parameters-default";
+	void testUpdateProcessingParametersUserTemplateNotFound404() throws Exception {
+		String requestUrl = "/parameters";
 		String requestJson = "{\"timeDiffGroup\":3600,\"resizeWidth\":1000,\"resizeHeight\":1000}";
 		int expectedStatus = 404;
 		String expectedJson = "";
 		
 		parametersRepository.deleteAll();
 
-		this.mvc.perform(put(requestUrl).content(requestJson).header("Authorization", SecurityTestUtil.createBearerTokenAdminUser())
+		this.mvc.perform(put(requestUrl).content(requestJson).header("Authorization", SecurityTestUtil.createBearerTokenDefaultUser())
 				.contentType(MediaType.APPLICATION_JSON)).andExpect(status().is(expectedStatus))
 				.andExpect(content().string(expectedJson));
 	}	

@@ -7,6 +7,7 @@ import javax.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,6 +21,7 @@ import svobodavlad.imagesprocessing.security.UserRepository;
 
 @RestController
 @RequiredArgsConstructor
+@Transactional
 public class ProcessingParametersUserController {
 
 	private static final String PARAMETERS_USER_URL = "/parameters";

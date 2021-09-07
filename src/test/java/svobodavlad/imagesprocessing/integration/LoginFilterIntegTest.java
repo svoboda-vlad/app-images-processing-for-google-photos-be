@@ -9,7 +9,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,14 +17,15 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
 
 import svobodavlad.imagesprocessing.security.User;
-import svobodavlad.imagesprocessing.security.UserRepository;
 import svobodavlad.imagesprocessing.security.User.LoginProvider;
+import svobodavlad.imagesprocessing.security.UserRepository;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-//@Transactional - removed due to false positive tests (error in production: detached entity passed to persist)
+@Transactional
 //@WithMockUser - not needed
 class LoginFilterIntegTest {
 
@@ -42,11 +42,6 @@ class LoginFilterIntegTest {
 	void initData() {
 		User user = new User("user321", encoder.encode("pass321"), LoginProvider.INTERNAL, "User 321", "User 321");
 		userRepository.save(user);
-	}
-
-	@AfterEach
-	void cleanData() {
-		userRepository.deleteAll();
 	}
 
 	@Test
