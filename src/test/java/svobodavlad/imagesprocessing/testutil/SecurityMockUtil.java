@@ -1,4 +1,4 @@
-package svobodavlad.imagesprocessing.integration;
+package svobodavlad.imagesprocessing.testutil;
 
 import svobodavlad.imagesprocessing.security.Role;
 import svobodavlad.imagesprocessing.security.User;

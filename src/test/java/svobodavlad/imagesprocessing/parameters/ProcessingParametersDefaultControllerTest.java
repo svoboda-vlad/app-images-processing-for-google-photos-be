@@ -19,8 +19,8 @@ import org.springframework.http.MediaType;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.test.web.servlet.MockMvc;
 
-import svobodavlad.imagesprocessing.integration.SecurityMockUtil;
-import svobodavlad.imagesprocessing.integration.SecurityTestUtil;
+import svobodavlad.imagesprocessing.testutil.SecurityMockUtil;
+import svobodavlad.imagesprocessing.testutil.SecurityTestUtil;
 
 @SpringBootTest
 @AutoConfigureMockMvc

@@ -1,4 +1,4 @@
-package svobodavlad.imagesprocessing.integration;
+package svobodavlad.imagesprocessing.testutil;
 
 import java.util.Optional;
 

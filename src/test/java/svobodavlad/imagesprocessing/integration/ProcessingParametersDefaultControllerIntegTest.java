@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import svobodavlad.imagesprocessing.parameters.ProcessingParametersDefault;
 import svobodavlad.imagesprocessing.parameters.ProcessingParametersDefaultRepository;
+import svobodavlad.imagesprocessing.testutil.SecurityTestUtil;
 
 @SpringBootTest
 @AutoConfigureMockMvc
