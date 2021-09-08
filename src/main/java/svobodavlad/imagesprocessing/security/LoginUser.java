@@ -1,19 +1,15 @@
 package svobodavlad.imagesprocessing.security;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 
 @Data
-@RequiredArgsConstructor
+@AllArgsConstructor
 @NoArgsConstructor
 class LoginUser {
 
-	@NonNull
-	private String username;
-	
-	@NonNull
+	private String username;	
 	private String password;
 
 }

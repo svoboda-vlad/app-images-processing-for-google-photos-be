@@ -30,7 +30,7 @@ class UserDetailsServiceImplTest {
 
 	@Test
 	void testLoadUserByUsernameOk() {
-		User user = new User("user", encoder.encode("password"), LoginProvider.INTERNAL, "User", "User");
+		User user = new User(0L, "user", encoder.encode("password"), LoginProvider.INTERNAL, "User", "User", null, null, null);
 
 		given(userRepository.findByUsername(user.getUsername())).willReturn(Optional.of(user));
 
@@ -39,7 +39,7 @@ class UserDetailsServiceImplTest {
 
 	@Test
 	void testLoadUserByUsernameThrowsException() {
-		User user = new User("user", encoder.encode("password"), LoginProvider.INTERNAL, "User", "User");
+		User user = new User(0L, "user", encoder.encode("password"), LoginProvider.INTERNAL, "User", "User", null, null, null);
 
 		given(userRepository.findByUsername(user.getUsername())).willReturn(Optional.empty());
 

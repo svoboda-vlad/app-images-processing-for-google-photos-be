@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.security.GeneralSecurityException;
+import java.util.ArrayList;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -32,6 +33,7 @@ import svobodavlad.imagesprocessing.security.RoleRepository;
 import svobodavlad.imagesprocessing.security.User;
 import svobodavlad.imagesprocessing.security.User.LoginProvider;
 import svobodavlad.imagesprocessing.security.UserRepository;
+import svobodavlad.imagesprocessing.security.UserRoles;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -56,7 +58,7 @@ class GoogleLoginFilterIntegTest {
 
 	@BeforeEach
 	void initData() {
-		User user = new User("user321", encoder.encode("user321"), LoginProvider.GOOGLE, "User 321", "User 321");
+		User user = new User(0L, "user321", encoder.encode("user321"), LoginProvider.GOOGLE, "User 321", "User 321", null, null, new ArrayList<UserRoles>());
 		Optional<Role> optRole = roleRepository.findByName("ROLE_USER");
 		user = userRepository.save(user);
 		user.addRole(optRole.get());

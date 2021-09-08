@@ -26,14 +26,13 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 
 @Data
 @Entity
-@RequiredArgsConstructor
+@AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "user", schema = "public") // needed for PostgreSQL
 public class User implements UserDetails {
@@ -46,28 +45,23 @@ public class User implements UserDetails {
 
     @NotNull
     @Size(min = 1, max = 255)
-    @NonNull
 	private String username;
 
     @NotNull
     @Size(min = 60, max = 60)
-    @NonNull
     @JsonIgnore
     private String password;
 
     @NotNull
-    @NonNull
     @Enumerated(EnumType.STRING)
     private LoginProvider loginProvider;    
     
     @NotNull
     @Size(min = 1, max = 255)
-    @NonNull
 	private String givenName;
 
     @NotNull
     @Size(min = 1, max = 255)
-    @NonNull
 	private String familyName;
     
     private LocalDateTime lastLoginDateTime;
@@ -139,10 +133,7 @@ public class User implements UserDetails {
 	}
 	
 	public UserInfo toUserInfo() {
-		UserInfo userInfo = new UserInfo(this.getUsername(), this.getGivenName(), this.getFamilyName());
-		userInfo.setLastLoginDateTime(lastLoginDateTime);
-		userInfo.setPreviousLoginDateTime(previousLoginDateTime);
-		userInfo.setUserRoles(roles);
+		UserInfo userInfo = new UserInfo(this.getUsername(), this.getGivenName(), this.getFamilyName(), this.getLastLoginDateTime(), this.getPreviousLoginDateTime(), this.getRoles());
 		return userInfo;
 	}
 	

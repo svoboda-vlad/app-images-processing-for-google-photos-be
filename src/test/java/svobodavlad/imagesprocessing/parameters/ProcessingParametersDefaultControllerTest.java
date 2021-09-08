@@ -49,7 +49,7 @@ public class ProcessingParametersDefaultControllerTest {
 		String expectedJson = "{\"timeDiffGroup\":1800,\"resizeWidth\":1000,\"resizeHeight\":1000}";
 		
 		List<ProcessingParametersDefault> parametersList = new ArrayList<ProcessingParametersDefault>();
-		ProcessingParametersDefault parameters = new ProcessingParametersDefault(1800, 1000, 1000);
+		ProcessingParametersDefault parameters = new ProcessingParametersDefault(0L, 1800, 1000, 1000);
 		parameters.setId(1);
 		parametersList.add(parameters);
 		
@@ -80,7 +80,7 @@ public class ProcessingParametersDefaultControllerTest {
 		int expectedStatus = 200;
 		String expectedJson = "{\"timeDiffGroup\":3600,\"resizeWidth\":1000,\"resizeHeight\":1000}";
 		
-		ProcessingParametersDefault parameters = new ProcessingParametersDefault(3600, 1000, 1000);
+		ProcessingParametersDefault parameters = new ProcessingParametersDefault(0L, 3600, 1000, 1000);
 		parameters.setId(1);
 		given(parametersRepository.findAll()).willReturn(new ArrayList<ProcessingParametersDefault>(List.of(parameters)));
 		given(parametersRepository.save(parameters)).willReturn(parameters);

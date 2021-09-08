@@ -10,6 +10,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 import javax.persistence.EntityExistsException;
@@ -59,8 +60,8 @@ class UserControllerTest {
 		int expectedStatus = 200;
 		String expectedJson = "{\"username\":\"user1\",\"givenName\":\"User 1\",\"familyName\":\"User 1\",\"userRoles\":[{\"role\":{\"id\":0,\"name\":\"ROLE_USER\"}}],\"lastLoginDateTime\":null,\"previousLoginDateTime\":null}";
 
-		User user = new User(USERNAME, "A".repeat(60), LoginProvider.INTERNAL, "User 1", "User 1");
-		user.addRole(new Role(ROLE_USER));
+		User user = new User(0L, USERNAME, "A".repeat(60), LoginProvider.INTERNAL, "User 1", "User 1", null, null, new ArrayList<UserRoles>());
+		user.addRole(new Role(0L, ROLE_USER));
 
 		given(userDetailsService.loadUserByUsername(USERNAME)).willReturn(user);
 		given(userRepository.findByUsername(USERNAME)).willReturn(Optional.of(user));
@@ -146,12 +147,12 @@ class UserControllerTest {
 		int expectedStatus = 200;
 		String expectedJson = "{\"username\":\"user1\",\"givenName\":\"User X\",\"familyName\":\"User Y\",\"userRoles\":[{\"role\":{\"id\":0,\"name\":\"ROLE_USER\"}}],\"lastLoginDateTime\":null,\"previousLoginDateTime\":null}";
 
-		User user = new User(USERNAME, "A".repeat(60), LoginProvider.INTERNAL, "User 1", "User 1");
-		user.addRole(new Role(ROLE_USER));
+		User user = new User(0L, USERNAME, "A".repeat(60), LoginProvider.INTERNAL, "User 1", "User 1", null, null, new ArrayList<UserRoles>());
+		user.addRole(new Role(0L, ROLE_USER));
 
 		given(userDetailsService.loadUserByUsername(USERNAME)).willReturn(user);
 
-		UserInfo userInfo = new UserInfo(USERNAME, "User X", "User Y");
+		UserInfo userInfo = new UserInfo(USERNAME, "User X", "User Y", null, null, new ArrayList<UserRoles>());
 
 		given(userService.updateUser(userInfo)).willReturn(userInfo.toUser(user));
 
@@ -167,8 +168,8 @@ class UserControllerTest {
 		int expectedStatus = 400;
 		String expectedJson = "";
 
-		User user = new User(USERNAME, "A".repeat(60), LoginProvider.INTERNAL, "User 1", "User 1");
-		user.addRole(new Role(ROLE_USER));
+		User user = new User(0L, USERNAME, "A".repeat(60), LoginProvider.INTERNAL, "User 1", "User 1", null, null, new ArrayList<UserRoles>());
+		user.addRole(new Role(0L, ROLE_USER));
 
 		given(userDetailsService.loadUserByUsername(USERNAME)).willReturn(user);
 
@@ -183,8 +184,8 @@ class UserControllerTest {
 		int expectedStatus = 204;
 		String expectedJson = "";
 
-		User user = new User(USERNAME, "A".repeat(60), LoginProvider.INTERNAL, "User 1", "User 1");
-		user.addRole(new Role(ROLE_USER));
+		User user = new User(0L, USERNAME, "A".repeat(60), LoginProvider.INTERNAL, "User 1", "User 1", null, null, new ArrayList<UserRoles>());
+		user.addRole(new Role(0L, ROLE_USER));
 		user.setId(1L);
 
 		given(userDetailsService.loadUserByUsername(USERNAME)).willReturn(user);

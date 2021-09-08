@@ -9,16 +9,14 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 
 @Data
 @Entity
-@RequiredArgsConstructor
+@AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "processing_parameters_default", schema = "public") // needed for PostgreSQL
 public class ProcessingParametersDefault implements Serializable {
@@ -29,18 +27,12 @@ public class ProcessingParametersDefault implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 
-	@NotNull
-	@NonNull
 	@Min(60) @Max(86400)
 	private int timeDiffGroup;
 	
-	@NotNull
-	@NonNull
 	@Min(1) @Max(10000)
 	private int resizeWidth;
 	
-	@NotNull
-	@NonNull
 	@Min(1) @Max(10000)
 	private int resizeHeight;
 	

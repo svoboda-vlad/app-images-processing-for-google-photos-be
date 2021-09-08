@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -22,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import svobodavlad.imagesprocessing.security.User;
 import svobodavlad.imagesprocessing.security.User.LoginProvider;
 import svobodavlad.imagesprocessing.security.UserRepository;
+import svobodavlad.imagesprocessing.security.UserRoles;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -40,7 +42,7 @@ class LoginFilterIntegTest {
 
 	@BeforeEach
 	void initData() {
-		User user = new User("user321", encoder.encode("pass321"), LoginProvider.INTERNAL, "User 321", "User 321");
+		User user = new User(0L, "user321", encoder.encode("pass321"), LoginProvider.INTERNAL, "User 321", "User 321", null, null, new ArrayList<UserRoles>());
 		userRepository.save(user);
 	}
 
@@ -68,8 +70,8 @@ class LoginFilterIntegTest {
 		int expectedStatus = 200;
 		String expectedJson = "";
 
-		User userWithLastLogin = new User("user322", encoder.encode("pass322"), LoginProvider.INTERNAL, "User 322",
-				"User 322");
+		User userWithLastLogin = new User(0L, "user322", encoder.encode("pass322"), LoginProvider.INTERNAL, "User 322",
+				"User 322", null, null, new ArrayList<UserRoles>());
 		LocalDateTime lastLoginDateTime = LocalDateTime.now();
 		userWithLastLogin.setLastLoginDateTime(lastLoginDateTime);
 		userRepository.save(userWithLastLogin);
@@ -104,8 +106,8 @@ class LoginFilterIntegTest {
 		int expectedStatus = 401;
 		String expectedJson = "";
 
-		User userWithGoogleLogin = new User("user323", encoder.encode("pass323"), LoginProvider.GOOGLE, "User 323",
-				"User 323");
+		User userWithGoogleLogin = new User(0L, "user323", encoder.encode("pass323"), LoginProvider.GOOGLE, "User 323",
+				"User 323", null, null, new ArrayList<UserRoles>());
 		LocalDateTime lastLoginDateTime = LocalDateTime.now();
 		userWithGoogleLogin.setLastLoginDateTime(lastLoginDateTime);
 		userRepository.save(userWithGoogleLogin);

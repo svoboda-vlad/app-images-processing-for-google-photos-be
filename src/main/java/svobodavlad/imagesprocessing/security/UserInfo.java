@@ -7,29 +7,25 @@ import java.util.List;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 
 @Data
-@RequiredArgsConstructor
+@AllArgsConstructor
 @NoArgsConstructor
 public class UserInfo {
 
 	@NotNull
 	@Size(min = 1, max = 255)
-	@NonNull
 	private String username;
 
 	@NotNull
 	@Size(min = 1, max = 255)
-	@NonNull
 	private String givenName;
 
 	@NotNull
 	@Size(min = 1, max = 255)
-	@NonNull
 	private String familyName;
 
 	private LocalDateTime lastLoginDateTime;

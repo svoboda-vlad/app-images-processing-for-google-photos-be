@@ -36,7 +36,7 @@ public class ProcessingParametersDefaultControllerIntegTest {
 	@BeforeEach
 	void initData() {
 		securityTestUtil.saveAdminUser();
-		parametersRepository.save(new ProcessingParametersDefault(1800, 1000, 1000));
+		parametersRepository.save(new ProcessingParametersDefault(0L, 1800, 1000, 1000));
 	}
 
 	@Test

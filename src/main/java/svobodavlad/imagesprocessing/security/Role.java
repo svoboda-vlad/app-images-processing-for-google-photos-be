@@ -14,14 +14,13 @@ import org.springframework.security.core.GrantedAuthority;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 
 @Data
 @Entity
-@RequiredArgsConstructor
+@AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "role", schema = "public") // needed for PostgreSQL
 public class Role implements Serializable, GrantedAuthority {
@@ -33,7 +32,6 @@ public class Role implements Serializable, GrantedAuthority {
 	private long id;
 
 	@NotNull
-	@NonNull
 	@Size(min = 1, max = 255)
 	private String name;
 

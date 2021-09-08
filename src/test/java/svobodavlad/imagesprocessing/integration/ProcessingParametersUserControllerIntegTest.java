@@ -37,7 +37,7 @@ public class ProcessingParametersUserControllerIntegTest {
 	@BeforeEach
 	void initData() {
 		User defaultUser = securityTestUtil.saveDefaultUser();
-		parametersRepository.save(new ProcessingParametersUser(1800, 1000, 1000, defaultUser));
+		parametersRepository.save(new ProcessingParametersUser(0L, 1800, 1000, 1000, defaultUser));
 	}
 
 	@Test

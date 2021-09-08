@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.BDDMockito.given;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 import javax.persistence.EntityExistsException;
@@ -33,8 +34,8 @@ public class UserServiceTest {
 
 	@Test
 	void testRegisterUserNewUser() {
-		Role role = new Role(USER_ROLE_NAME);
-		User user = new User("user", "A".repeat(60), LoginProvider.INTERNAL, "User", "User");
+		Role role = new Role(0L, USER_ROLE_NAME);
+		User user = new User(0L, "user", "A".repeat(60), LoginProvider.INTERNAL, "User", "User", null, null, new ArrayList<UserRoles>());
 		user.addRole(role);
 
 		given(roleRepository.findByName(USER_ROLE_NAME)).willReturn(Optional.of(role));
@@ -46,8 +47,8 @@ public class UserServiceTest {
 
 	@Test
 	void testRegisterUserAlreadyExistsException() {
-		Role role = new Role(USER_ROLE_NAME);
-		User user = new User("user", "A".repeat(60), LoginProvider.INTERNAL, "User", "User");
+		Role role = new Role(0L, USER_ROLE_NAME);
+		User user = new User(0L, "user", "A".repeat(60), LoginProvider.INTERNAL, "User", "User", null, null, new ArrayList<UserRoles>());
 
 		given(roleRepository.findByName(USER_ROLE_NAME)).willReturn(Optional.of(role));
 		given(userRepository.findByUsername("user")).willReturn(Optional.of(user));
@@ -60,7 +61,7 @@ public class UserServiceTest {
 
 	@Test
 	void testRegisterUserDefaultRoleNotFound() {
-		User user = new User("user", "A".repeat(60), LoginProvider.INTERNAL, "User", "User");
+		User user = new User(0L, "user", "A".repeat(60), LoginProvider.INTERNAL, "User", "User", null, null, new ArrayList<UserRoles>());
 
 		given(roleRepository.findByName(USER_ROLE_NAME)).willReturn(Optional.empty());
 
@@ -72,7 +73,7 @@ public class UserServiceTest {
 	@Test
 	void testUpdateLastLoginDateTime() {
 		String username = "user";
-		User user = new User("user", "A".repeat(60), LoginProvider.INTERNAL, "User", "User");
+		User user = new User(0L, "user", "A".repeat(60), LoginProvider.INTERNAL, "User", "User", null, null, new ArrayList<UserRoles>());
 
 		given(userRepository.findByUsername(username)).willReturn(Optional.of(user));
 		given(userRepository.save(user)).willReturn(user);
@@ -83,8 +84,8 @@ public class UserServiceTest {
 	@Test
 	void testUpdateUserOkUserExists() {
 		String username = "user";
-		User user = new User("user", "A".repeat(60), LoginProvider.INTERNAL, "User", "User");
-		UserInfo userInfo = new UserInfo("user", "User", "User");
+		User user = new User(0L, "user", "A".repeat(60), LoginProvider.INTERNAL, "User", "User", null, null, new ArrayList<UserRoles>());
+		UserInfo userInfo = new UserInfo("user", "User", "User", null, null, null);
 
 		given(userRepository.findByUsername(username)).willReturn(Optional.of(user));
 		given(userRepository.save(userInfo.toUser(user))).willReturn(user);
@@ -93,9 +94,9 @@ public class UserServiceTest {
 
 	@Test
 	void testRegisterUserNewAdminUser() {
-		Role role1 = new Role(USER_ROLE_NAME);
-		Role role2 = new Role(ADMIN_ROLE_NAME);
-		User user = new User("user", "A".repeat(60), LoginProvider.INTERNAL, "User", "User");
+		Role role1 = new Role(0L, USER_ROLE_NAME);
+		Role role2 = new Role(0L, ADMIN_ROLE_NAME);
+		User user = new User(0L, "user", "A".repeat(60), LoginProvider.INTERNAL, "User", "User", null, null, new ArrayList<UserRoles>());
 		user.addRole(role1);
 		user.addRole(role2);
 
@@ -109,9 +110,9 @@ public class UserServiceTest {
 
 	@Test
 	void testRegisterAdminUserAdminRoleNotFound() {
-		User user = new User("user", "A".repeat(60), LoginProvider.INTERNAL, "User", "User");
+		User user = new User(0L, "user", "A".repeat(60), LoginProvider.INTERNAL, "User", "User", null, null, new ArrayList<UserRoles>());
 
-		Role role1 = new Role(USER_ROLE_NAME);
+		Role role1 = new Role(0L, USER_ROLE_NAME);
 		given(roleRepository.findByName(USER_ROLE_NAME)).willReturn(Optional.of(role1));
 		given(roleRepository.findByName(ADMIN_ROLE_NAME)).willReturn(Optional.empty());
 

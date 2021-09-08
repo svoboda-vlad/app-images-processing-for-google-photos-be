@@ -15,15 +15,15 @@ import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import svobodavlad.imagesprocessing.security.User;
 
 @Data
 @Entity
-@RequiredArgsConstructor
+@AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "processing_parameters_user", schema = "public") // needed for PostgreSQL
 public class ProcessingParametersUser implements Serializable {
@@ -35,17 +35,14 @@ public class ProcessingParametersUser implements Serializable {
 	private long id;
 
 	@NotNull
-	@NonNull
 	@Min(60) @Max(86400)
 	private int timeDiffGroup;
 	
 	@NotNull
-	@NonNull
 	@Min(1) @Max(10000)
 	private int resizeWidth;
 	
 	@NotNull
-	@NonNull
 	@Min(1) @Max(10000)
 	private int resizeHeight;
 	
