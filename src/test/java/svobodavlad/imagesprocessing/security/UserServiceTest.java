@@ -17,7 +17,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import svobodavlad.imagesprocessing.security.User.LoginProvider;
 
 @SpringBootTest
-//@WithMockUser - not needed
 public class UserServiceTest {
 
 	private static final String USER_ROLE_NAME = "ROLE_USER";

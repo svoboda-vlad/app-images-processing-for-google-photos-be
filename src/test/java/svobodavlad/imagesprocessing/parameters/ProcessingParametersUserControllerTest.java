@@ -25,7 +25,6 @@ import svobodavlad.imagesprocessing.testutil.SecurityTestUtil;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-//@Transactional - removed due to false positive tests (error in production: detached entity passed to persist)
 //@WithMockUser - not needed
 public class ProcessingParametersUserControllerTest {
 
@@ -117,5 +116,4 @@ public class ProcessingParametersUserControllerTest {
 				.contentType(MediaType.APPLICATION_JSON)).andExpect(status().is(expectedStatus))
 				.andExpect(content().string(expectedJson));
 	}
-	
 }

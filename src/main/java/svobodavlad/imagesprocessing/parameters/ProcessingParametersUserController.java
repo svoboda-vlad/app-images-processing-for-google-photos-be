@@ -1,5 +1,6 @@
 package svobodavlad.imagesprocessing.parameters;
 
+import java.util.List;
 import java.util.Optional;
 
 import javax.validation.Valid;
@@ -25,8 +26,10 @@ import svobodavlad.imagesprocessing.security.UserRepository;
 public class ProcessingParametersUserController {
 
 	private static final String PARAMETERS_USER_URL = "/parameters";
+	private static final String PARAMETERS_USER_RESET_URL = "/parameters-reset-to-default";
 	private final ProcessingParametersUserRepository parametersRepository;
 	private final UserRepository userRepository;
+	private final ProcessingParametersDefaultRepository parametersDefaultRepository;
 
 	@Operation(security = { @SecurityRequirement(name = "bearer-key") })
 	@GetMapping(PARAMETERS_USER_URL)
@@ -54,4 +57,20 @@ public class ProcessingParametersUserController {
 		return ResponseEntity.ok(parameters.toProcessingParametersUserTemplate());
 	}
 
+	@Operation(security = { @SecurityRequirement(name = "bearer-key") })
+	@GetMapping(PARAMETERS_USER_RESET_URL)
+	public ResponseEntity<String> getRresetToDefault() {
+        // if (parameters.getId() == 0L) return ResponseEntity.badRequest().build();
+        // if (id != parameters.getId()) return ResponseEntity.badRequest().build();
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		Optional<User> optUser = userRepository.findByUsername(authentication.getName());
+		Optional<ProcessingParametersUser> optParameters = parametersRepository.findByUser(optUser.get());
+		if (optParameters.isEmpty()) return ResponseEntity.notFound().build();
+		List<ProcessingParametersDefault> parametersList = parametersDefaultRepository.findAll();
+		if (parametersList.isEmpty()) return ResponseEntity.notFound().build();
+		ProcessingParametersUser parameters = optParameters.get().resetToDefault(parametersList.get(0));
+		parameters = parametersRepository.save(parameters);
+		return ResponseEntity.ok("");
+	}
+	
 }

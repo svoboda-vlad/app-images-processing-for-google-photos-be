@@ -57,5 +57,12 @@ public class ProcessingParametersUser implements Serializable {
 	public ProcessingParametersUserTemplate toProcessingParametersUserTemplate() {
 		return new ProcessingParametersUserTemplate(this.getTimeDiffGroup(), this.getResizeWidth(), this.getResizeHeight());
 	}
+	
+	public ProcessingParametersUser resetToDefault(ProcessingParametersDefault parametersDefault) {
+		this.setTimeDiffGroup(parametersDefault.getTimeDiffGroup());
+		this.setResizeHeight(parametersDefault.getResizeHeight());
+		this.setResizeWidth(parametersDefault.getResizeWidth());
+		return this;
+	}
 
 }

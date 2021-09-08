@@ -37,8 +37,9 @@ Response:
 {"id":6,"currencyCode":"EUR","country":"EMU","rateQty":1}
 ```
 
-restricted (administrator):
-- GET "/admin/parameters-default" (ProcessingParametersDefaultController)
+restricted:
+- GET + PUT "/parameters" (ProcessingParametersUserController)
+- GET "/parameters-reset-to-default" (ProcessingParametersUserController)
 
 ## REST API endpoints - security + administration
 unrestricted:
@@ -46,13 +47,8 @@ unrestricted:
 - POST "/google-login" (GoogleLoginFilter)
 - GET + POST "/user" (UserController)
 
-unrestricted, but not REST API:
-- GET "/h2-console/**"
-- GET "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html"
-
 restricted:
 - PUT + DELETE "/user" (UserController)
-- GET + PUT "/parameters" (ProcessingParametersUserController)
 
 restricted (administrator):
 - GET "/admin/users" (UserAdminController)

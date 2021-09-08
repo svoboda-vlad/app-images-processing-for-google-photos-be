@@ -39,9 +39,9 @@ public class ProcessingParametersDefaultController {
         // if (parameters.getId() == 0L) return ResponseEntity.badRequest().build();
         // if (id != parameters.getId()) return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         // if (parametersRepository.findById(parameters.getId()).isEmpty()) return ResponseEntity.badRequest().build();
-		List<ProcessingParametersDefault> optParameters = parametersRepository.findAll();
-		if (optParameters.isEmpty()) return ResponseEntity.notFound().build();
-		ProcessingParametersDefault parameters = parametersTemplate.toProcessingParametersDefault(optParameters.get(0));
+		List<ProcessingParametersDefault> parametersList = parametersRepository.findAll();
+		if (parametersList.isEmpty()) return ResponseEntity.notFound().build();
+		ProcessingParametersDefault parameters = parametersTemplate.toProcessingParametersDefault(parametersList.get(0));
 		parameters = parametersRepository.save(parameters);
 		return ResponseEntity.ok(parameters.toProcessingParametersDefaultTemplate());		
 	}
