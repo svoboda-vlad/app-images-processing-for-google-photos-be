@@ -6,6 +6,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -38,7 +40,10 @@ public class ProcessingParametersUserControllerTest {
 	private UserDetailsService userDetailsService;
 
 	@MockBean
-	private UserRepository userRepository;	
+	private UserRepository userRepository;
+	
+	@MockBean
+	private ProcessingParametersDefaultRepository parametersDefaultRepository;	
 	
 	private User mockedUser;
 
@@ -116,4 +121,58 @@ public class ProcessingParametersUserControllerTest {
 				.contentType(MediaType.APPLICATION_JSON)).andExpect(status().is(expectedStatus))
 				.andExpect(content().string(expectedJson));
 	}
+	
+	@Test
+	void testGetRresetToDefaultOk200() throws Exception {
+		String requestUrl = "/parameters-reset-to-default";
+		int expectedStatus = 200;
+		String expectedJson = "";
+		
+		ProcessingParametersUser parameters = new ProcessingParametersUser(0L, 3600, 1000, 1000, mockedUser);
+		ProcessingParametersDefault parametersDefault = new ProcessingParametersDefault(0L, 1800, 1000, 1000);
+		
+		given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
+		given(parametersRepository.findByUser(mockedUser)).willReturn(Optional.of(parameters));
+		given(parametersDefaultRepository.findAll()).willReturn(new ArrayList<ProcessingParametersDefault>(List.of(parametersDefault)));
+		ProcessingParametersUser parametersReset = parameters.resetToDefault(parametersDefault);
+		given(parametersRepository.save(parametersReset)).willReturn(parametersReset);
+		
+		this.mvc.perform(get(requestUrl).header("Authorization", SecurityTestUtil.createBearerTokenDefaultUser())
+				.accept(MediaType.APPLICATION_JSON)).andExpect(status().is(expectedStatus))
+				.andExpect(content().string(expectedJson));
+	}
+	
+	
+	@Test
+	void testGetRresetToDefaultNoUserParametersNotFound404() throws Exception {
+		String requestUrl = "/parameters-reset-to-default";
+		int expectedStatus = 404;
+		String expectedJson = "";
+				
+		given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
+		given(parametersRepository.findByUser(mockedUser)).willReturn(Optional.empty());
+		
+		this.mvc.perform(get(requestUrl).header("Authorization", SecurityTestUtil.createBearerTokenDefaultUser())
+				.accept(MediaType.APPLICATION_JSON)).andExpect(status().is(expectedStatus))
+				.andExpect(content().string(expectedJson));
+	}
+	
+	
+	@Test
+	void testGetRresetToDefaultNoDefaultParametersNotFound404() throws Exception {
+		String requestUrl = "/parameters-reset-to-default";
+		int expectedStatus = 404;
+		String expectedJson = "";
+		
+		ProcessingParametersUser parameters = new ProcessingParametersUser(0L, 3600, 1000, 1000, mockedUser);
+		
+		given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
+		given(parametersRepository.findByUser(mockedUser)).willReturn(Optional.of(parameters));
+		given(parametersDefaultRepository.findAll()).willReturn(new ArrayList<ProcessingParametersDefault>());
+		
+		this.mvc.perform(get(requestUrl).header("Authorization", SecurityTestUtil.createBearerTokenDefaultUser())
+				.accept(MediaType.APPLICATION_JSON)).andExpect(status().is(expectedStatus))
+				.andExpect(content().string(expectedJson));
+	}	
+	
 }
