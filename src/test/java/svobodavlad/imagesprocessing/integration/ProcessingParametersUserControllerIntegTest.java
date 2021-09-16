@@ -97,7 +97,7 @@ public class ProcessingParametersUserControllerIntegTest {
 	}
 	
 	@Test
-	void testGetRresetToDefaultOk200() throws Exception {
+	void testGetResetToDefaultOk200() throws Exception {
 		String requestUrl = "/parameters-reset-to-default";
 		int expectedStatus = 200;
 		String expectedJson = "";
@@ -112,13 +112,13 @@ public class ProcessingParametersUserControllerIntegTest {
 
 		this.mvc.perform(get(requestUrl).header("Authorization", SecurityTestUtil.createBearerTokenDefaultUser())
 				.accept(MediaType.APPLICATION_JSON)).andExpect(status().is(expectedStatus))
-				.andExpect(content().json(expectedJson));		
+				.andExpect(content().json(expectedJson));
 	}
 		
 	@Test
-	void testGetRresetToDefaultNoUserParametersNotFound404() throws Exception {
+	void testGetResetToDefaultNoUserParametersOk200() throws Exception {
 		String requestUrl = "/parameters-reset-to-default";
-		int expectedStatus = 404;
+		int expectedStatus = 200;
 		String expectedJson = "";
 		
 		parametersRepository.deleteAll();
@@ -126,10 +126,18 @@ public class ProcessingParametersUserControllerIntegTest {
 		this.mvc.perform(get(requestUrl).header("Authorization", SecurityTestUtil.createBearerTokenDefaultUser())
 				.accept(MediaType.APPLICATION_JSON)).andExpect(status().is(expectedStatus))
 				.andExpect(content().string(expectedJson));
+		
+		requestUrl = "/parameters";
+		expectedStatus = 200;
+		expectedJson = "{\"timeDiffGroup\":1800,\"resizeWidth\":1000,\"resizeHeight\":1000}";
+
+		this.mvc.perform(get(requestUrl).header("Authorization", SecurityTestUtil.createBearerTokenDefaultUser())
+				.accept(MediaType.APPLICATION_JSON)).andExpect(status().is(expectedStatus))
+				.andExpect(content().json(expectedJson));		
 	}
 	
 	@Test
-	void testGetRresetToDefaultNoDefaultParametersNotFound404() throws Exception {
+	void testGetResetToDefaultNoDefaultParametersNotFound404() throws Exception {
 		String requestUrl = "/parameters-reset-to-default";
 		int expectedStatus = 404;
 		String expectedJson = "";

@@ -1,6 +1,9 @@
 package svobodavlad.imagesprocessing.parameters;
 
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -37,13 +40,16 @@ public class ProcessingParametersUserControllerTest {
 	private ProcessingParametersUserRepository parametersRepository;
 	
 	@MockBean
+	private ProcessingParametersDefaultRepository parametersDefaultRepository;	
+	
+	@MockBean
 	private UserDetailsService userDetailsService;
 
 	@MockBean
 	private UserRepository userRepository;
 	
 	@MockBean
-	private ProcessingParametersDefaultRepository parametersDefaultRepository;	
+	private ProcessingParametersUserService parametersService;	
 	
 	private User mockedUser;
 
@@ -123,56 +129,34 @@ public class ProcessingParametersUserControllerTest {
 	}
 	
 	@Test
-	void testGetRresetToDefaultOk200() throws Exception {
+	void testGetResetToDefaultOk200() throws Exception {
 		String requestUrl = "/parameters-reset-to-default";
 		int expectedStatus = 200;
 		String expectedJson = "";
 		
-		ProcessingParametersUser parameters = new ProcessingParametersUser(0L, 3600, 1000, 1000, mockedUser);
-		ProcessingParametersDefault parametersDefault = new ProcessingParametersDefault(0L, 1800, 1000, 1000);
-		
-		given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
-		given(parametersRepository.findByUser(mockedUser)).willReturn(Optional.of(parameters));
-		given(parametersDefaultRepository.findAll()).willReturn(new ArrayList<ProcessingParametersDefault>(List.of(parametersDefault)));
-		ProcessingParametersUser parametersReset = parameters.resetToDefault(parametersDefault);
-		given(parametersRepository.save(parametersReset)).willReturn(parametersReset);
+		ProcessingParametersDefault parameters = new ProcessingParametersDefault(0L, 3600, 1000, 1000);
+		given(parametersDefaultRepository.findAll()).willReturn(new ArrayList<ProcessingParametersDefault>(List.of(parameters)));
 		
 		this.mvc.perform(get(requestUrl).header("Authorization", SecurityTestUtil.createBearerTokenDefaultUser())
 				.accept(MediaType.APPLICATION_JSON)).andExpect(status().is(expectedStatus))
 				.andExpect(content().string(expectedJson));
-	}
-	
-	
-	@Test
-	void testGetRresetToDefaultNoUserParametersNotFound404() throws Exception {
-		String requestUrl = "/parameters-reset-to-default";
-		int expectedStatus = 404;
-		String expectedJson = "";
-				
-		given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
-		given(parametersRepository.findByUser(mockedUser)).willReturn(Optional.empty());
 		
-		this.mvc.perform(get(requestUrl).header("Authorization", SecurityTestUtil.createBearerTokenDefaultUser())
-				.accept(MediaType.APPLICATION_JSON)).andExpect(status().is(expectedStatus))
-				.andExpect(content().string(expectedJson));
+		verify(this.parametersService, times(1)).resetToDefault();
 	}
 	
-	
 	@Test
-	void testGetRresetToDefaultNoDefaultParametersNotFound404() throws Exception {
+	void testGetResetToDefaultNoDefaultParametersNotFound404() throws Exception {
 		String requestUrl = "/parameters-reset-to-default";
 		int expectedStatus = 404;
 		String expectedJson = "";
 		
-		ProcessingParametersUser parameters = new ProcessingParametersUser(0L, 3600, 1000, 1000, mockedUser);
-		
-		given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
-		given(parametersRepository.findByUser(mockedUser)).willReturn(Optional.of(parameters));
 		given(parametersDefaultRepository.findAll()).willReturn(new ArrayList<ProcessingParametersDefault>());
-		
+				
 		this.mvc.perform(get(requestUrl).header("Authorization", SecurityTestUtil.createBearerTokenDefaultUser())
 				.accept(MediaType.APPLICATION_JSON)).andExpect(status().is(expectedStatus))
 				.andExpect(content().string(expectedJson));
+		
+		verify(this.parametersService, never()).resetToDefault();		
 	}	
 	
 }

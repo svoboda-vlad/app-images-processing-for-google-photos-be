@@ -13,6 +13,7 @@ import javax.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import svobodavlad.imagesprocessing.security.User;
 
 @Data
 @Entity
@@ -38,6 +39,10 @@ public class ProcessingParametersDefault implements Serializable {
 	
 	public ProcessingParametersDefaultTemplate toProcessingParametersDefaultTemplate() {
 		return new ProcessingParametersDefaultTemplate(this.getTimeDiffGroup(), this.getResizeWidth(), this.getResizeHeight());
-	}	
+	}
+	
+	public ProcessingParametersUser toProcessingParametersUser(User user) {
+		return new ProcessingParametersUser(0L, timeDiffGroup, resizeWidth, resizeHeight, user);
+	}
 
 }
