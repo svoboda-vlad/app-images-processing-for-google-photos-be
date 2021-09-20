@@ -19,7 +19,7 @@ import svobodavlad.imagesprocessing.testutil.SecurityTestUtil;
 @AutoConfigureMockMvc
 @Transactional
 //@WithMockUser - not needed
-class UserAdminControllerIntegTest {
+class UserAdminControllerIT {
 
 	@Autowired
 	private MockMvc mvc;

@@ -39,7 +39,7 @@ import svobodavlad.imagesprocessing.security.UserRoles;
 @AutoConfigureMockMvc
 @Transactional
 //@WithMockUser - not needed
-class GoogleLoginFilterIntegTest {
+class GoogleLoginFilterIT {
 
 	@Autowired
 	private MockMvc mvc;

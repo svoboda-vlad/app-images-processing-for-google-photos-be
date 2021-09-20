@@ -29,7 +29,7 @@ import svobodavlad.imagesprocessing.security.UserRoles;
 @AutoConfigureMockMvc
 @Transactional
 //@WithMockUser - not needed
-class LoginFilterIntegTest {
+class LoginFilterIT {
 
 	@Autowired
 	private MockMvc mvc;

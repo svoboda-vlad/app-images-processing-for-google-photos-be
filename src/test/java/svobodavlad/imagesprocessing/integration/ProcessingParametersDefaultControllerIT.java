@@ -22,7 +22,7 @@ import svobodavlad.imagesprocessing.testutil.SecurityTestUtil;
 @AutoConfigureMockMvc
 @Transactional
 //@WithMockUser - not needed
-public class ProcessingParametersDefaultControllerIntegTest {
+public class ProcessingParametersDefaultControllerIT {
 
 	@Autowired
 	private MockMvc mvc;
