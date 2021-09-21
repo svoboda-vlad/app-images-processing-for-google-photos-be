@@ -233,16 +233,27 @@ sudo mvn clean install -Dhttps.protocols=TLSv1.2 -Dspring.profiles.active=integ
 sudo java -Dadmin.username=admin -Dadmin.password=admin123 -jar target/*.jar
 ```
 ## PostgreSQL within Homestead Vagrant box
-
-```
-sudo service postgresql status
-
-```
-
-```
-sudo service postgresql restart
-```
+SQL queries
 
 ```
 psql -U homestead -h localhost -c '\x' -c 'SELECT * FROM mytable;'
+```
+Restarting/stopping database
+
+```
+sudo service postgresql status
+sudo service postgresql restart
+sudo service postgresql stop
+```
+PostgreSQL version
+
+```
+psql --version
+```
+
+Drop and create database
+
+```
+dropdb homestead -U homestead -h localhost
+createdb homestead -U homestead -h localhost
 ```
