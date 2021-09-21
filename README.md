@@ -238,11 +238,11 @@ SQL queries
 ```
 psql -U homestead -h localhost -c '\x' -c 'SELECT * FROM mytable;'
 ```
-Restarting/stopping database
+Starting/stopping database
 
 ```
 sudo service postgresql status
-sudo service postgresql restart
+sudo service postgresql start
 sudo service postgresql stop
 ```
 PostgreSQL version
