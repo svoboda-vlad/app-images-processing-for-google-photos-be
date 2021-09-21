@@ -232,7 +232,16 @@ sudo mvn clean install -Dhttps.protocols=TLSv1.2 -Dspring.profiles.active=integ
 ```
 sudo java -Dadmin.username=admin -Dadmin.password=admin123 -jar target/*.jar
 ```
-## PostgreSQL access within Homestead Vagrant box
+## PostgreSQL within Homestead Vagrant box
+
+```
+sudo service postgresql status
+
+```
+
+```
+sudo service postgresql restart
+```
 
 ```
 psql -U homestead -h localhost -c '\x' -c 'SELECT * FROM mytable;'
