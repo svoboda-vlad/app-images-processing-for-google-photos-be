@@ -25,13 +25,13 @@ public class ProcessingParametersUserService {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		Optional<User> optUser = userRepository.findByUsername(authentication.getName());
 		Optional<ProcessingParametersUser> optParameters = parametersRepository.findByUser(optUser.get());
-		List<ProcessingParametersDefault> parametersList = parametersDefaultRepository.findAll();
-		if (parametersList.isEmpty()) throw new RuntimeException("Default parameters not found.");
+		List<ProcessingParametersDefault> parametersDefaultList = parametersDefaultRepository.findAll();
+		if (parametersDefaultList.isEmpty()) throw new RuntimeException("Default parameters not found.");
 		if (optParameters.isEmpty()) {
-			ProcessingParametersUser parameters = parametersList.get(0).toProcessingParametersUser(optUser.get());
+			ProcessingParametersUser parameters = parametersDefaultList.get(0).toProcessingParametersUser(optUser.get());
 			return parametersRepository.save(parameters);
 		}
-		ProcessingParametersUser parameters = optParameters.get().resetToDefault(parametersList.get(0));
+		ProcessingParametersUser parameters = optParameters.get().resetToDefault(parametersDefaultList.get(0));
 		return parametersRepository.save(parameters);
 	}
 
