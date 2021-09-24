@@ -157,10 +157,6 @@
 						<configuration>
 							<dataFile>${project.build.directory}/jacoco-output/jacoco-unit-tests.exec</dataFile>
 							<outputDirectory>${project.reporting.outputDirectory}/jacoco-unit-test-coverage-report</outputDirectory>
-							<excludes>
-								<exclude>svobodavlad/imagesprocessing/google/GoogleLoginFilter.class</exclude>
-								<exclude>svobodavlad/imagesprocessing/security/LoginFilter.class</exclude>
-							</excludes>							
 						</configuration>
 					</execution>
 					<execution>
