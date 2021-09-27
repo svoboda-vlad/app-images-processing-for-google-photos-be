@@ -4,6 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.BDDMockito.given;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Optional;
 
@@ -70,14 +73,42 @@ public class UserServiceTest {
 	}
 
 	@Test
-	void testUpdateLastLoginDateTime() {
+	void testUpdateLastLoginDateTimeFirstLogin() {
 		String username = "user";
-		User user = new User(0L, "user", "A".repeat(60), LoginProvider.INTERNAL, "User", "User", null, null, new ArrayList<UserRoles>());
+		User user = new User(0L, username, "A".repeat(60), LoginProvider.INTERNAL, "User", "User", null, null, new ArrayList<UserRoles>());
 
 		given(userRepository.findByUsername(username)).willReturn(Optional.of(user));
 		given(userRepository.save(user)).willReturn(user);
 
+		LocalDateTime minTime = LocalDateTime.now();
+		
 		assertThat(userService.updateLastLoginDateTime(username)).isEqualTo(user);
+		assertThat(user.getLastLoginDateTime()).isBetween(minTime, LocalDateTime.now());
+		assertThat(user.getPreviousLoginDateTime()).isBetween(minTime, LocalDateTime.now());
+	}
+	
+	@Test
+	void testUpdateLastLoginDateTimeSecondLogin() {
+		String username = "user";
+		LocalDateTime lastLoginDateTime = LocalDateTime.of(LocalDate.of(2021, 9, 26), LocalTime.of(12, 53));
+		User user = new User(0L, username, "A".repeat(60), LoginProvider.INTERNAL, "User", "User", lastLoginDateTime, lastLoginDateTime, new ArrayList<UserRoles>());
+		
+		given(userRepository.findByUsername(username)).willReturn(Optional.of(user));
+		given(userRepository.save(user)).willReturn(user);
+
+		LocalDateTime minTime = LocalDateTime.now();
+		
+		assertThat(userService.updateLastLoginDateTime(username)).isEqualTo(user);
+		assertThat(user.getLastLoginDateTime()).isBetween(minTime, LocalDateTime.now());
+		assertThat(user.getPreviousLoginDateTime()).isEqualTo(lastLoginDateTime);
+	}
+	
+	@Test
+	void testUpdateLastLoginDateTimeUserDoesNotExist() {
+		String username = "userx";		
+		given(userRepository.findByUsername(username)).willReturn(Optional.empty());
+		
+		assertThat(userService.updateLastLoginDateTime(username)).isNull();
 	}
 
 	@Test
