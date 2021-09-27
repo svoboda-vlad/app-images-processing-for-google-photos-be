@@ -1,6 +1,5 @@
 package svobodavlad.imagesprocessing.security;
 
-import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -14,26 +13,16 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.transaction.annotation.Transactional;
 
 import svobodavlad.imagesprocessing.security.User.LoginProvider;
 import svobodavlad.imagesprocessing.testutil.SecurityMockUtil;
+import svobodavlad.imagesprocessing.testutil.UnitTestMockMvcTemplate;
 
-@SpringBootTest
-@AutoConfigureMockMvc
-@Transactional
-//@WithMockUser - not needed
-class LoginFilterTest {
-
-	@Autowired
-	private MockMvc mvc;
+class LoginFilterTest extends UnitTestMockMvcTemplate {
 	
 	@Autowired
 	private PasswordEncoder encoder;
@@ -53,8 +42,8 @@ class LoginFilterTest {
 	private void initData() {
 		mockedUser = SecurityMockUtil.getMockedDefaultUser();
 		mockedUser.setPassword(encoder.encode("pass123"));
-		given(userDetailsService.loadUserByUsername(mockedUser.getUsername())).willReturn(mockedUser);
-		given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
+		this.given(userDetailsService.loadUserByUsername(mockedUser.getUsername())).willReturn(mockedUser);
+		this.given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
 	}	
 
 	@Test
