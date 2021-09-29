@@ -1,22 +1,14 @@
 package svobodavlad.imagesprocessing.security;
 
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.web.servlet.ResultActions;
 
 import svobodavlad.imagesprocessing.security.User.LoginProvider;
 import svobodavlad.imagesprocessing.testutil.SecurityMockUtil;
@@ -52,12 +44,13 @@ class LoginFilterTest extends UnitTestMockMvcTemplate {
 		String requestJson = "{\"username\":\"user1\",\"password\":\"pass123\"}";
 		int expectedStatus = 200;
 		String expectedJson = "";
+		String expectedHeader = "Authorization";
 		
-		this.mvc.perform(post(requestUrl).content(requestJson).contentType(MediaType.APPLICATION_JSON))
-				.andExpect(status().is(expectedStatus)).andExpect(content().string(expectedJson))
-				.andExpect(header().exists("Authorization"));
-		
-		verify(userService, times(1)).updateLastLoginDateTime(mockedUser.getUsername());
+		ResultActions mvcResult = this.mockMvcPerformPost(requestUrl, requestJson);
+		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
+		this.mockMvcExpectHeaderExists(mvcResult, expectedHeader);
+				
+		this.verify(userService, this.times(1)).updateLastLoginDateTime(mockedUser.getUsername());
 	}
 
 	@Test
@@ -66,12 +59,13 @@ class LoginFilterTest extends UnitTestMockMvcTemplate {
 		String requestJson = "{\"username\":\"user1\",\"password\":\"wrongpassword\"}";
 		int expectedStatus = 401;
 		String expectedJson = "";
+		String unexpectedHeader = "Authorization";
 
-		this.mvc.perform(post(requestUrl).content(requestJson).contentType(MediaType.APPLICATION_JSON))
-				.andExpect(status().is(expectedStatus)).andExpect(content().string(expectedJson))
-				.andExpect(header().doesNotExist("Authorization"));
+		ResultActions mvcResult = this.mockMvcPerformPost(requestUrl, requestJson);
+		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
+		this.mockMvcExpectHeaderDoesNotExist(mvcResult, unexpectedHeader);
 		
-		verify(userService, never()).updateLastLoginDateTime(mockedUser.getUsername());
+		this.verify(userService, this.never()).updateLastLoginDateTime(mockedUser.getUsername());
 	}
 
 	@Test
@@ -80,14 +74,15 @@ class LoginFilterTest extends UnitTestMockMvcTemplate {
 		String requestJson = "{\"username\":\"user1\",\"password\":\"pass123\"}";
 		int expectedStatus = 401;
 		String expectedJson = "";
+		String unexpectedHeader = "Authorization";
 		
 		mockedUser.setLoginProvider(LoginProvider.GOOGLE);
 		
-		this.mvc.perform(post(requestUrl).content(requestJson).contentType(MediaType.APPLICATION_JSON))
-				.andExpect(status().is(expectedStatus)).andExpect(content().string(expectedJson))
-				.andExpect(header().doesNotExist("Authorization"));
-		
-		verify(userService, never()).updateLastLoginDateTime(mockedUser.getUsername());
+		ResultActions mvcResult = this.mockMvcPerformPost(requestUrl, requestJson);
+		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
+		this.mockMvcExpectHeaderDoesNotExist(mvcResult, unexpectedHeader);
+				
+		this.verify(userService, this.never()).updateLastLoginDateTime(mockedUser.getUsername());
 	}
 	
 	@Test
@@ -96,12 +91,13 @@ class LoginFilterTest extends UnitTestMockMvcTemplate {
 		String requestJson = "{\"usernamex\":\"user1\",\"password\":\"pass123\"}";
 		int expectedStatus = 401;
 		String expectedJson = "";
+		String unexpectedHeader = "Authorization";
 
-		this.mvc.perform(post(requestUrl).content(requestJson).contentType(MediaType.APPLICATION_JSON))
-				.andExpect(status().is(expectedStatus)).andExpect(content().string(expectedJson))
-				.andExpect(header().doesNotExist("Authorization"));
+		ResultActions mvcResult = this.mockMvcPerformPost(requestUrl, requestJson);
+		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
+		this.mockMvcExpectHeaderDoesNotExist(mvcResult, unexpectedHeader);
 		
-		verify(userService, never()).updateLastLoginDateTime(mockedUser.getUsername());		
+		this.verify(userService, this.never()).updateLastLoginDateTime(mockedUser.getUsername());		
 	}
 
 	@Test
@@ -110,11 +106,12 @@ class LoginFilterTest extends UnitTestMockMvcTemplate {
 		String requestJson = "{\"username\":\"user1x\",\"password\":\"pass123\"}";
 		int expectedStatus = 401;
 		String expectedJson = "";
-
-		this.mvc.perform(post(requestUrl).content(requestJson).contentType(MediaType.APPLICATION_JSON))
-				.andExpect(status().is(expectedStatus)).andExpect(content().string(expectedJson))
-				.andExpect(header().doesNotExist("Authorization"));
+		String unexpectedHeader = "Authorization";
 		
-		verify(userService, never()).updateLastLoginDateTime("user1x");
+		ResultActions mvcResult = this.mockMvcPerformPost(requestUrl, requestJson);
+		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
+		this.mockMvcExpectHeaderDoesNotExist(mvcResult, unexpectedHeader);
+		
+		this.verify(userService, this.never()).updateLastLoginDateTime("user1x");
 	}
 }
