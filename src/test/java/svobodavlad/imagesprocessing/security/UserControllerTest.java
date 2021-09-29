@@ -1,40 +1,21 @@
 package svobodavlad.imagesprocessing.security;
 
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import java.util.ArrayList;
 import java.util.Optional;
 
 import javax.persistence.EntityExistsException;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 
-import svobodavlad.imagesprocessing.security.User.LoginProvider;
+import svobodavlad.imagesprocessing.testutil.SecurityMockUtil;
+import svobodavlad.imagesprocessing.testutil.UnitTestTemplate;
 
-@SpringBootTest
-@AutoConfigureMockMvc
-//@WithMockUser - not needed
-class UserControllerTest {
-
-	@Autowired
-	private MockMvc mvc;
+class UserControllerTest extends UnitTestTemplate {
 
 	@MockBean
 	private UserRepository userRepository;
@@ -48,9 +29,6 @@ class UserControllerTest {
 	@MockBean
 	private PasswordEncoder encoder;
 
-	private static final String USERNAME = "user1";
-	private static final String ROLE_USER = "ROLE_USER";
-	private static final String USERNAME_INVALID = "user2";
 	private static final String USERNAME_NEW = "usernew";
 	private static final String PASSWORD_NEW = "pass123new";
 
@@ -60,15 +38,11 @@ class UserControllerTest {
 		int expectedStatus = 200;
 		String expectedJson = "{\"username\":\"user1\",\"givenName\":\"User 1\",\"familyName\":\"User 1\",\"userRoles\":[{\"role\":{\"id\":0,\"name\":\"ROLE_USER\"}}],\"lastLoginDateTime\":null,\"previousLoginDateTime\":null}";
 
-		User user = new User(0L, USERNAME, "A".repeat(60), LoginProvider.INTERNAL, "User 1", "User 1", null, null, new ArrayList<UserRoles>());
-		user.addRole(new Role(0L, ROLE_USER));
+		this.given(userDetailsService.loadUserByUsername(SecurityMockUtil.getMockedDefaultUser().getUsername())).willReturn(SecurityMockUtil.getMockedDefaultUser());
+		this.given(userRepository.findByUsername(SecurityMockUtil.getMockedDefaultUser().getUsername())).willReturn(Optional.of(SecurityMockUtil.getMockedDefaultUser()));
 
-		given(userDetailsService.loadUserByUsername(USERNAME)).willReturn(user);
-		given(userRepository.findByUsername(USERNAME)).willReturn(Optional.of(user));
-
-		this.mvc.perform(get(requestUrl).header("Authorization", AuthenticationService.createBearerToken(USERNAME))
-				.accept(MediaType.APPLICATION_JSON)).andExpect(status().is(expectedStatus))
-				.andExpect(content().json(expectedJson));
+		ResultActions mvcResult = this.mockMvcPerformGetAuthorizationDefaultUser(requestUrl);
+		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
 	}
 
 	@Test
@@ -76,9 +50,9 @@ class UserControllerTest {
 		String requestUrl = "/user";
 		int expectedStatus = 404;
 		String expectedJson = "";
-
-		this.mvc.perform(get(requestUrl).accept(MediaType.APPLICATION_JSON)).andExpect(status().is(expectedStatus))
-				.andExpect(content().string(expectedJson));
+		
+		ResultActions mvcResult = this.mockMvcPerformGetNoAuthorization(requestUrl);
+		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
 	}
 
 	@Test
@@ -86,13 +60,13 @@ class UserControllerTest {
 		String requestUrl = "/user";
 		int expectedStatus = 404;
 		String expectedJson = "";
+		String invalidUsername = "userinvalid";
 
-		given(userDetailsService.loadUserByUsername(USERNAME_INVALID))
+		this.given(userDetailsService.loadUserByUsername(invalidUsername))
 				.willThrow(new UsernameNotFoundException("User not found."));
-
-		this.mvc.perform(get(requestUrl).header("Authorization", AuthenticationService.createBearerToken(USERNAME_INVALID))
-				.accept(MediaType.APPLICATION_JSON)).andExpect(status().is(expectedStatus))
-				.andExpect(content().string(expectedJson));
+		
+		ResultActions mvcResult = this.mockMvcPerformGetAuthorizationForUsername(requestUrl, invalidUsername);
+		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
 	}
 
 	@Test
@@ -100,10 +74,9 @@ class UserControllerTest {
 		String requestUrl = "/user";
 		int expectedStatus = 404;
 		String expectedJson = "";
-
-		this.mvc.perform(get(requestUrl).header("Authorization", AuthenticationService.createBearerToken(USERNAME) + "xxx")
-				.accept(MediaType.APPLICATION_JSON)).andExpect(status().is(expectedStatus))
-				.andExpect(content().string(expectedJson));
+		
+		ResultActions mvcResult = this.mockMvcPerformGetAuthorizationInvalidToken(requestUrl);
+		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
 	}
 
 	@Test
@@ -113,14 +86,14 @@ class UserControllerTest {
 		int expectedStatus = 201;
 		String expectedJson = "";
 
-		given(encoder.encode(PASSWORD_NEW)).willReturn("A".repeat(60));
+		this.given(encoder.encode(PASSWORD_NEW)).willReturn("A".repeat(60));
 		UserRegister userRegister = new UserRegister(USERNAME_NEW, PASSWORD_NEW, "New User", "New User");
 		User user = userRegister.toUserInternal(encoder);
 
-		this.mvc.perform(post(requestUrl).content(requestJson).contentType(MediaType.APPLICATION_JSON))
-				.andExpect(status().is(expectedStatus)).andExpect(content().string(expectedJson));
+		ResultActions mvcResult = this.mockMvcPerformPostNoAuthorization(requestUrl, requestJson);
+		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
 
-		verify(userService, times(1)).registerUser(user);
+		this.verify(userService, this.times(1)).registerUser(user);
 	}
 
 	@Test
@@ -130,14 +103,14 @@ class UserControllerTest {
 		int expectedStatus = 400;
 		String expectedJson = "";
 
-		given(encoder.encode(PASSWORD_NEW)).willReturn("A".repeat(60));
+		this.given(encoder.encode(PASSWORD_NEW)).willReturn("A".repeat(60));
 		UserRegister userRegister = new UserRegister(USERNAME_NEW, PASSWORD_NEW, "New User", "New User");
 		User user = userRegister.toUserInternal(encoder);
 
-		given(userService.registerUser(user)).willThrow(new EntityExistsException("User already exists."));
-
-		this.mvc.perform(post(requestUrl).content(requestJson).contentType(MediaType.APPLICATION_JSON))
-				.andExpect(status().is(expectedStatus)).andExpect(content().string(expectedJson));
+		this.given(userService.registerUser(user)).willThrow(new EntityExistsException("User already exists."));
+		
+		ResultActions mvcResult = this.mockMvcPerformPostNoAuthorization(requestUrl, requestJson);
+		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
 	}
 
 	@Test
@@ -147,18 +120,14 @@ class UserControllerTest {
 		int expectedStatus = 200;
 		String expectedJson = "{\"username\":\"user1\",\"givenName\":\"User X\",\"familyName\":\"User Y\",\"userRoles\":[{\"role\":{\"id\":0,\"name\":\"ROLE_USER\"}}],\"lastLoginDateTime\":null,\"previousLoginDateTime\":null}";
 
-		User user = new User(0L, USERNAME, "A".repeat(60), LoginProvider.INTERNAL, "User 1", "User 1", null, null, new ArrayList<UserRoles>());
-		user.addRole(new Role(0L, ROLE_USER));
+		this.given(userDetailsService.loadUserByUsername(SecurityMockUtil.getMockedDefaultUser().getUsername())).willReturn(SecurityMockUtil.getMockedDefaultUser());
 
-		given(userDetailsService.loadUserByUsername(USERNAME)).willReturn(user);
+		UserInfo userInfo = new UserInfo(SecurityMockUtil.getMockedDefaultUser().getUsername(), "User X", "User Y", null, null, new ArrayList<UserRoles>());
 
-		UserInfo userInfo = new UserInfo(USERNAME, "User X", "User Y", null, null, new ArrayList<UserRoles>());
-
-		given(userService.updateUser(userInfo)).willReturn(userInfo.toUser(user));
-
-		this.mvc.perform(put(requestUrl).header("Authorization", AuthenticationService.createBearerToken(USERNAME))
-				.content(requestJson).contentType(MediaType.APPLICATION_JSON)).andExpect(status().is(expectedStatus))
-				.andExpect(content().json(expectedJson));
+		this.given(userService.updateUser(userInfo)).willReturn(userInfo.toUser(SecurityMockUtil.getMockedDefaultUser()));
+		
+		ResultActions mvcResult = this.mockMvcPerformPutAuthorizationDefaultUser(requestUrl, requestJson);
+		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
 	}
 
 	@Test
@@ -168,14 +137,10 @@ class UserControllerTest {
 		int expectedStatus = 400;
 		String expectedJson = "";
 
-		User user = new User(0L, USERNAME, "A".repeat(60), LoginProvider.INTERNAL, "User 1", "User 1", null, null, new ArrayList<UserRoles>());
-		user.addRole(new Role(0L, ROLE_USER));
+		this.given(userDetailsService.loadUserByUsername(SecurityMockUtil.getMockedDefaultUser().getUsername())).willReturn(SecurityMockUtil.getMockedDefaultUser());
 
-		given(userDetailsService.loadUserByUsername(USERNAME)).willReturn(user);
-
-		this.mvc.perform(put(requestUrl).header("Authorization", AuthenticationService.createBearerToken(USERNAME))
-				.content(requestJson).contentType(MediaType.APPLICATION_JSON)).andExpect(status().is(expectedStatus))
-				.andExpect(content().string(expectedJson));
+		ResultActions mvcResult = this.mockMvcPerformPutAuthorizationDefaultUser(requestUrl, requestJson);
+		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
 	}
 
 	@Test
@@ -184,17 +149,16 @@ class UserControllerTest {
 		int expectedStatus = 204;
 		String expectedJson = "";
 
-		User user = new User(0L, USERNAME, "A".repeat(60), LoginProvider.INTERNAL, "User 1", "User 1", null, null, new ArrayList<UserRoles>());
-		user.addRole(new Role(0L, ROLE_USER));
+		User user = SecurityMockUtil.getMockedDefaultUser();
 		user.setId(1L);
 
-		given(userDetailsService.loadUserByUsername(USERNAME)).willReturn(user);
-		given(userRepository.findByUsername(USERNAME)).willReturn(Optional.of(user));
+		this.given(userDetailsService.loadUserByUsername(user.getUsername())).willReturn(user);
+		this.given(userRepository.findByUsername(user.getUsername())).willReturn(Optional.of(user));
+		
+		ResultActions mvcResult = this.mockMvcPerformDeleteAuthorizationDefaultUser(requestUrl);
+		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
 
-		this.mvc.perform(delete(requestUrl).header("Authorization", AuthenticationService.createBearerToken(USERNAME)))
-				.andExpect(status().is(expectedStatus)).andExpect(content().string(expectedJson));
-
-		verify(userRepository, times(1)).deleteById(1L);
+		this.verify(userRepository, this.times(1)).deleteById(1L);
 	}
 
 }

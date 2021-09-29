@@ -12,9 +12,9 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import svobodavlad.imagesprocessing.security.User.LoginProvider;
 import svobodavlad.imagesprocessing.testutil.SecurityMockUtil;
-import svobodavlad.imagesprocessing.testutil.UnitTestMockMvcTemplate;
+import svobodavlad.imagesprocessing.testutil.UnitTestTemplate;
 
-class LoginFilterTest extends UnitTestMockMvcTemplate {
+class LoginFilterTest extends UnitTestTemplate {
 	
 	@Autowired
 	private PasswordEncoder encoder;
@@ -46,7 +46,7 @@ class LoginFilterTest extends UnitTestMockMvcTemplate {
 		String expectedJson = "";
 		String expectedHeader = "Authorization";
 		
-		ResultActions mvcResult = this.mockMvcPerformPost(requestUrl, requestJson);
+		ResultActions mvcResult = this.mockMvcPerformPostNoAuthorization(requestUrl, requestJson);
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
 		this.mockMvcExpectHeaderExists(mvcResult, expectedHeader);
 				
@@ -61,7 +61,7 @@ class LoginFilterTest extends UnitTestMockMvcTemplate {
 		String expectedJson = "";
 		String unexpectedHeader = "Authorization";
 
-		ResultActions mvcResult = this.mockMvcPerformPost(requestUrl, requestJson);
+		ResultActions mvcResult = this.mockMvcPerformPostNoAuthorization(requestUrl, requestJson);
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
 		this.mockMvcExpectHeaderDoesNotExist(mvcResult, unexpectedHeader);
 		
@@ -78,7 +78,7 @@ class LoginFilterTest extends UnitTestMockMvcTemplate {
 		
 		mockedUser.setLoginProvider(LoginProvider.GOOGLE);
 		
-		ResultActions mvcResult = this.mockMvcPerformPost(requestUrl, requestJson);
+		ResultActions mvcResult = this.mockMvcPerformPostNoAuthorization(requestUrl, requestJson);
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
 		this.mockMvcExpectHeaderDoesNotExist(mvcResult, unexpectedHeader);
 				
@@ -93,7 +93,7 @@ class LoginFilterTest extends UnitTestMockMvcTemplate {
 		String expectedJson = "";
 		String unexpectedHeader = "Authorization";
 
-		ResultActions mvcResult = this.mockMvcPerformPost(requestUrl, requestJson);
+		ResultActions mvcResult = this.mockMvcPerformPostNoAuthorization(requestUrl, requestJson);
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
 		this.mockMvcExpectHeaderDoesNotExist(mvcResult, unexpectedHeader);
 		
@@ -108,7 +108,7 @@ class LoginFilterTest extends UnitTestMockMvcTemplate {
 		String expectedJson = "";
 		String unexpectedHeader = "Authorization";
 		
-		ResultActions mvcResult = this.mockMvcPerformPost(requestUrl, requestJson);
+		ResultActions mvcResult = this.mockMvcPerformPostNoAuthorization(requestUrl, requestJson);
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
 		this.mockMvcExpectHeaderDoesNotExist(mvcResult, unexpectedHeader);
 		

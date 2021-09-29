@@ -1,34 +1,19 @@
 package svobodavlad.imagesprocessing.security;
 
-import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 
 import svobodavlad.imagesprocessing.security.User.LoginProvider;
 import svobodavlad.imagesprocessing.testutil.SecurityMockUtil;
-import svobodavlad.imagesprocessing.testutil.SecurityTestUtil;
+import svobodavlad.imagesprocessing.testutil.UnitTestTemplate;
 
-@SpringBootTest
-@AutoConfigureMockMvc
-//@WithMockUser - not needed
-class UserAdminControllerTest {
-
-	@Autowired
-	private MockMvc mvc;
+class UserAdminControllerTest extends UnitTestTemplate {
 
 	@MockBean
 	private UserRepository userRepository;
@@ -41,7 +26,7 @@ class UserAdminControllerTest {
 
 	@BeforeEach
 	private void initData() {
-		given(userDetailsService.loadUserByUsername(SecurityMockUtil.getMockedAdminUser().getUsername())).willReturn(SecurityMockUtil.getMockedAdminUser());
+		this.given(userDetailsService.loadUserByUsername(SecurityMockUtil.getMockedAdminUser().getUsername())).willReturn(SecurityMockUtil.getMockedAdminUser());
 	}
 
 	@Test
@@ -57,11 +42,10 @@ class UserAdminControllerTest {
 		user2.addRole(new Role(0L, ROLE_USER));
 		user2.addRole(new Role(0L, ROLE_ADMIN));
 
-		given(userRepository.findAll()).willReturn(new ArrayList<User>(List.of(user1, user2)));
-
-		this.mvc.perform(get(requestUrl).header("Authorization", SecurityTestUtil.createBearerTokenAdminUser())
-				.accept(MediaType.APPLICATION_JSON)).andExpect(status().is(expectedStatus))
-				.andExpect(content().json(expectedJson));
+		this.given(userRepository.findAll()).willReturn(new ArrayList<User>(List.of(user1, user2)));
+		
+		ResultActions mvcResult = this.mockMvcPerformGetAuthorizationAdminUser(requestUrl);
+		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
 	}
 
 }
