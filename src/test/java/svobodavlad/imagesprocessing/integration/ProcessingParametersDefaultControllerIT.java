@@ -1,33 +1,16 @@
 package svobodavlad.imagesprocessing.integration;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.test.web.servlet.ResultActions;
 
 import svobodavlad.imagesprocessing.parameters.ProcessingParametersDefault;
 import svobodavlad.imagesprocessing.parameters.ProcessingParametersDefaultRepository;
+import svobodavlad.imagesprocessing.testutil.IntegTestTemplate;
 import svobodavlad.imagesprocessing.testutil.SecurityTestUtil;
 
-@SpringBootTest
-@AutoConfigureMockMvc
-@Transactional
-@ActiveProfiles("h2")
-//@WithMockUser - not needed
-public class ProcessingParametersDefaultControllerIT {
-
-	@Autowired
-	private MockMvc mvc;
+public class ProcessingParametersDefaultControllerIT extends IntegTestTemplate {
 	
 	@Autowired
 	private SecurityTestUtil securityTestUtil;
@@ -46,10 +29,9 @@ public class ProcessingParametersDefaultControllerIT {
 		String requestUrl = "/admin/parameters-default";
 		int expectedStatus = 200;
 		String expectedJson = "{\"timeDiffGroup\":1800,\"resizeWidth\":1000,\"resizeHeight\":1000}";
-
-		this.mvc.perform(get(requestUrl).header("Authorization", SecurityTestUtil.createBearerTokenAdminUser())
-				.accept(MediaType.APPLICATION_JSON)).andExpect(status().is(expectedStatus))
-				.andExpect(content().json(expectedJson));		
+		
+		ResultActions mvcResult = this.mockMvcPerformGetAuthorizationAdminUser(requestUrl);
+		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
 	}
 	
 	@Test
@@ -60,9 +42,8 @@ public class ProcessingParametersDefaultControllerIT {
 		
 		parametersRepository.deleteAll();		
 
-		this.mvc.perform(get(requestUrl).header("Authorization", SecurityTestUtil.createBearerTokenAdminUser())
-				.accept(MediaType.APPLICATION_JSON)).andExpect(status().is(expectedStatus))
-				.andExpect(content().string(expectedJson));		
+		ResultActions mvcResult = this.mockMvcPerformGetAuthorizationAdminUser(requestUrl);
+		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);		
 	}	
 
 	@Test
@@ -72,9 +53,8 @@ public class ProcessingParametersDefaultControllerIT {
 		int expectedStatus = 200;
 		String expectedJson = "{\"timeDiffGroup\":3600,\"resizeWidth\":1000,\"resizeHeight\":1000}";
 
-		this.mvc.perform(put(requestUrl).content(requestJson).header("Authorization", SecurityTestUtil.createBearerTokenAdminUser())
-				.contentType(MediaType.APPLICATION_JSON)).andExpect(status().is(expectedStatus))
-				.andExpect(content().json(expectedJson));
+		ResultActions mvcResult = this.mockMvcPerformPutAuthorizationAdminUser(requestUrl, requestJson);
+		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
 	}
 	
 	@Test
@@ -86,8 +66,7 @@ public class ProcessingParametersDefaultControllerIT {
 		
 		parametersRepository.deleteAll();
 
-		this.mvc.perform(put(requestUrl).content(requestJson).header("Authorization", SecurityTestUtil.createBearerTokenAdminUser())
-				.contentType(MediaType.APPLICATION_JSON)).andExpect(status().is(expectedStatus))
-				.andExpect(content().string(expectedJson));
+		ResultActions mvcResult = this.mockMvcPerformPutAuthorizationAdminUser(requestUrl, requestJson);
+		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
 	}	
 }

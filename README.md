@@ -180,6 +180,8 @@ DEFAULT:
 
 spring.liquibase.change-log=classpath:db/changelog/db.changelog-master.xml
 
+spring.liquibase.enabled=true
+
 spring.profiles.active=dev
 
 google.client.clientids=...
@@ -191,6 +193,12 @@ spring.h2.console.enabled=true
 spring.h2.console.settings.web-allow-others=true
 
 spring.datasource.generate-unique-name=false
+
+spring.liquibase.enabled=false
+
+LIQUIBASE:
+
+spring.liquibase.enabled=true
 
 INTEG:
 
@@ -216,13 +224,19 @@ ADMIN_PASSWORD=...
 
 ## Maven build
 
-default "dev" profile
+default "dev" profile - unit testing (mocked repositories)
+
+```
+sudo mvn clean package -Dhttps.protocols=TLSv1.2
+```
+
+default "dev" + "liquibase" profile - testing against H2 databae
 
 ```
 sudo mvn clean install -Dhttps.protocols=TLSv1.2
 ```
 
-"integration" profile - integration testing
+"integ" + "liquibase" profile - integration testing against PostgreSQL
 
 ```
 sudo mvn clean install -Dhttps.protocols=TLSv1.2 -Dspring.profiles.active=integ

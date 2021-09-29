@@ -29,7 +29,7 @@ import svobodavlad.imagesprocessing.security.UserRoles;
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-@ActiveProfiles("h2")
+@ActiveProfiles("liquibase")
 //@WithMockUser - not needed
 class LoginFilterIT {
 

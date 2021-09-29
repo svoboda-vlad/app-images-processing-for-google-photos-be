@@ -22,7 +22,7 @@ import svobodavlad.imagesprocessing.testutil.SecurityTestUtil;
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-@ActiveProfiles("h2")
+@ActiveProfiles("liquibase")
 //@WithMockUser - not needed
 class UserControllerIT {
 
