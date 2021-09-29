@@ -1,33 +1,14 @@
 package svobodavlad.imagesprocessing.integration;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.test.web.servlet.ResultActions;
 
+import svobodavlad.imagesprocessing.testutil.IntegTestTemplate;
 import svobodavlad.imagesprocessing.testutil.SecurityTestUtil;
 
-@SpringBootTest
-@AutoConfigureMockMvc
-@Transactional
-@ActiveProfiles("liquibase")
-//@WithMockUser - not needed
-class UserControllerIT {
-
-	@Autowired
-	private MockMvc mvc;
+public class UserControllerIT extends IntegTestTemplate {
 
 	@Autowired
 	private SecurityTestUtil securityTestUtil;
@@ -44,9 +25,8 @@ class UserControllerIT {
 		int expectedStatus = 200;
 		String expectedJson = "{\"username\":\"user1\",\"givenName\":\"User 1\",\"familyName\":\"User 1\",\"userRoles\":[{\"role\":{\"name\":\"ROLE_USER\"}}],\"lastLoginDateTime\":null,\"previousLoginDateTime\":null}";
 
-		this.mvc.perform(get(requestUrl).header("Authorization", SecurityTestUtil.createBearerTokenDefaultUser())
-				.accept(MediaType.APPLICATION_JSON)).andExpect(status().is(expectedStatus))
-				.andExpect(content().json(expectedJson));
+		ResultActions mvcResult = this.mockMvcPerformGetAuthorizationDefaultUser(requestUrl);
+		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
 	}
 
 	@Test
@@ -55,8 +35,8 @@ class UserControllerIT {
 		int expectedStatus = 404;
 		String expectedJson = "";
 
-		this.mvc.perform(get(requestUrl).accept(MediaType.APPLICATION_JSON)).andExpect(status().is(expectedStatus))
-				.andExpect(content().string(expectedJson));
+		ResultActions mvcResult = this.mockMvcPerformGetNoAuthorization(requestUrl);
+		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
 	}
 
 	@Test
@@ -64,10 +44,10 @@ class UserControllerIT {
 		String requestUrl = "/user";
 		int expectedStatus = 404;
 		String expectedJson = "";
+		String invalidUsername = "invaliduser";
 
-		this.mvc.perform(get(requestUrl).header("Authorization", SecurityTestUtil.createBearerTokenForUsername("invaliduser"))
-				.accept(MediaType.APPLICATION_JSON)).andExpect(status().is(expectedStatus))
-				.andExpect(content().string(expectedJson));
+		ResultActions mvcResult = this.mockMvcPerformGetAuthorizationForUsername(requestUrl, invalidUsername);
+		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
 	}
 
 	@Test
@@ -76,9 +56,8 @@ class UserControllerIT {
 		int expectedStatus = 404;
 		String expectedJson = "";
 
-		this.mvc.perform(get(requestUrl).header("Authorization", SecurityTestUtil.createBearerTokenDefaultUser() + "xxx")
-				.accept(MediaType.APPLICATION_JSON)).andExpect(status().is(expectedStatus))
-				.andExpect(content().string(expectedJson));
+		ResultActions mvcResult = this.mockMvcPerformGetAuthorizationInvalidToken(requestUrl);
+		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
 
 	}
 
@@ -88,17 +67,17 @@ class UserControllerIT {
 		String requestJson = "{\"username\": \"usernew\", \"password\": \"pass123new\",\"givenName\": \"Test 1\",\"familyName\": \"Test 1\"}";
 		int expectedStatus = 201;
 		String expectedJson = "";
+		String username = "usernew";
 
-		this.mvc.perform(post(requestUrl).content(requestJson).contentType(MediaType.APPLICATION_JSON))
-				.andExpect(status().is(expectedStatus)).andExpect(content().string(expectedJson));
+		ResultActions mvcResult = this.mockMvcPerformPostNoAuthorization(requestUrl, requestJson);
+		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
 
 		requestUrl = "/user";
 		expectedStatus = 200;
 		expectedJson = "{\"username\":\"usernew\",\"givenName\":\"Test 1\",\"familyName\":\"Test 1\",\"userRoles\":[{\"role\":{\"name\":\"ROLE_USER\"}}],\"lastLoginDateTime\":null,\"previousLoginDateTime\":null}";
 
-		this.mvc.perform(get(requestUrl).header("Authorization", SecurityTestUtil.createBearerTokenForUsername("usernew"))
-				.accept(MediaType.APPLICATION_JSON)).andExpect(status().is(expectedStatus))
-				.andExpect(content().json(expectedJson));
+		mvcResult = this.mockMvcPerformGetAuthorizationForUsername(requestUrl, username);
+		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
 
 	}
 
@@ -109,8 +88,8 @@ class UserControllerIT {
 		int expectedStatus = 400;
 		String expectedJson = "";
 
-		this.mvc.perform(post(requestUrl).content(requestJson).contentType(MediaType.APPLICATION_JSON))
-				.andExpect(status().is(expectedStatus)).andExpect(content().string(expectedJson));
+		ResultActions mvcResult = this.mockMvcPerformPostNoAuthorization(requestUrl, requestJson);
+		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
 	}
 
 	@Test
@@ -120,9 +99,8 @@ class UserControllerIT {
 		int expectedStatus = 200;
 		String expectedJson = "{\"username\":\"user1\",\"givenName\":\"User X\",\"familyName\":\"User Y\",\"userRoles\":[{\"role\":{\"name\":\"ROLE_USER\"}}],\"lastLoginDateTime\":null,\"previousLoginDateTime\":null}";
 
-		this.mvc.perform(put(requestUrl).header("Authorization", SecurityTestUtil.createBearerTokenDefaultUser())
-				.content(requestJson).contentType(MediaType.APPLICATION_JSON)).andExpect(status().is(expectedStatus))
-				.andExpect(content().json(expectedJson));
+		ResultActions mvcResult = this.mockMvcPerformPutAuthorizationDefaultUser(requestUrl, requestJson);
+		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
 	}
 
 	@Test
@@ -132,9 +110,8 @@ class UserControllerIT {
 		int expectedStatus = 400;
 		String expectedJson = "";
 
-		this.mvc.perform(put(requestUrl).header("Authorization", SecurityTestUtil.createBearerTokenDefaultUser())
-				.content(requestJson).contentType(MediaType.APPLICATION_JSON)).andExpect(status().is(expectedStatus))
-				.andExpect(content().string(expectedJson));
+		ResultActions mvcResult = this.mockMvcPerformPutAuthorizationDefaultUser(requestUrl, requestJson);
+		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
 	}
 
 	@Test
@@ -143,8 +120,8 @@ class UserControllerIT {
 		int expectedStatus = 204;
 		String expectedJson = "";
 
-		this.mvc.perform(delete(requestUrl).header("Authorization", SecurityTestUtil.createBearerTokenDefaultUser()))
-				.andExpect(status().is(expectedStatus)).andExpect(content().string(expectedJson));
+		ResultActions mvcResult = this.mockMvcPerformDeleteAuthorizationDefaultUser(requestUrl);
+		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
 	}
 
 }
