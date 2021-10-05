@@ -28,7 +28,7 @@ class LoginFilterIT extends IntegTestTemplate {
 
 	@BeforeEach
 	void initData() {
-		User user = new User(0L, "user321", encoder.encode("pass321"), LoginProvider.INTERNAL, "User 321", "User 321", null, null, new ArrayList<UserRoles>());
+		User user = new User("user321", encoder.encode("pass321"), LoginProvider.INTERNAL, "User 321", "User 321", null, null, new ArrayList<UserRoles>());
 		userRepository.save(user);
 	}
 
@@ -58,7 +58,7 @@ class LoginFilterIT extends IntegTestTemplate {
 		String expectedJson = "";
 		String expectedHeader = "Authorization";
 
-		User userWithLastLogin = new User(0L, "user322", encoder.encode("pass322"), LoginProvider.INTERNAL, "User 322",
+		User userWithLastLogin = new User("user322", encoder.encode("pass322"), LoginProvider.INTERNAL, "User 322",
 				"User 322", null, null, new ArrayList<UserRoles>());
 		LocalDateTime lastLoginDateTime = LocalDateTime.now();
 		userWithLastLogin.setLastLoginDateTime(lastLoginDateTime);
@@ -96,7 +96,7 @@ class LoginFilterIT extends IntegTestTemplate {
 		String expectedJson = "";
 		String unexpectedHeader = "Authorization";
 
-		User userWithGoogleLogin = new User(0L, "user323", encoder.encode("pass323"), LoginProvider.GOOGLE, "User 323",
+		User userWithGoogleLogin = new User("user323", encoder.encode("pass323"), LoginProvider.GOOGLE, "User 323",
 				"User 323", null, null, new ArrayList<UserRoles>());
 		LocalDateTime lastLoginDateTime = LocalDateTime.now();
 		userWithGoogleLogin.setLastLoginDateTime(lastLoginDateTime);

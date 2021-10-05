@@ -57,7 +57,7 @@ public class StartupCommandLineRunner implements CommandLineRunner {
 
 	void saveProcessingParametersDefault() {
 		if (parametersRepository.findAll().isEmpty()) {
-			ProcessingParametersDefault parameters = new ProcessingParametersDefault(0L, TIME_DIFF_GROUP_DEFAULT,
+			ProcessingParametersDefault parameters = new ProcessingParametersDefault(TIME_DIFF_GROUP_DEFAULT,
 					RESIZE_WIDTH_DEFAULT, RESIZE_HEIGHT_DEFAULT);
 			parametersRepository.save(parameters);
 		}

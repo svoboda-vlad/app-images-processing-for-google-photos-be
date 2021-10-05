@@ -1,12 +1,7 @@
 package svobodavlad.imagesprocessing.parameters;
 
-import java.io.Serializable;
-
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.Max;
@@ -16,23 +11,21 @@ import javax.validation.constraints.NotNull;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
+import lombok.Setter;
+import lombok.ToString;
+import svobodavlad.imagesprocessing.jpautil.JpaEntityTemplate;
 import svobodavlad.imagesprocessing.security.User;
 
-@Data
 @Entity
-@AllArgsConstructor
-@NoArgsConstructor
 @Table(name = "processing_parameters_user", schema = "public") // needed for PostgreSQL
-public class ProcessingParametersUser implements Serializable {
-
-	private static final long serialVersionUID = 1L;
-
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long id;
+@Getter @Setter @ToString
+@EqualsAndHashCode(callSuper=true)
+@NoArgsConstructor
+@AllArgsConstructor
+public class ProcessingParametersUser extends JpaEntityTemplate {
 
 	@NotNull
 	@Min(60) @Max(86400)
@@ -47,7 +40,6 @@ public class ProcessingParametersUser implements Serializable {
 	private int resizeHeight;
 	
 	@NotNull
-	@NonNull	
 	// fetch - changed to lazy
 	// @JoinColumn(name = "user_id") - specified by default
 	@OneToOne(fetch = FetchType.LAZY)

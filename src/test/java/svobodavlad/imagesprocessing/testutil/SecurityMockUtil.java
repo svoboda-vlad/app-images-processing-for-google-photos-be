@@ -21,15 +21,15 @@ public class SecurityMockUtil {
 	private static final String ROLE_ADMIN = "ROLE_ADMIN";	
 		
 	public static User getMockedAdminUser() {
-		User user = new User(0L, ADMIN_USERNAME, ADMIN_PASSWORD, LoginProvider.INTERNAL, ADMIN_GIVEN_NAME, ADMIN_FAMILY_NAME, null, null, new ArrayList<UserRoles>());
-		user.addRole(new Role(0L, ROLE_USER));
-		user.addRole(new Role(0L, ROLE_ADMIN));
+		User user = new User(ADMIN_USERNAME, ADMIN_PASSWORD, LoginProvider.INTERNAL, ADMIN_GIVEN_NAME, ADMIN_FAMILY_NAME, null, null, new ArrayList<UserRoles>());
+		user.addRole(new Role(ROLE_USER));
+		user.addRole(new Role(ROLE_ADMIN));
 		return user;
 	}
 	
 	public static User getMockedDefaultUser() {
-		User user = new User(0L, USER_USERNAME, USER_PASSWORD, LoginProvider.INTERNAL, USER_GIVEN_NAME, USER_FAMILY_NAME, null, null, new ArrayList<UserRoles>());
-		user.addRole(new Role(0L, ROLE_USER));
+		User user = new User(USER_USERNAME, USER_PASSWORD, LoginProvider.INTERNAL, USER_GIVEN_NAME, USER_FAMILY_NAME, null, null, new ArrayList<UserRoles>());
+		user.addRole(new Role(ROLE_USER));
 		return user;
 	}	
 

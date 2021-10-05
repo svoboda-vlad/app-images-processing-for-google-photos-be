@@ -36,11 +36,11 @@ class UserAdminControllerTest extends UnitTestTemplate {
 		String expectedJson = "[{\"username\":\"user1\",\"givenName\":\"User 1\",\"familyName\":\"User 1\",\"lastLoginDateTime\":null,\"previousLoginDateTime\":null,\"userRoles\":[{\"role\":{\"id\":0,\"name\":\"ROLE_USER\"}}]},"
 				+ "{\"username\":\"user2\",\"givenName\":\"User 2\",\"familyName\":\"User 2\",\"lastLoginDateTime\":null,\"previousLoginDateTime\":null,\"userRoles\":[{\"role\":{\"id\":0,\"name\":\"ROLE_USER\"}},{\"role\":{\"id\":0,\"name\":\"ROLE_ADMIN\"}}]}]";
 
-		User user1 = new User(0L, "user1", "A".repeat(60), LoginProvider.INTERNAL, "User 1", "User 1", null, null, new ArrayList<UserRoles>());
-		user1.addRole(new Role(0L, ROLE_USER));
-		User user2 = new User(0L, "user2", "A".repeat(60), LoginProvider.INTERNAL, "User 2", "User 2", null, null, new ArrayList<UserRoles>());
-		user2.addRole(new Role(0L, ROLE_USER));
-		user2.addRole(new Role(0L, ROLE_ADMIN));
+		User user1 = new User("user1", "A".repeat(60), LoginProvider.INTERNAL, "User 1", "User 1", null, null, new ArrayList<UserRoles>());
+		user1.addRole(new Role(ROLE_USER));
+		User user2 = new User("user2", "A".repeat(60), LoginProvider.INTERNAL, "User 2", "User 2", null, null, new ArrayList<UserRoles>());
+		user2.addRole(new Role(ROLE_USER));
+		user2.addRole(new Role(ROLE_ADMIN));
 
 		this.given(userRepository.findAll()).willReturn(new ArrayList<User>(List.of(user1, user2)));
 		

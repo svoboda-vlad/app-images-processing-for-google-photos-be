@@ -36,8 +36,8 @@ public class UserServiceTest {
 
 	@Test
 	void testRegisterUserNewUser() {
-		Role role = new Role(0L, USER_ROLE_NAME);
-		User user = new User(0L, "user", "A".repeat(60), LoginProvider.INTERNAL, "User", "User", null, null, new ArrayList<UserRoles>());
+		Role role = new Role(USER_ROLE_NAME);
+		User user = new User("user", "A".repeat(60), LoginProvider.INTERNAL, "User", "User", null, null, new ArrayList<UserRoles>());
 		user.addRole(role);
 
 		given(roleRepository.findByName(USER_ROLE_NAME)).willReturn(Optional.of(role));
@@ -49,8 +49,8 @@ public class UserServiceTest {
 
 	@Test
 	void testRegisterUserAlreadyExistsException() {
-		Role role = new Role(0L, USER_ROLE_NAME);
-		User user = new User(0L, "user", "A".repeat(60), LoginProvider.INTERNAL, "User", "User", null, null, new ArrayList<UserRoles>());
+		Role role = new Role(USER_ROLE_NAME);
+		User user = new User("user", "A".repeat(60), LoginProvider.INTERNAL, "User", "User", null, null, new ArrayList<UserRoles>());
 
 		given(roleRepository.findByName(USER_ROLE_NAME)).willReturn(Optional.of(role));
 		given(userRepository.findByUsername("user")).willReturn(Optional.of(user));
@@ -63,7 +63,7 @@ public class UserServiceTest {
 
 	@Test
 	void testRegisterUserDefaultRoleNotFound() {
-		User user = new User(0L, "user", "A".repeat(60), LoginProvider.INTERNAL, "User", "User", null, null, new ArrayList<UserRoles>());
+		User user = new User("user", "A".repeat(60), LoginProvider.INTERNAL, "User", "User", null, null, new ArrayList<UserRoles>());
 
 		given(roleRepository.findByName(USER_ROLE_NAME)).willReturn(Optional.empty());
 
@@ -75,7 +75,7 @@ public class UserServiceTest {
 	@Test
 	void testUpdateLastLoginDateTimeFirstLogin() {
 		String username = "user";
-		User user = new User(0L, username, "A".repeat(60), LoginProvider.INTERNAL, "User", "User", null, null, new ArrayList<UserRoles>());
+		User user = new User(username, "A".repeat(60), LoginProvider.INTERNAL, "User", "User", null, null, new ArrayList<UserRoles>());
 
 		given(userRepository.findByUsername(username)).willReturn(Optional.of(user));
 		given(userRepository.save(user)).willReturn(user);
@@ -91,7 +91,7 @@ public class UserServiceTest {
 	void testUpdateLastLoginDateTimeSecondLogin() {
 		String username = "user";
 		LocalDateTime lastLoginDateTime = LocalDateTime.of(LocalDate.of(2021, 9, 26), LocalTime.of(12, 53));
-		User user = new User(0L, username, "A".repeat(60), LoginProvider.INTERNAL, "User", "User", lastLoginDateTime, lastLoginDateTime, new ArrayList<UserRoles>());
+		User user = new User(username, "A".repeat(60), LoginProvider.INTERNAL, "User", "User", lastLoginDateTime, lastLoginDateTime, new ArrayList<UserRoles>());
 		
 		given(userRepository.findByUsername(username)).willReturn(Optional.of(user));
 		given(userRepository.save(user)).willReturn(user);
@@ -114,7 +114,7 @@ public class UserServiceTest {
 	@Test
 	void testUpdateUserOkUserExists() {
 		String username = "user";
-		User user = new User(0L, "user", "A".repeat(60), LoginProvider.INTERNAL, "User", "User", null, null, new ArrayList<UserRoles>());
+		User user = new User("user", "A".repeat(60), LoginProvider.INTERNAL, "User", "User", null, null, new ArrayList<UserRoles>());
 		UserInfo userInfo = new UserInfo("user", "User", "User", null, null, null);
 
 		given(userRepository.findByUsername(username)).willReturn(Optional.of(user));
@@ -124,9 +124,9 @@ public class UserServiceTest {
 
 	@Test
 	void testRegisterUserNewAdminUser() {
-		Role role1 = new Role(0L, USER_ROLE_NAME);
-		Role role2 = new Role(0L, ADMIN_ROLE_NAME);
-		User user = new User(0L, "user", "A".repeat(60), LoginProvider.INTERNAL, "User", "User", null, null, new ArrayList<UserRoles>());
+		Role role1 = new Role(USER_ROLE_NAME);
+		Role role2 = new Role(ADMIN_ROLE_NAME);
+		User user = new User("user", "A".repeat(60), LoginProvider.INTERNAL, "User", "User", null, null, new ArrayList<UserRoles>());
 		user.addRole(role1);
 		user.addRole(role2);
 
@@ -140,9 +140,9 @@ public class UserServiceTest {
 
 	@Test
 	void testRegisterAdminUserAdminRoleNotFound() {
-		User user = new User(0L, "user", "A".repeat(60), LoginProvider.INTERNAL, "User", "User", null, null, new ArrayList<UserRoles>());
+		User user = new User("user", "A".repeat(60), LoginProvider.INTERNAL, "User", "User", null, null, new ArrayList<UserRoles>());
 
-		Role role1 = new Role(0L, USER_ROLE_NAME);
+		Role role1 = new Role(USER_ROLE_NAME);
 		given(roleRepository.findByName(USER_ROLE_NAME)).willReturn(Optional.of(role1));
 		given(roleRepository.findByName(ADMIN_ROLE_NAME)).willReturn(Optional.empty());
 

@@ -46,7 +46,7 @@ public class ProcessingParametersUserControllerTest extends UnitTestTemplate {
 		int expectedStatus = 200;
 		String expectedJson = "{\"timeDiffGroup\":1800,\"resizeWidth\":1000,\"resizeHeight\":1000}";
 		
-		ProcessingParametersUser parameters = new ProcessingParametersUser(0L, 1800, 1000, 1000, mockedUser);
+		ProcessingParametersUser parameters = new ProcessingParametersUser(1800, 1000, 1000, mockedUser);
 		parameters.setId(1);
 		
 		this.given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
@@ -76,7 +76,7 @@ public class ProcessingParametersUserControllerTest extends UnitTestTemplate {
 		int expectedStatus = 200;
 		String expectedJson = "{\"timeDiffGroup\":3600,\"resizeWidth\":1000,\"resizeHeight\":1000}";
 		
-		ProcessingParametersUser parameters = new ProcessingParametersUser(0L, 3600, 1000, 1000, mockedUser);
+		ProcessingParametersUser parameters = new ProcessingParametersUser(3600, 1000, 1000, mockedUser);
 		parameters.setId(1);
 		
 		this.given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
@@ -95,7 +95,7 @@ public class ProcessingParametersUserControllerTest extends UnitTestTemplate {
 		int expectedStatus = 404;
 		String expectedJson = "";
 		
-		ProcessingParametersUser parameters = new ProcessingParametersUser(0L, 3600, 1000, 1000, mockedUser);
+		ProcessingParametersUser parameters = new ProcessingParametersUser(3600, 1000, 1000, mockedUser);
 		parameters.setId(1);
 		
 		this.given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
@@ -111,7 +111,7 @@ public class ProcessingParametersUserControllerTest extends UnitTestTemplate {
 		int expectedStatus = 200;
 		String expectedJson = "";
 		
-		ProcessingParametersDefault parameters = new ProcessingParametersDefault(0L, 3600, 1000, 1000);
+		ProcessingParametersDefault parameters = new ProcessingParametersDefault(3600, 1000, 1000);
 		this.given(parametersDefaultRepository.findAll()).willReturn(new ArrayList<ProcessingParametersDefault>(List.of(parameters)));
 		
 		ResultActions mvcResult = this.mockMvcPerformGetAuthorizationDefaultUser(requestUrl);

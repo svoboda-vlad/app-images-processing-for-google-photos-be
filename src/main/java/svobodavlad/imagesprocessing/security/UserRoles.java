@@ -11,15 +11,19 @@ import javax.persistence.Table;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
-@Data
 @Entity
-@AllArgsConstructor
-@NoArgsConstructor
 @Table(name = "user_roles", schema = "public") // needed for PostgreSQL
 @IdClass(UserRolesId.class)
+@Getter @Setter @ToString
+@EqualsAndHashCode
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserRoles implements Serializable {
 
 	private static final long serialVersionUID = 1L;

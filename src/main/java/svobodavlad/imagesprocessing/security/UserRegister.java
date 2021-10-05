@@ -34,12 +34,12 @@ public class UserRegister {
 	private String familyName;
 
 	public User toUserInternal(PasswordEncoder passwordEncoder) {
-		User user = new User(0L, username, passwordEncoder.encode(password), LoginProvider.INTERNAL, givenName, familyName, null, null, new ArrayList<UserRoles>());
+		User user = new User(username, passwordEncoder.encode(password), LoginProvider.INTERNAL, givenName, familyName, null, null, new ArrayList<UserRoles>());
 		return user;
 	}
 
 	public User toUserGoogle(PasswordEncoder passwordEncoder) {
-		User user = new User(0L, username, passwordEncoder.encode(password), LoginProvider.GOOGLE, givenName, familyName, null, null, new ArrayList<UserRoles>());
+		User user = new User(username, passwordEncoder.encode(password), LoginProvider.GOOGLE, givenName, familyName, null, null, new ArrayList<UserRoles>());
 		return user;
 	}
 

@@ -39,7 +39,7 @@ public class SecurityTestUtil {
 	private static final String DEFAULT_FAMILY_NAME = "User 1";
 
 	public User saveAdminUser() {
-		User user = new User(0L, ADMIN_USERNAME, encoder.encode(ADMIN_PASSWORD), LoginProvider.INTERNAL, ADMIN_GIVEN_NAME,
+		User user = new User(ADMIN_USERNAME, encoder.encode(ADMIN_PASSWORD), LoginProvider.INTERNAL, ADMIN_GIVEN_NAME,
 				ADMIN_FAMILY_NAME, null, null, new ArrayList<UserRoles>());
 		user = userRepository.save(user);
 		Optional<Role> optRole1 = roleRepository.findByName(ROLE_USER);
@@ -50,7 +50,7 @@ public class SecurityTestUtil {
 	}
 	
 	public User saveDefaultUser() {
-		User user = new User(0L, DEFAULT_USERNAME, encoder.encode(DEFAULT_PASSWORD), LoginProvider.INTERNAL, DEFAULT_GIVEN_NAME,
+		User user = new User(DEFAULT_USERNAME, encoder.encode(DEFAULT_PASSWORD), LoginProvider.INTERNAL, DEFAULT_GIVEN_NAME,
 				DEFAULT_FAMILY_NAME, null, null, new ArrayList<UserRoles>());
 		user = userRepository.save(user);
 		Optional<Role> optRole1 = roleRepository.findByName(ROLE_USER);
