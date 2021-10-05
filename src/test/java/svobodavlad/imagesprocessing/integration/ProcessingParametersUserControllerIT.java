@@ -26,7 +26,7 @@ public class ProcessingParametersUserControllerIT extends IntegTestTemplate {
 		
 	@BeforeEach
 	void initData() {
-		User defaultUser = securityTestUtil.saveDefaultUser();
+		User defaultUser = securityTestUtil.saveDefaultUserInternal();
 		ProcessingParametersUser parameters = new ProcessingParametersUser(3600, 1000, 1000);
 		parameters.setUser(defaultUser);
 		parametersRepository.save(parameters);

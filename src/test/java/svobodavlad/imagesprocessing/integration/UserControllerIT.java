@@ -16,7 +16,7 @@ public class UserControllerIT extends IntegTestTemplate {
 	@BeforeEach
 	void initData() {
 		securityTestUtil.saveAdminUser();
-		securityTestUtil.saveDefaultUser();
+		securityTestUtil.saveDefaultUserInternal();
 	}
 
 	@Test

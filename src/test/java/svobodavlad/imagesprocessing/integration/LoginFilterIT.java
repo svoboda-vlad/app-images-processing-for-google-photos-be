@@ -15,25 +15,30 @@ import svobodavlad.imagesprocessing.security.User;
 import svobodavlad.imagesprocessing.security.User.LoginProvider;
 import svobodavlad.imagesprocessing.security.UserRepository;
 import svobodavlad.imagesprocessing.testutil.IntegTestTemplate;
+import svobodavlad.imagesprocessing.testutil.SecurityTestUtil;
 
 class LoginFilterIT extends IntegTestTemplate {
 
 	@Autowired
 	private PasswordEncoder encoder;
-
+	
 	@Autowired
 	private UserRepository userRepository;
+	
+	@Autowired
+	private SecurityTestUtil securityTestUtil;
+	
+	private User defaultUser;
 
 	@BeforeEach
 	void initData() {
-		User user = new User("user321", encoder.encode("pass321"), LoginProvider.INTERNAL, "User 321", "User 321", null, null);
-		userRepository.save(user);
+		defaultUser = securityTestUtil.saveDefaultUserInternal();
 	}
 
 	@Test
 	void testLoginNoLastLoginDateTimeOk200() throws Exception {
 		String requestUrl = "/login";
-		String requestJson = "{\"username\":\"user321\",\"password\":\"pass321\"}";
+		String requestJson = "{\"username\":\"user1\",\"password\":\"pass123\"}";
 		int expectedStatus = 200;
 		String expectedJson = "";
 		String expectedHeader = "Authorization";
@@ -42,7 +47,7 @@ class LoginFilterIT extends IntegTestTemplate {
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
 		this.mockMvcExpectHeaderExists(mvcResult, expectedHeader);
 
-		Optional<User> user = userRepository.findByUsername("user321");
+		Optional<User> user = userRepository.findByUsername(defaultUser.getUsername());
 
 		assertThat(user.get().getLastLoginDateTime()).isNotNull();
 		assertThat(user.get().getPreviousLoginDateTime()).isNotNull();

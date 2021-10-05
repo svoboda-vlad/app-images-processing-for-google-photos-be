@@ -9,7 +9,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.ResultActions;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
@@ -17,34 +16,27 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken.Payload;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.json.webtoken.JsonWebSignature.Header;
 
-import svobodavlad.imagesprocessing.security.Role;
-import svobodavlad.imagesprocessing.security.RoleRepository;
 import svobodavlad.imagesprocessing.security.User;
-import svobodavlad.imagesprocessing.security.User.LoginProvider;
 import svobodavlad.imagesprocessing.security.UserRepository;
 import svobodavlad.imagesprocessing.testutil.IntegTestTemplate;
+import svobodavlad.imagesprocessing.testutil.SecurityTestUtil;
 
 class GoogleLoginFilterIT extends IntegTestTemplate {
 
 	@Autowired
-	private PasswordEncoder encoder;
-
-	@Autowired
 	private UserRepository userRepository;
-
-	@Autowired
-	private RoleRepository roleRepository;
 
 	@MockBean
 	private GoogleIdTokenVerifier googleIdTokenVerifier;
+	
+	@Autowired
+	private SecurityTestUtil securityTestUtil;
+	
+	private User defaultUser;
 
 	@BeforeEach
 	void initData() {
-		User user = new User("user321", encoder.encode("user321"), LoginProvider.GOOGLE, "User 321", "User 321", null, null);
-		Optional<Role> optRole = roleRepository.findByName("ROLE_USER");
-		user = userRepository.save(user);
-		user.addRole(optRole.get());
-		userRepository.save(user);
+		defaultUser = securityTestUtil.saveDefaultUserGoogle();
 	}
 
 	@Test
@@ -57,9 +49,9 @@ class GoogleLoginFilterIT extends IntegTestTemplate {
 
 		Header header = new Header();
 		Payload payload = new Payload();
-		payload.setSubject("user321");
-		payload.set("given_name", "User 321");
-		payload.set("family_name", "User 321");
+		payload.setSubject(defaultUser.getUsername());
+		payload.set("given_name", defaultUser.getGivenName());
+		payload.set("family_name", defaultUser.getFamilyName());
 		GoogleIdToken idToken = new GoogleIdToken(header, payload, new byte[0], new byte[0]);
 		given(googleIdTokenVerifier.verify("abcdef")).willReturn(idToken);
 		

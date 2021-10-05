@@ -47,7 +47,7 @@ public class SecurityTestUtil {
 		return userRepository.save(user);
 	}
 	
-	public User saveDefaultUser() {
+	public User saveDefaultUserInternal() {
 		User user = new User(DEFAULT_USERNAME, encoder.encode(DEFAULT_PASSWORD), LoginProvider.INTERNAL, DEFAULT_GIVEN_NAME,
 				DEFAULT_FAMILY_NAME, null, null);
 		user = userRepository.save(user);
@@ -56,6 +56,15 @@ public class SecurityTestUtil {
 		return userRepository.save(user);
 	}
 
+	public User saveDefaultUserGoogle() {
+		User user = new User(DEFAULT_USERNAME, encoder.encode(DEFAULT_USERNAME), LoginProvider.GOOGLE, DEFAULT_GIVEN_NAME,
+				DEFAULT_FAMILY_NAME, null, null);
+		user = userRepository.save(user);
+		Optional<Role> optRole1 = roleRepository.findByName(ROLE_USER);
+		user.addRole(optRole1.get());
+		return userRepository.save(user);
+	}	
+	
 	public static String createBearerTokenAdminUser() {
 		return AuthenticationService.createBearerToken(ADMIN_USERNAME);
 	}
