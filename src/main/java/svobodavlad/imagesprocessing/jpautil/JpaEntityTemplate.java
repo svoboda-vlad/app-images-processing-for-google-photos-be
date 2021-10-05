@@ -14,7 +14,7 @@ import lombok.ToString;
 
 @MappedSuperclass
 @Getter @Setter @ToString @EqualsAndHashCode
-public class JpaEntityTemplate implements Serializable {
+public abstract class JpaEntityTemplate implements Serializable {
 
 	public static final long serialVersionUID = 1L;
 

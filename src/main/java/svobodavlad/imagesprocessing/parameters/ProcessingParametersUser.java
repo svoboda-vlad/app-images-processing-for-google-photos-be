@@ -21,7 +21,7 @@ import svobodavlad.imagesprocessing.security.User;
 
 @Entity
 @Table(name = "processing_parameters_user", schema = "public") // needed for PostgreSQL
-@Getter @Setter @ToString
+@Getter @Setter @ToString(callSuper=true)
 @EqualsAndHashCode(callSuper=true)
 @NoArgsConstructor
 @AllArgsConstructor
