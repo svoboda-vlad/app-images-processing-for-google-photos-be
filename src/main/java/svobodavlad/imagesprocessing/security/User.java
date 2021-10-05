@@ -1,18 +1,13 @@
 package svobodavlad.imagesprocessing.security;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -29,15 +24,15 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import svobodavlad.imagesprocessing.jpautil.JpaEntityTemplate;
+import svobodavlad.imagesprocessing.jpautil.JpaEntityTemplateUserRolesRelationship;
 
 @Entity
 @Table(name = "user", schema = "public") // needed for PostgreSQL
-@Getter @Setter @ToString
-@EqualsAndHashCode(callSuper=true)
+@Getter @Setter @ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public class User extends JpaEntityTemplate implements UserDetails {
+public class User extends JpaEntityTemplateUserRolesRelationship implements UserDetails {
 
     @NotNull
     @Size(min = 1, max = 255)
@@ -62,12 +57,6 @@ public class User extends JpaEntityTemplate implements UserDetails {
     
     private LocalDateTime lastLoginDateTime;
     private LocalDateTime previousLoginDateTime;
-    
-    // CascadeType.ALL - enable removing the relation (user_roles.user_id)
-    // orphanRemoval - enable removing the related entity (user_roles)
-    // fetch - changed to eager
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-	private List<UserRoles> roles = new ArrayList<UserRoles>();
     
 	public void addRole(Role role) {
 		UserRoles userRoles = new UserRoles(this,role);

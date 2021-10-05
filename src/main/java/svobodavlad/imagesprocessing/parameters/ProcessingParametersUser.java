@@ -16,8 +16,8 @@ import svobodavlad.imagesprocessing.jpautil.JpaEntityTemplateUserRelationship;
 
 @Entity
 @Table(name = "processing_parameters_user", schema = "public") // needed for PostgreSQL
-@Getter @Setter @ToString(callSuper=true)
-@EqualsAndHashCode(callSuper=true)
+@Getter @Setter @ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProcessingParametersUser extends JpaEntityTemplateUserRelationship {

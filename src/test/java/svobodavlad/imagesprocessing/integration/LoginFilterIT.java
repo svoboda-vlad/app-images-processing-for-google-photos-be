@@ -3,7 +3,6 @@ package svobodavlad.imagesprocessing.integration;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -15,7 +14,6 @@ import org.springframework.test.web.servlet.ResultActions;
 import svobodavlad.imagesprocessing.security.User;
 import svobodavlad.imagesprocessing.security.User.LoginProvider;
 import svobodavlad.imagesprocessing.security.UserRepository;
-import svobodavlad.imagesprocessing.security.UserRoles;
 import svobodavlad.imagesprocessing.testutil.IntegTestTemplate;
 
 class LoginFilterIT extends IntegTestTemplate {
@@ -28,7 +26,7 @@ class LoginFilterIT extends IntegTestTemplate {
 
 	@BeforeEach
 	void initData() {
-		User user = new User("user321", encoder.encode("pass321"), LoginProvider.INTERNAL, "User 321", "User 321", null, null, new ArrayList<UserRoles>());
+		User user = new User("user321", encoder.encode("pass321"), LoginProvider.INTERNAL, "User 321", "User 321", null, null);
 		userRepository.save(user);
 	}
 
@@ -59,7 +57,7 @@ class LoginFilterIT extends IntegTestTemplate {
 		String expectedHeader = "Authorization";
 
 		User userWithLastLogin = new User("user322", encoder.encode("pass322"), LoginProvider.INTERNAL, "User 322",
-				"User 322", null, null, new ArrayList<UserRoles>());
+				"User 322", null, null);
 		LocalDateTime lastLoginDateTime = LocalDateTime.now();
 		userWithLastLogin.setLastLoginDateTime(lastLoginDateTime);
 		userRepository.save(userWithLastLogin);
@@ -97,7 +95,7 @@ class LoginFilterIT extends IntegTestTemplate {
 		String unexpectedHeader = "Authorization";
 
 		User userWithGoogleLogin = new User("user323", encoder.encode("pass323"), LoginProvider.GOOGLE, "User 323",
-				"User 323", null, null, new ArrayList<UserRoles>());
+				"User 323", null, null);
 		LocalDateTime lastLoginDateTime = LocalDateTime.now();
 		userWithGoogleLogin.setLastLoginDateTime(lastLoginDateTime);
 		userRepository.save(userWithGoogleLogin);

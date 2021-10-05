@@ -3,7 +3,6 @@ package svobodavlad.imagesprocessing.integration;
 import static org.mockito.BDDMockito.given;
 
 import java.security.GeneralSecurityException;
-import java.util.ArrayList;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -23,7 +22,6 @@ import svobodavlad.imagesprocessing.security.RoleRepository;
 import svobodavlad.imagesprocessing.security.User;
 import svobodavlad.imagesprocessing.security.User.LoginProvider;
 import svobodavlad.imagesprocessing.security.UserRepository;
-import svobodavlad.imagesprocessing.security.UserRoles;
 import svobodavlad.imagesprocessing.testutil.IntegTestTemplate;
 
 class GoogleLoginFilterIT extends IntegTestTemplate {
@@ -42,7 +40,7 @@ class GoogleLoginFilterIT extends IntegTestTemplate {
 
 	@BeforeEach
 	void initData() {
-		User user = new User("user321", encoder.encode("user321"), LoginProvider.GOOGLE, "User 321", "User 321", null, null, new ArrayList<UserRoles>());
+		User user = new User("user321", encoder.encode("user321"), LoginProvider.GOOGLE, "User 321", "User 321", null, null);
 		Optional<Role> optRole = roleRepository.findByName("ROLE_USER");
 		user = userRepository.save(user);
 		user.addRole(optRole.get());

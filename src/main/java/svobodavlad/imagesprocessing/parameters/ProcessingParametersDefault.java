@@ -16,8 +16,8 @@ import svobodavlad.imagesprocessing.security.User;
 
 @Entity
 @Table(name = "processing_parameters_default", schema = "public") // needed for PostgreSQL
-@Getter @Setter @ToString
-@EqualsAndHashCode(callSuper=true)
+@Getter @Setter @ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProcessingParametersDefault extends JpaEntityTemplate {

@@ -19,8 +19,8 @@ import svobodavlad.imagesprocessing.jpautil.JpaEntityTemplate;
 
 @Entity
 @Table(name = "role", schema = "public") // needed for PostgreSQL
-@Getter @Setter @ToString
-@EqualsAndHashCode(callSuper=true)
+@Getter @Setter @ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
 public class Role extends JpaEntityTemplate implements GrantedAuthority {

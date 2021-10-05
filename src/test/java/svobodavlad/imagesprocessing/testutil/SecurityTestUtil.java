@@ -1,6 +1,5 @@
 package svobodavlad.imagesprocessing.testutil;
 
-import java.util.ArrayList;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +12,6 @@ import svobodavlad.imagesprocessing.security.RoleRepository;
 import svobodavlad.imagesprocessing.security.User;
 import svobodavlad.imagesprocessing.security.User.LoginProvider;
 import svobodavlad.imagesprocessing.security.UserRepository;
-import svobodavlad.imagesprocessing.security.UserRoles;
 
 @Component
 public class SecurityTestUtil {
@@ -40,7 +38,7 @@ public class SecurityTestUtil {
 
 	public User saveAdminUser() {
 		User user = new User(ADMIN_USERNAME, encoder.encode(ADMIN_PASSWORD), LoginProvider.INTERNAL, ADMIN_GIVEN_NAME,
-				ADMIN_FAMILY_NAME, null, null, new ArrayList<UserRoles>());
+				ADMIN_FAMILY_NAME, null, null);
 		user = userRepository.save(user);
 		Optional<Role> optRole1 = roleRepository.findByName(ROLE_USER);
 		Optional<Role> optRole2 = roleRepository.findByName(ROLE_ADMIN);
@@ -51,7 +49,7 @@ public class SecurityTestUtil {
 	
 	public User saveDefaultUser() {
 		User user = new User(DEFAULT_USERNAME, encoder.encode(DEFAULT_PASSWORD), LoginProvider.INTERNAL, DEFAULT_GIVEN_NAME,
-				DEFAULT_FAMILY_NAME, null, null, new ArrayList<UserRoles>());
+				DEFAULT_FAMILY_NAME, null, null);
 		user = userRepository.save(user);
 		Optional<Role> optRole1 = roleRepository.findByName(ROLE_USER);
 		user.addRole(optRole1.get());
