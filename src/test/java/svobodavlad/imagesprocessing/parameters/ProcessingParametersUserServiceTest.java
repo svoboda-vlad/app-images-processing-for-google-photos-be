@@ -37,7 +37,8 @@ class ProcessingParametersUserServiceTest {
 	@Test
 	void testResetToDefaultReturnsDefault() {
 		User mockedUser = SecurityMockUtil.getMockedDefaultUser();
-		ProcessingParametersUser parameters = new ProcessingParametersUser(1800, 1000, 1000, mockedUser);
+		ProcessingParametersUser parameters = new ProcessingParametersUser(1800, 1000, 1000);
+		parameters.setUser(mockedUser);
 		
 		given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
 		given(parametersRepository.findByUser(mockedUser)).willReturn(Optional.of(parameters));
@@ -45,7 +46,8 @@ class ProcessingParametersUserServiceTest {
 		ProcessingParametersDefault parametersDefault = new ProcessingParametersDefault(3600, 1000, 1000);
 		given(parametersDefaultRepository.findAll()).willReturn(new ArrayList<ProcessingParametersDefault>(List.of(parametersDefault)));
 		
-		ProcessingParametersUser parametersAfterReset = new ProcessingParametersUser(parametersDefault.getTimeDiffGroup(), parametersDefault.getResizeWidth(), parametersDefault.getResizeHeight(), mockedUser);
+		ProcessingParametersUser parametersAfterReset = new ProcessingParametersUser(parametersDefault.getTimeDiffGroup(), parametersDefault.getResizeWidth(), parametersDefault.getResizeHeight());
+		parametersAfterReset.setUser(mockedUser);
 		given(parametersRepository.save(parametersAfterReset)).willReturn(parametersAfterReset);
 		
 		assertThat(parametersService.resetToDefault()).isEqualTo(parametersAfterReset);
@@ -54,7 +56,8 @@ class ProcessingParametersUserServiceTest {
 	@Test
 	void testResetToDefaultThrowsError() {
 		User mockedUser = SecurityMockUtil.getMockedDefaultUser();
-		ProcessingParametersUser parameters = new ProcessingParametersUser(1800, 1000, 1000, mockedUser);
+		ProcessingParametersUser parameters = new ProcessingParametersUser(1800, 1000, 1000);
+		parameters.setUser(mockedUser);
 		
 		given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
 		given(parametersRepository.findByUser(mockedUser)).willReturn(Optional.of(parameters));
@@ -75,9 +78,10 @@ class ProcessingParametersUserServiceTest {
 		given(parametersRepository.findByUser(mockedUser)).willReturn(Optional.empty());
 		
 		ProcessingParametersDefault parametersDefault = new ProcessingParametersDefault(3600, 1000, 1000);
-		given(parametersDefaultRepository.findAll()).willReturn(new ArrayList<ProcessingParametersDefault>(List.of(parametersDefault)));		
+		given(parametersDefaultRepository.findAll()).willReturn(new ArrayList<ProcessingParametersDefault>(List.of(parametersDefault)));
 		
-		ProcessingParametersUser parametersAfterReset = new ProcessingParametersUser(parametersDefault.getTimeDiffGroup(), parametersDefault.getResizeWidth(), parametersDefault.getResizeHeight(), mockedUser);		
+		ProcessingParametersUser parametersAfterReset = new ProcessingParametersUser(parametersDefault.getTimeDiffGroup(), parametersDefault.getResizeWidth(), parametersDefault.getResizeHeight());
+		parametersAfterReset.setUser(mockedUser);
 		
 		given(parametersRepository.save(parametersAfterReset)).willReturn(parametersAfterReset);
 		

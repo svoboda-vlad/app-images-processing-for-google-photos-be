@@ -46,7 +46,8 @@ public class ProcessingParametersUserControllerTest extends UnitTestTemplate {
 		int expectedStatus = 200;
 		String expectedJson = "{\"timeDiffGroup\":1800,\"resizeWidth\":1000,\"resizeHeight\":1000}";
 		
-		ProcessingParametersUser parameters = new ProcessingParametersUser(1800, 1000, 1000, mockedUser);
+		ProcessingParametersUser parameters = new ProcessingParametersUser(1800, 1000, 1000);
+		parameters.setUser(mockedUser);
 		parameters.setId(1);
 		
 		this.given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
@@ -76,7 +77,8 @@ public class ProcessingParametersUserControllerTest extends UnitTestTemplate {
 		int expectedStatus = 200;
 		String expectedJson = "{\"timeDiffGroup\":3600,\"resizeWidth\":1000,\"resizeHeight\":1000}";
 		
-		ProcessingParametersUser parameters = new ProcessingParametersUser(3600, 1000, 1000, mockedUser);
+		ProcessingParametersUser parameters = new ProcessingParametersUser(3600, 1000, 1000);
+		parameters.setUser(mockedUser);
 		parameters.setId(1);
 		
 		this.given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
@@ -95,7 +97,8 @@ public class ProcessingParametersUserControllerTest extends UnitTestTemplate {
 		int expectedStatus = 404;
 		String expectedJson = "";
 		
-		ProcessingParametersUser parameters = new ProcessingParametersUser(3600, 1000, 1000, mockedUser);
+		ProcessingParametersUser parameters = new ProcessingParametersUser(3600, 1000, 1000);
+		parameters.setUser(mockedUser);
 		parameters.setId(1);
 		
 		this.given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));

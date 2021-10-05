@@ -36,7 +36,9 @@ public class ProcessingParametersDefault extends JpaEntityTemplate {
 	}
 	
 	public ProcessingParametersUser toProcessingParametersUser(User user) {
-		return new ProcessingParametersUser(timeDiffGroup, resizeWidth, resizeHeight, user);
+		ProcessingParametersUser parameters = new ProcessingParametersUser(timeDiffGroup, resizeWidth, resizeHeight);
+		parameters.setUser(user);
+		return parameters;
 	}
 
 }

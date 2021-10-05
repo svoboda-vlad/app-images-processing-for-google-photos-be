@@ -7,12 +7,17 @@ import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import svobodavlad.imagesprocessing.security.User;
 
 @MappedSuperclass
-@Getter @Setter
+@Getter @Setter @ToString(callSuper=true)
+@EqualsAndHashCode(callSuper=true)
+@NoArgsConstructor
 public abstract class JpaEntityTemplateUserRelationship extends JpaEntityTemplate {
 
 	@NotNull
