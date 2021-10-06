@@ -1,7 +1,5 @@
 package svobodavlad.imagesprocessing.integration;
 
-import static org.mockito.BDDMockito.given;
-
 import java.security.GeneralSecurityException;
 import java.util.Optional;
 
@@ -53,7 +51,7 @@ class GoogleLoginFilterIT extends IntegTestTemplate {
 		payload.set("given_name", defaultUser.getGivenName());
 		payload.set("family_name", defaultUser.getFamilyName());
 		GoogleIdToken idToken = new GoogleIdToken(header, payload, new byte[0], new byte[0]);
-		given(googleIdTokenVerifier.verify("abcdef")).willReturn(idToken);
+		this.given(googleIdTokenVerifier.verify("abcdef")).willReturn(idToken);
 		
 		ResultActions mvcResult = this.mockMvcPerformPostNoAuthorization(requestUrl, requestJson);
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
@@ -75,7 +73,7 @@ class GoogleLoginFilterIT extends IntegTestTemplate {
 		payload.set("given_name", "User 322");
 		payload.set("family_name", "User 322");
 		GoogleIdToken idToken = new GoogleIdToken(header, payload, new byte[0], new byte[0]);
-		given(googleIdTokenVerifier.verify("abcdef")).willReturn(idToken);
+		this.given(googleIdTokenVerifier.verify("abcdef")).willReturn(idToken);
 
 		ResultActions mvcResult = this.mockMvcPerformPostNoAuthorization(requestUrl, requestJson);
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
@@ -100,7 +98,7 @@ class GoogleLoginFilterIT extends IntegTestTemplate {
 		String expectedJson = "";
 		String unexpectedHeader = "Authorization";
 
-		given(googleIdTokenVerifier.verify("abcdef")).willThrow(new GeneralSecurityException());
+		this.given(googleIdTokenVerifier.verify("abcdef")).willThrow(new GeneralSecurityException());
 		
 		ResultActions mvcResult = this.mockMvcPerformPostNoAuthorization(requestUrl, requestJson);
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
@@ -128,7 +126,7 @@ class GoogleLoginFilterIT extends IntegTestTemplate {
 		String expectedJson = "";
 		String unexpectedHeader = "Authorization";
 
-		given(googleIdTokenVerifier.verify("abcdef")).willReturn(null);
+		this.given(googleIdTokenVerifier.verify("abcdef")).willReturn(null);
 
 		ResultActions mvcResult = this.mockMvcPerformPostNoAuthorization(requestUrl, requestJson);
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);

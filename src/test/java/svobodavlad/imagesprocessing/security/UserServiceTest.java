@@ -1,9 +1,5 @@
 package svobodavlad.imagesprocessing.security;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.mockito.BDDMockito.given;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -13,13 +9,12 @@ import javax.persistence.EntityExistsException;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import svobodavlad.imagesprocessing.security.User.LoginProvider;
+import svobodavlad.imagesprocessing.testutil.UnitTestTemplate;
 
-@SpringBootTest
-public class UserServiceTest {
+public class UserServiceTest extends UnitTestTemplate {
 
 	private static final String USER_ROLE_NAME = "ROLE_USER";
 	private static final String ADMIN_ROLE_NAME = "ROLE_ADMIN";
@@ -39,11 +34,11 @@ public class UserServiceTest {
 		User user = new User("user", "A".repeat(60), LoginProvider.INTERNAL, "User", "User", null, null);
 		user.addRole(role);
 
-		given(roleRepository.findByName(USER_ROLE_NAME)).willReturn(Optional.of(role));
-		given(userRepository.findByUsername("user")).willReturn(Optional.empty());
-		given(userRepository.save(user)).willReturn(user);
+		this.given(roleRepository.findByName(USER_ROLE_NAME)).willReturn(Optional.of(role));
+		this.given(userRepository.findByUsername("user")).willReturn(Optional.empty());
+		this.given(userRepository.save(user)).willReturn(user);
 
-		assertThat(userService.registerUser(user)).isEqualTo(user);
+		this.assertThat(userService.registerUser(user)).isEqualTo(user);
 	}
 
 	@Test
@@ -51,10 +46,10 @@ public class UserServiceTest {
 		Role role = new Role(USER_ROLE_NAME);
 		User user = new User("user", "A".repeat(60), LoginProvider.INTERNAL, "User", "User", null, null);
 
-		given(roleRepository.findByName(USER_ROLE_NAME)).willReturn(Optional.of(role));
-		given(userRepository.findByUsername("user")).willReturn(Optional.of(user));
+		this.given(roleRepository.findByName(USER_ROLE_NAME)).willReturn(Optional.of(role));
+		this.given(userRepository.findByUsername("user")).willReturn(Optional.of(user));
 
-		assertThatExceptionOfType(EntityExistsException.class).isThrownBy(() -> {
+		this.assertThatExceptionOfType(EntityExistsException.class).isThrownBy(() -> {
 			userService.registerUser(user);
 		});
 
@@ -64,9 +59,9 @@ public class UserServiceTest {
 	void testRegisterUserDefaultRoleNotFound() {
 		User user = new User("user", "A".repeat(60), LoginProvider.INTERNAL, "User", "User", null, null);
 
-		given(roleRepository.findByName(USER_ROLE_NAME)).willReturn(Optional.empty());
+		this.given(roleRepository.findByName(USER_ROLE_NAME)).willReturn(Optional.empty());
 
-		assertThatExceptionOfType(RuntimeException.class).isThrownBy(() -> {
+		this.assertThatExceptionOfType(RuntimeException.class).isThrownBy(() -> {
 			userService.registerUser(user);
 		});
 	}
@@ -76,14 +71,14 @@ public class UserServiceTest {
 		String username = "user";
 		User user = new User(username, "A".repeat(60), LoginProvider.INTERNAL, "User", "User", null, null);
 
-		given(userRepository.findByUsername(username)).willReturn(Optional.of(user));
-		given(userRepository.save(user)).willReturn(user);
+		this.given(userRepository.findByUsername(username)).willReturn(Optional.of(user));
+		this.given(userRepository.save(user)).willReturn(user);
 
 		LocalDateTime minTime = LocalDateTime.now();
 		
-		assertThat(userService.updateLastLoginDateTime(username)).isEqualTo(user);
-		assertThat(user.getLastLoginDateTime()).isBetween(minTime, LocalDateTime.now());
-		assertThat(user.getPreviousLoginDateTime()).isBetween(minTime, LocalDateTime.now());
+		this.assertThat(userService.updateLastLoginDateTime(username)).isEqualTo(user);
+		this.assertThat(user.getLastLoginDateTime()).isBetween(minTime, LocalDateTime.now());
+		this.assertThat(user.getPreviousLoginDateTime()).isBetween(minTime, LocalDateTime.now());
 	}
 	
 	@Test
@@ -92,22 +87,22 @@ public class UserServiceTest {
 		LocalDateTime lastLoginDateTime = LocalDateTime.of(LocalDate.of(2021, 9, 26), LocalTime.of(12, 53));
 		User user = new User(username, "A".repeat(60), LoginProvider.INTERNAL, "User", "User", lastLoginDateTime, lastLoginDateTime);
 		
-		given(userRepository.findByUsername(username)).willReturn(Optional.of(user));
-		given(userRepository.save(user)).willReturn(user);
+		this.given(userRepository.findByUsername(username)).willReturn(Optional.of(user));
+		this.given(userRepository.save(user)).willReturn(user);
 
 		LocalDateTime minTime = LocalDateTime.now();
 		
-		assertThat(userService.updateLastLoginDateTime(username)).isEqualTo(user);
-		assertThat(user.getLastLoginDateTime()).isBetween(minTime, LocalDateTime.now());
-		assertThat(user.getPreviousLoginDateTime()).isEqualTo(lastLoginDateTime);
+		this.assertThat(userService.updateLastLoginDateTime(username)).isEqualTo(user);
+		this.assertThat(user.getLastLoginDateTime()).isBetween(minTime, LocalDateTime.now());
+		this.assertThat(user.getPreviousLoginDateTime()).isEqualTo(lastLoginDateTime);
 	}
 	
 	@Test
 	void testUpdateLastLoginDateTimeUserDoesNotExist() {
 		String username = "userx";		
-		given(userRepository.findByUsername(username)).willReturn(Optional.empty());
+		this.given(userRepository.findByUsername(username)).willReturn(Optional.empty());
 		
-		assertThat(userService.updateLastLoginDateTime(username)).isNull();
+		this.assertThat(userService.updateLastLoginDateTime(username)).isNull();
 	}
 
 	@Test
@@ -116,9 +111,9 @@ public class UserServiceTest {
 		User user = new User("user", "A".repeat(60), LoginProvider.INTERNAL, "User", "User", null, null);
 		UserInfo userInfo = new UserInfo("user", "User", "User", null, null, null);
 
-		given(userRepository.findByUsername(username)).willReturn(Optional.of(user));
-		given(userRepository.save(userInfo.toUser(user))).willReturn(user);
-		assertThat(userService.updateUser(userInfo)).isEqualTo(user);
+		this.given(userRepository.findByUsername(username)).willReturn(Optional.of(user));
+		this.given(userRepository.save(userInfo.toUser(user))).willReturn(user);
+		this.assertThat(userService.updateUser(userInfo)).isEqualTo(user);
 	}
 
 	@Test
@@ -129,12 +124,12 @@ public class UserServiceTest {
 		user.addRole(role1);
 		user.addRole(role2);
 
-		given(roleRepository.findByName(USER_ROLE_NAME)).willReturn(Optional.of(role1));
-		given(roleRepository.findByName(ADMIN_ROLE_NAME)).willReturn(Optional.of(role2));
-		given(userRepository.findByUsername("user")).willReturn(Optional.empty());
-		given(userRepository.save(user)).willReturn(user);
+		this.given(roleRepository.findByName(USER_ROLE_NAME)).willReturn(Optional.of(role1));
+		this.given(roleRepository.findByName(ADMIN_ROLE_NAME)).willReturn(Optional.of(role2));
+		this.given(userRepository.findByUsername("user")).willReturn(Optional.empty());
+		this.given(userRepository.save(user)).willReturn(user);
 
-		assertThat(userService.registerAdminUser(user)).isEqualTo(user);
+		this.assertThat(userService.registerAdminUser(user)).isEqualTo(user);
 	}
 
 	@Test
@@ -142,10 +137,10 @@ public class UserServiceTest {
 		User user = new User("user", "A".repeat(60), LoginProvider.INTERNAL, "User", "User", null, null);
 
 		Role role1 = new Role(USER_ROLE_NAME);
-		given(roleRepository.findByName(USER_ROLE_NAME)).willReturn(Optional.of(role1));
-		given(roleRepository.findByName(ADMIN_ROLE_NAME)).willReturn(Optional.empty());
+		this.given(roleRepository.findByName(USER_ROLE_NAME)).willReturn(Optional.of(role1));
+		this.given(roleRepository.findByName(ADMIN_ROLE_NAME)).willReturn(Optional.empty());
 
-		assertThatExceptionOfType(RuntimeException.class).isThrownBy(() -> {
+		this.assertThatExceptionOfType(RuntimeException.class).isThrownBy(() -> {
 			userService.registerAdminUser(user);
 		});
 	}

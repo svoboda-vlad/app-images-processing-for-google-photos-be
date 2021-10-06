@@ -1,26 +1,21 @@
 package svobodavlad.imagesprocessing.parameters;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.mockito.BDDMockito.given;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
 
 import svobodavlad.imagesprocessing.security.User;
 import svobodavlad.imagesprocessing.security.UserRepository;
 import svobodavlad.imagesprocessing.testutil.SecurityMockUtil;
+import svobodavlad.imagesprocessing.testutil.UnitTestTemplate;
 
-@SpringBootTest
 @WithMockUser(username = "user1")
-class ProcessingParametersUserServiceTest {
+class ProcessingParametersUserServiceTest extends UnitTestTemplate {
 
 	@MockBean
 	private ProcessingParametersUserRepository parametersRepository;
@@ -40,17 +35,17 @@ class ProcessingParametersUserServiceTest {
 		ProcessingParametersUser parameters = new ProcessingParametersUser(1800, 1000, 1000);
 		parameters.setUser(mockedUser);
 		
-		given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
-		given(parametersRepository.findByUser(mockedUser)).willReturn(Optional.of(parameters));
+		this.given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
+		this.given(parametersRepository.findByUser(mockedUser)).willReturn(Optional.of(parameters));
 		
 		ProcessingParametersDefault parametersDefault = new ProcessingParametersDefault(3600, 1000, 1000);
-		given(parametersDefaultRepository.findAll()).willReturn(new ArrayList<ProcessingParametersDefault>(List.of(parametersDefault)));
+		this.given(parametersDefaultRepository.findAll()).willReturn(new ArrayList<ProcessingParametersDefault>(List.of(parametersDefault)));
 		
 		ProcessingParametersUser parametersAfterReset = new ProcessingParametersUser(parametersDefault.getTimeDiffGroup(), parametersDefault.getResizeWidth(), parametersDefault.getResizeHeight());
 		parametersAfterReset.setUser(mockedUser);
-		given(parametersRepository.save(parametersAfterReset)).willReturn(parametersAfterReset);
+		this.given(parametersRepository.save(parametersAfterReset)).willReturn(parametersAfterReset);
 		
-		assertThat(parametersService.resetToDefault()).isEqualTo(parametersAfterReset);
+		this.assertThat(parametersService.resetToDefault()).isEqualTo(parametersAfterReset);
 	}
 	
 	@Test
@@ -59,12 +54,12 @@ class ProcessingParametersUserServiceTest {
 		ProcessingParametersUser parameters = new ProcessingParametersUser(1800, 1000, 1000);
 		parameters.setUser(mockedUser);
 		
-		given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
-		given(parametersRepository.findByUser(mockedUser)).willReturn(Optional.of(parameters));
+		this.given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
+		this.given(parametersRepository.findByUser(mockedUser)).willReturn(Optional.of(parameters));
 		
-		given(parametersDefaultRepository.findAll()).willReturn(new ArrayList<ProcessingParametersDefault>());
+		this.given(parametersDefaultRepository.findAll()).willReturn(new ArrayList<ProcessingParametersDefault>());
 		
-		assertThatExceptionOfType(RuntimeException.class)
+		this.assertThatExceptionOfType(RuntimeException.class)
 		  .isThrownBy(() -> {
 			  parametersService.resetToDefault();
 		});
@@ -74,18 +69,18 @@ class ProcessingParametersUserServiceTest {
 	void testResetToDefaultReturnsDefaultWhenParametersUserNotFound() {
 		User mockedUser = SecurityMockUtil.getMockedDefaultUser();
 		
-		given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
-		given(parametersRepository.findByUser(mockedUser)).willReturn(Optional.empty());
+		this.given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
+		this.given(parametersRepository.findByUser(mockedUser)).willReturn(Optional.empty());
 		
 		ProcessingParametersDefault parametersDefault = new ProcessingParametersDefault(3600, 1000, 1000);
-		given(parametersDefaultRepository.findAll()).willReturn(new ArrayList<ProcessingParametersDefault>(List.of(parametersDefault)));
+		this.given(parametersDefaultRepository.findAll()).willReturn(new ArrayList<ProcessingParametersDefault>(List.of(parametersDefault)));
 		
 		ProcessingParametersUser parametersAfterReset = new ProcessingParametersUser(parametersDefault.getTimeDiffGroup(), parametersDefault.getResizeWidth(), parametersDefault.getResizeHeight());
 		parametersAfterReset.setUser(mockedUser);
 		
-		given(parametersRepository.save(parametersAfterReset)).willReturn(parametersAfterReset);
+		this.given(parametersRepository.save(parametersAfterReset)).willReturn(parametersAfterReset);
 		
-		assertThat(parametersService.resetToDefault()).isEqualTo(parametersAfterReset);
+		this.assertThat(parametersService.resetToDefault()).isEqualTo(parametersAfterReset);
 	}	
 
 }

@@ -1,7 +1,5 @@
 package svobodavlad.imagesprocessing.integration;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -49,8 +47,8 @@ class LoginFilterIT extends IntegTestTemplate {
 
 		Optional<User> user = userRepository.findByUsername(defaultUser.getUsername());
 
-		assertThat(user.get().getLastLoginDateTime()).isNotNull();
-		assertThat(user.get().getPreviousLoginDateTime()).isNotNull();
+		this.assertThat(user.get().getLastLoginDateTime()).isNotNull();
+		this.assertThat(user.get().getPreviousLoginDateTime()).isNotNull();
 	}
 
 	@Test
@@ -73,8 +71,8 @@ class LoginFilterIT extends IntegTestTemplate {
 
 		Optional<User> user = userRepository.findByUsername("user322");
 
-		assertThat(user.get().getLastLoginDateTime()).isAfter(lastLoginDateTime);
-		assertThat(user.get().getPreviousLoginDateTime()).isEqualTo(lastLoginDateTime);
+		this.assertThat(user.get().getLastLoginDateTime()).isAfter(lastLoginDateTime);
+		this.assertThat(user.get().getPreviousLoginDateTime()).isEqualTo(lastLoginDateTime);
 
 	}
 

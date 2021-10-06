@@ -22,7 +22,7 @@ public class ProcessingParametersDefaultControllerTest extends UnitTestTemplate 
 
 	@BeforeEach
 	private void initData() {
-		given(userDetailsService.loadUserByUsername(SecurityMockUtil.getMockedAdminUser().getUsername())).willReturn(SecurityMockUtil.getMockedAdminUser());
+		this.given(userDetailsService.loadUserByUsername(SecurityMockUtil.getMockedAdminUser().getUsername())).willReturn(SecurityMockUtil.getMockedAdminUser());
 	}
 
 	@Test
@@ -48,7 +48,7 @@ public class ProcessingParametersDefaultControllerTest extends UnitTestTemplate 
 		int expectedStatus = 404;
 		String expectedJson = "";
 		
-		given(parametersRepository.findAll()).willReturn(new ArrayList<ProcessingParametersDefault>());
+		this.given(parametersRepository.findAll()).willReturn(new ArrayList<ProcessingParametersDefault>());
 		
 		ResultActions mvcResult = this.mockMvcPerformGetAuthorizationAdminUser(requestUrl);
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
@@ -63,8 +63,8 @@ public class ProcessingParametersDefaultControllerTest extends UnitTestTemplate 
 		
 		ProcessingParametersDefault parameters = new ProcessingParametersDefault(3600, 1000, 1000);
 		parameters.setId(1);
-		given(parametersRepository.findAll()).willReturn(new ArrayList<ProcessingParametersDefault>(List.of(parameters)));
-		given(parametersRepository.save(parameters)).willReturn(parameters);
+		this.given(parametersRepository.findAll()).willReturn(new ArrayList<ProcessingParametersDefault>(List.of(parameters)));
+		this.given(parametersRepository.save(parameters)).willReturn(parameters);
 		
 		ResultActions mvcResult = this.mockMvcPerformPutAuthorizationAdminUser(requestUrl, requestJson);
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
@@ -77,7 +77,7 @@ public class ProcessingParametersDefaultControllerTest extends UnitTestTemplate 
 		int expectedStatus = 404;
 		String expectedJson = "";
 		
-		given(parametersRepository.findAll()).willReturn(new ArrayList<ProcessingParametersDefault>());
+		this.given(parametersRepository.findAll()).willReturn(new ArrayList<ProcessingParametersDefault>());
 		
 		ResultActions mvcResult = this.mockMvcPerformPutAuthorizationAdminUser(requestUrl, requestJson);
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
