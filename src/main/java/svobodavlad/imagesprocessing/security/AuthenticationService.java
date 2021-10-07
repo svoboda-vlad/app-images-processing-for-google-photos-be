@@ -40,8 +40,8 @@ public class AuthenticationService {
 	private final UserDetailsService userDetailsService;
 
 	static public void addToken(HttpServletResponse res, String username) {
-		String jwtToken = PREFIX + " " + createBearerToken(username);
-		res.addHeader("Authorization", jwtToken);
+		String jwtToken = createBearerToken(username);
+		res.addHeader(AUTHORIZATION, jwtToken);
 		res.addHeader("Access-Control-Expose-Headers", "Authorization");
 	}
 
