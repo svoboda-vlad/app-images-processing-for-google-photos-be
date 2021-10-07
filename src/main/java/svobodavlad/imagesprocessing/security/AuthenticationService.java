@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -36,7 +35,7 @@ public class AuthenticationService {
 	// the key would be read from your application configuration instead.
 	static final Key SIGNINGKEY = Keys.secretKeyFor(SignatureAlgorithm.HS512);
 	static final String PREFIX = "Bearer";
-	private static final String AUTHORIZATION = "Authorization";
+	static final String AUTHORIZATION = "Authorization";
 	private final UserDetailsService userDetailsService;
 
 	static public void addToken(HttpServletResponse res, String username) {
@@ -47,8 +46,10 @@ public class AuthenticationService {
 
 	public Authentication getAuthentication(HttpServletRequest request) {
 		String token = resolveToken(request);
-		if (token == null)
-			return null;
+		if (token == null) {
+			log.info("JWT token not found.");
+			return null;			
+		}
 		String username = getUsername(validateToken(token));
 		if (username == null)
 			return null;
@@ -72,13 +73,9 @@ public class AuthenticationService {
 	private Jws<Claims> validateToken(String token) {
 		try {
 			Jws<Claims> claims = Jwts.parserBuilder().setSigningKey(SIGNINGKEY).build().parseClaimsJws(token);
-
-			if (claims.getBody().getExpiration().before(new Date())) {
-				return null;
-			}
 			return claims;
-		} catch (JwtException | IllegalArgumentException e) {
-			log.info("JWT token validation failed: {}. JWT token: {}.", e.getMessage(), token);
+		} catch (RuntimeException e) {
+			log.info("JWT token validation failed: {}.", e.getMessage());
 		}
 		return null;
 	}
