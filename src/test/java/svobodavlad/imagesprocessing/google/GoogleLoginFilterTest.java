@@ -1,8 +1,9 @@
 package svobodavlad.imagesprocessing.google;
 
+import java.util.ArrayList;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -14,13 +15,14 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.json.webtoken.JsonWebSignature.Header;
 
 import svobodavlad.imagesprocessing.security.User;
+import svobodavlad.imagesprocessing.security.UserRoles;
 import svobodavlad.imagesprocessing.security.UserService;
 import svobodavlad.imagesprocessing.testutil.SecurityMockUtil;
 import svobodavlad.imagesprocessing.testutil.UnitTestTemplate;
 
 class GoogleLoginFilterTest extends UnitTestTemplate {
 
-	@Autowired
+	@MockBean
 	private PasswordEncoder encoder;	
 	
 	@MockBean
@@ -37,7 +39,8 @@ class GoogleLoginFilterTest extends UnitTestTemplate {
 	@BeforeEach
 	private void initData() {
 		mockedUser = SecurityMockUtil.getMockedDefaultUserGoogle();
-		mockedUser.setPassword(encoder.encode(mockedUser.getUsername()));
+		this.given(encoder.encode(mockedUser.getUsername())).willReturn(mockedUser.getPassword());
+		this.given(encoder.matches(mockedUser.getUsername(),mockedUser.getPassword())).willReturn(true);		
 		this.given(userDetailsService.loadUserByUsername(mockedUser.getUsername())).willReturn(mockedUser);
 	}
 
@@ -60,7 +63,11 @@ class GoogleLoginFilterTest extends UnitTestTemplate {
 		ResultActions mvcResult = this.mockMvcPerformPostNoAuthorization(requestUrl, requestJson);
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
 		this.mockMvcExpectHeaderExists(mvcResult, expectedHeader);
-				
+		
+		User mockedUserWithoutRoles = SecurityMockUtil.getMockedDefaultUserGoogle();
+		mockedUserWithoutRoles.setRoles(new ArrayList<UserRoles>());
+		
+		this.verify(userService, this.times(1)).registerUser(mockedUserWithoutRoles);
 		this.verify(userService, this.times(1)).updateLastLoginDateTime(mockedUser.getUsername());
 	}
 

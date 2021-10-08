@@ -4,7 +4,6 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -16,7 +15,7 @@ import svobodavlad.imagesprocessing.testutil.UnitTestTemplate;
 
 class LoginFilterTest extends UnitTestTemplate {
 	
-	@Autowired
+	@MockBean
 	private PasswordEncoder encoder;
 
 	@MockBean
@@ -33,7 +32,8 @@ class LoginFilterTest extends UnitTestTemplate {
 	@BeforeEach
 	private void initData() {
 		mockedUser = SecurityMockUtil.getMockedDefaultUserInternal();
-		mockedUser.setPassword(encoder.encode("pass123"));
+		this.given(encoder.encode("pass123")).willReturn(mockedUser.getPassword());
+		this.given(encoder.matches("pass123", mockedUser.getPassword())).willReturn(true);	
 		this.given(userDetailsService.loadUserByUsername(mockedUser.getUsername())).willReturn(mockedUser);
 		this.given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
 	}	
