@@ -2,7 +2,6 @@ package svobodavlad.imagesprocessing.google;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.util.Collections;
 
 import javax.persistence.EntityExistsException;
 import javax.servlet.FilterChain;
@@ -25,13 +24,12 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken.Payload;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 
 import svobodavlad.imagesprocessing.security.AuthenticationService;
 import svobodavlad.imagesprocessing.security.User;
 import svobodavlad.imagesprocessing.security.UserRegister;
 import svobodavlad.imagesprocessing.security.UserService;
-
-import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 
 public class GoogleLoginFilter extends AbstractAuthenticationProcessingFilter {
 
@@ -81,14 +79,13 @@ public class GoogleLoginFilter extends AbstractAuthenticationProcessingFilter {
 			throw new BadCredentialsException("");
 		}
 		return getAuthenticationManager()
-				.authenticate(new UsernamePasswordAuthenticationToken(username, username, Collections.emptyList()));
+				.authenticate(new UsernamePasswordAuthenticationToken(username, username));
 	}
 
 	@Override
 	protected void successfulAuthentication(HttpServletRequest req, HttpServletResponse res, FilterChain chain,
 			Authentication auth) throws IOException, ServletException {
 		AuthenticationService.addToken(res, auth.getName());
-
 		userService.updateLastLoginDateTime(auth.getName());
 	}
 

@@ -24,8 +24,14 @@ public class SecurityMockUtil {
 		return user;
 	}
 	
-	public static User getMockedDefaultUser() {
+	public static User getMockedDefaultUserInternal() {
 		User user = new User(USER_USERNAME, USER_PASSWORD, LoginProvider.INTERNAL, USER_GIVEN_NAME, USER_FAMILY_NAME, null, null);
+		user.addRole(new Role(ROLE_USER));
+		return user;
+	}
+	
+	public static User getMockedDefaultUserGoogle() {
+		User user = new User(USER_USERNAME, USER_PASSWORD, LoginProvider.GOOGLE, USER_GIVEN_NAME, USER_FAMILY_NAME, null, null);
 		user.addRole(new Role(ROLE_USER));
 		return user;
 	}	

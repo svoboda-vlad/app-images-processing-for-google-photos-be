@@ -38,8 +38,8 @@ class UserControllerTest extends UnitTestTemplate {
 		int expectedStatus = 200;
 		String expectedJson = "{\"username\":\"user1\",\"givenName\":\"User 1\",\"familyName\":\"User 1\",\"userRoles\":[{\"role\":{\"id\":0,\"name\":\"ROLE_USER\"}}],\"lastLoginDateTime\":null,\"previousLoginDateTime\":null}";
 
-		this.given(userDetailsService.loadUserByUsername(SecurityMockUtil.getMockedDefaultUser().getUsername())).willReturn(SecurityMockUtil.getMockedDefaultUser());
-		this.given(userRepository.findByUsername(SecurityMockUtil.getMockedDefaultUser().getUsername())).willReturn(Optional.of(SecurityMockUtil.getMockedDefaultUser()));
+		this.given(userDetailsService.loadUserByUsername(SecurityMockUtil.getMockedDefaultUserInternal().getUsername())).willReturn(SecurityMockUtil.getMockedDefaultUserInternal());
+		this.given(userRepository.findByUsername(SecurityMockUtil.getMockedDefaultUserInternal().getUsername())).willReturn(Optional.of(SecurityMockUtil.getMockedDefaultUserInternal()));
 
 		ResultActions mvcResult = this.mockMvcPerformGetAuthorizationDefaultUser(requestUrl);
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
@@ -120,11 +120,11 @@ class UserControllerTest extends UnitTestTemplate {
 		int expectedStatus = 200;
 		String expectedJson = "{\"username\":\"user1\",\"givenName\":\"User X\",\"familyName\":\"User Y\",\"userRoles\":[{\"role\":{\"id\":0,\"name\":\"ROLE_USER\"}}],\"lastLoginDateTime\":null,\"previousLoginDateTime\":null}";
 
-		this.given(userDetailsService.loadUserByUsername(SecurityMockUtil.getMockedDefaultUser().getUsername())).willReturn(SecurityMockUtil.getMockedDefaultUser());
+		this.given(userDetailsService.loadUserByUsername(SecurityMockUtil.getMockedDefaultUserInternal().getUsername())).willReturn(SecurityMockUtil.getMockedDefaultUserInternal());
 
-		UserInfo userInfo = new UserInfo(SecurityMockUtil.getMockedDefaultUser().getUsername(), "User X", "User Y", null, null, new ArrayList<UserRoles>());
+		UserInfo userInfo = new UserInfo(SecurityMockUtil.getMockedDefaultUserInternal().getUsername(), "User X", "User Y", null, null, new ArrayList<UserRoles>());
 
-		this.given(userService.updateUser(userInfo)).willReturn(userInfo.toUser(SecurityMockUtil.getMockedDefaultUser()));
+		this.given(userService.updateUser(userInfo)).willReturn(userInfo.toUser(SecurityMockUtil.getMockedDefaultUserInternal()));
 		
 		ResultActions mvcResult = this.mockMvcPerformPutAuthorizationDefaultUser(requestUrl, requestJson);
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
@@ -137,7 +137,7 @@ class UserControllerTest extends UnitTestTemplate {
 		int expectedStatus = 400;
 		String expectedJson = "";
 
-		this.given(userDetailsService.loadUserByUsername(SecurityMockUtil.getMockedDefaultUser().getUsername())).willReturn(SecurityMockUtil.getMockedDefaultUser());
+		this.given(userDetailsService.loadUserByUsername(SecurityMockUtil.getMockedDefaultUserInternal().getUsername())).willReturn(SecurityMockUtil.getMockedDefaultUserInternal());
 
 		ResultActions mvcResult = this.mockMvcPerformPutAuthorizationDefaultUser(requestUrl, requestJson);
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
@@ -149,7 +149,7 @@ class UserControllerTest extends UnitTestTemplate {
 		int expectedStatus = 204;
 		String expectedJson = "";
 
-		User user = SecurityMockUtil.getMockedDefaultUser();
+		User user = SecurityMockUtil.getMockedDefaultUserInternal();
 		user.setId(1L);
 
 		this.given(userDetailsService.loadUserByUsername(user.getUsername())).willReturn(user);

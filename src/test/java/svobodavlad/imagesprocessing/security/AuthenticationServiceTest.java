@@ -44,7 +44,7 @@ class AuthenticationServiceTest extends UnitTestTemplate {
 
 	@Test
 	void testGetAuthenticationOk() {
-		User mockedUser = SecurityMockUtil.getMockedDefaultUser();
+		User mockedUser = SecurityMockUtil.getMockedDefaultUserInternal();
 		Date expirationDateTime = Date.from(LocalDateTime.now().plusMinutes(AuthenticationService.EXPIRY_MINS)
 				.atZone(ZoneId.systemDefault()).toInstant());
 		String jwtToken = Jwts.builder().setSubject(mockedUser.getUsername()).setExpiration(expirationDateTime)
@@ -91,7 +91,7 @@ class AuthenticationServiceTest extends UnitTestTemplate {
 
 	@Test
 	void testGetAuthenticationExpiredToken() {
-		User mockedUser = SecurityMockUtil.getMockedDefaultUser();
+		User mockedUser = SecurityMockUtil.getMockedDefaultUserInternal();
 		Date expirationDateTime = Date
 				.from(LocalDateTime.now().minusDays(1).atZone(ZoneId.systemDefault()).toInstant());
 		String jwtToken = Jwts.builder().setSubject(mockedUser.getUsername()).setExpiration(expirationDateTime)
@@ -105,7 +105,7 @@ class AuthenticationServiceTest extends UnitTestTemplate {
 	
 	@Test
 	void testGetAuthenticationUsernameNotFound() {
-		User mockedUser = SecurityMockUtil.getMockedDefaultUser();
+		User mockedUser = SecurityMockUtil.getMockedDefaultUserInternal();
 		Date expirationDateTime = Date.from(LocalDateTime.now().plusMinutes(AuthenticationService.EXPIRY_MINS)
 				.atZone(ZoneId.systemDefault()).toInstant());
 		String jwtToken = Jwts.builder().setSubject(mockedUser.getUsername()).setExpiration(expirationDateTime)

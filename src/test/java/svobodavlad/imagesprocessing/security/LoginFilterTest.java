@@ -32,7 +32,7 @@ class LoginFilterTest extends UnitTestTemplate {
 	
 	@BeforeEach
 	private void initData() {
-		mockedUser = SecurityMockUtil.getMockedDefaultUser();
+		mockedUser = SecurityMockUtil.getMockedDefaultUserInternal();
 		mockedUser.setPassword(encoder.encode("pass123"));
 		this.given(userDetailsService.loadUserByUsername(mockedUser.getUsername())).willReturn(mockedUser);
 		this.given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));

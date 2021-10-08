@@ -36,7 +36,7 @@ public class ProcessingParametersUserControllerTest extends UnitTestTemplate {
 
 	@BeforeEach
 	private void initData() {
-		mockedUser = SecurityMockUtil.getMockedDefaultUser();
+		mockedUser = SecurityMockUtil.getMockedDefaultUserInternal();
 		this.given(userDetailsService.loadUserByUsername(mockedUser.getUsername())).willReturn(mockedUser);
 	}
 

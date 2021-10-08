@@ -31,7 +31,7 @@ class ProcessingParametersUserServiceTest extends UnitTestTemplate {
 	
 	@Test
 	void testResetToDefaultReturnsDefault() {
-		User mockedUser = SecurityMockUtil.getMockedDefaultUser();
+		User mockedUser = SecurityMockUtil.getMockedDefaultUserInternal();
 		ProcessingParametersUser parameters = new ProcessingParametersUser(1800, 1000, 1000);
 		parameters.setUser(mockedUser);
 		
@@ -50,7 +50,7 @@ class ProcessingParametersUserServiceTest extends UnitTestTemplate {
 	
 	@Test
 	void testResetToDefaultThrowsError() {
-		User mockedUser = SecurityMockUtil.getMockedDefaultUser();
+		User mockedUser = SecurityMockUtil.getMockedDefaultUserInternal();
 		ProcessingParametersUser parameters = new ProcessingParametersUser(1800, 1000, 1000);
 		parameters.setUser(mockedUser);
 		
@@ -67,7 +67,7 @@ class ProcessingParametersUserServiceTest extends UnitTestTemplate {
 	
 	@Test
 	void testResetToDefaultReturnsDefaultWhenParametersUserNotFound() {
-		User mockedUser = SecurityMockUtil.getMockedDefaultUser();
+		User mockedUser = SecurityMockUtil.getMockedDefaultUserInternal();
 		
 		this.given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
 		this.given(parametersRepository.findByUser(mockedUser)).willReturn(Optional.empty());

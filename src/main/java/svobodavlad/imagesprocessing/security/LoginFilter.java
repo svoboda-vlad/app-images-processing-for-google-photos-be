@@ -47,10 +47,8 @@ public class LoginFilter extends AbstractAuthenticationProcessingFilter {
 			throw new BadCredentialsException("");
 
 		Optional<User> optUser = userRepository.findByUsername(loginUser.getUsername());
-		if (optUser.isPresent()) {
-			if (optUser.get().getLoginProvider() != LoginProvider.INTERNAL)
-				throw new BadCredentialsException("");
-		}
+		if (optUser.isPresent() && optUser.get().getLoginProvider() != LoginProvider.INTERNAL) throw new BadCredentialsException("");
+		
 		return getAuthenticationManager().authenticate(
 				new UsernamePasswordAuthenticationToken(loginUser.getUsername(), loginUser.getPassword()));
 	}
