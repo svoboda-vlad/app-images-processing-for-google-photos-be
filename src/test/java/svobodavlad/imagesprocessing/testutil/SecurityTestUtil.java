@@ -35,6 +35,7 @@ public class SecurityTestUtil {
 	private static final String DEFAULT_PASSWORD = "pass123";
 	private static final String DEFAULT_GIVEN_NAME = "User 1";
 	private static final String DEFAULT_FAMILY_NAME = "User 1";
+	private static final String DEFAULT_USERNAME_GOOGLE = "usergoogle1";
 
 	public User saveAdminUser() {
 		User user = new User(ADMIN_USERNAME, encoder.encode(ADMIN_PASSWORD), LoginProvider.INTERNAL, ADMIN_GIVEN_NAME,
@@ -57,7 +58,7 @@ public class SecurityTestUtil {
 	}
 
 	public User saveDefaultUserGoogle() {
-		User user = new User(DEFAULT_USERNAME, encoder.encode(DEFAULT_USERNAME), LoginProvider.GOOGLE, DEFAULT_GIVEN_NAME,
+		User user = new User(DEFAULT_USERNAME_GOOGLE, encoder.encode(DEFAULT_USERNAME_GOOGLE), LoginProvider.GOOGLE, DEFAULT_GIVEN_NAME,
 				DEFAULT_FAMILY_NAME, null, null);
 		user = userRepository.save(user);
 		Optional<Role> optRole1 = roleRepository.findByName(ROLE_USER);

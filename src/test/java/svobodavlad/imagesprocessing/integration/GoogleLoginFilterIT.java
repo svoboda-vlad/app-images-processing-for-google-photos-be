@@ -1,6 +1,7 @@
 package svobodavlad.imagesprocessing.integration;
 
 import java.security.GeneralSecurityException;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -57,6 +58,27 @@ class GoogleLoginFilterIT extends IntegTestTemplate {
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
 		this.mockMvcExpectHeaderExists(mvcResult, expectedHeader);
 	}
+	
+	@Test
+	void testGoogleLoginUserFoundButInternalUnauthorized401() throws Exception {
+		String requestUrl = "/google-login";
+		String requestJson = "{\"idToken\":\"abcdef\"}";
+		int expectedStatus = 401;
+		String expectedJson = "";
+		String unexpectedHeader = "Authorization";
+		
+		User defaultUserInternal = securityTestUtil.saveDefaultUserInternal();
+
+		Header header = new Header();
+		Payload payload = new Payload();
+		payload.setSubject(defaultUserInternal.getUsername());
+		GoogleIdToken idToken = new GoogleIdToken(header, payload, new byte[0], new byte[0]);
+		this.given(googleIdTokenVerifier.verify("abcdef")).willReturn(idToken);
+		
+		ResultActions mvcResult = this.mockMvcPerformPostNoAuthorization(requestUrl, requestJson);
+		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
+		this.mockMvcExpectHeaderDoesNotExist(mvcResult, unexpectedHeader);
+	}	
 
 	@Test
 	void testGoogleLoginRegisterNewUserOk200() throws Exception {
@@ -83,8 +105,8 @@ class GoogleLoginFilterIT extends IntegTestTemplate {
 		expectedStatus = 200;
 		Optional<User> optUser = userRepository.findByUsername(newUserUsername);
 		expectedJson = "{\"username\":\"user322\",\"givenName\":\"User 322\",\"familyName\":\"User 322\",\"userRoles\":[{\"role\":{\"name\":\"ROLE_USER\"}}],\"lastLoginDateTime\":\""
-				+ optUser.get().getLastLoginDateTime() + "\",\"previousLoginDateTime\":\""
-				+ optUser.get().getLastLoginDateTime() + "\"}";
+				+ optUser.get().getLastLoginDateTime().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME) + "\",\"previousLoginDateTime\":\""
+				+ optUser.get().getLastLoginDateTime().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME) + "\"}";
 
 		mvcResult = this.mockMvcPerformGetAuthorizationForUsername(requestUrl, newUserUsername);
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
