@@ -2,7 +2,6 @@ package svobodavlad.imagesprocessing.security;
 
 import java.util.Optional;
 
-import javax.persistence.EntityExistsException;
 import javax.validation.Valid;
 
 import org.springframework.http.ResponseEntity;
@@ -36,7 +35,7 @@ public class UserController {
 		User user = userRegister.toUserInternal(encoder);
 		try {
 			userService.registerUser(user);
-		} catch (EntityExistsException e) {
+		} catch (Exception e) {
 			return ResponseEntity.badRequest().build();
 		}
 		return ResponseEntity.created(null).build();

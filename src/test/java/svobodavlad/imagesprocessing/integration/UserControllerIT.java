@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.ResultActions;
 
+import svobodavlad.imagesprocessing.security.RoleRepository;
+import svobodavlad.imagesprocessing.security.UserRepository;
 import svobodavlad.imagesprocessing.testutil.IntegTestTemplate;
 import svobodavlad.imagesprocessing.testutil.SecurityTestUtil;
 
@@ -12,6 +14,12 @@ public class UserControllerIT extends IntegTestTemplate {
 
 	@Autowired
 	private SecurityTestUtil securityTestUtil;
+	
+	@Autowired
+	private UserRepository userRepository;	
+	
+	@Autowired
+	private RoleRepository roleRepository;
 	
 	@BeforeEach
 	void initData() {
@@ -91,6 +99,20 @@ public class UserControllerIT extends IntegTestTemplate {
 		ResultActions mvcResult = this.mockMvcPerformPostNoAuthorization(requestUrl, requestJson);
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
 	}
+	
+	@Test
+	void testRegisterRoleNotFoundBadRequest400() throws Exception {
+		String requestUrl = "/user";
+		String requestJson = "{\"username\": \"user1\", \"password\": \"pass123\",\"givenName\": \"User 1\",\"familyName\": \"User 1\"}";
+		int expectedStatus = 400;
+		String expectedJson = "";
+		
+		userRepository.deleteAll();
+		roleRepository.deleteAll();
+
+		ResultActions mvcResult = this.mockMvcPerformPostNoAuthorization(requestUrl, requestJson);
+		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
+	}	
 
 	@Test
 	void testUpdateUserOk200() throws Exception {
