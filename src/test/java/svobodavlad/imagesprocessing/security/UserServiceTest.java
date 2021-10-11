@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
-import svobodavlad.imagesprocessing.security.User.LoginProvider;
+import svobodavlad.imagesprocessing.testutil.SecurityMockUtil;
 import svobodavlad.imagesprocessing.testutil.UnitTestTemplate;
 
 public class UserServiceTest extends UnitTestTemplate {
@@ -31,75 +31,74 @@ public class UserServiceTest extends UnitTestTemplate {
 	@Test
 	void testRegisterUserNewUser() {
 		Role role = new Role(USER_ROLE_NAME);
-		User user = new User("user", "A".repeat(60), LoginProvider.INTERNAL, "User", "User", null, null);
-		user.addRole(role);
+		User mockedUser = SecurityMockUtil.getMockedDefaultUserInternal();
 
 		this.given(roleRepository.findByName(USER_ROLE_NAME)).willReturn(Optional.of(role));
-		this.given(userRepository.findByUsername("user")).willReturn(Optional.empty());
-		this.given(userRepository.save(user)).willReturn(user);
+		this.given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.empty());
+		this.given(userRepository.save(mockedUser)).willReturn(mockedUser);
 
-		this.assertThat(userService.registerUser(user)).isEqualTo(user);
+		this.assertThat(userService.registerUser(mockedUser)).isEqualTo(mockedUser);
 	}
 
 	@Test
 	void testRegisterUserAlreadyExistsException() {
 		Role role = new Role(USER_ROLE_NAME);
-		User user = new User("user", "A".repeat(60), LoginProvider.INTERNAL, "User", "User", null, null);
+		User mockedUser = SecurityMockUtil.getMockedDefaultUserInternal();
 
 		this.given(roleRepository.findByName(USER_ROLE_NAME)).willReturn(Optional.of(role));
-		this.given(userRepository.findByUsername("user")).willReturn(Optional.of(user));
+		this.given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
 
 		this.assertThatExceptionOfType(EntityExistsException.class).isThrownBy(() -> {
-			userService.registerUser(user);
+			userService.registerUser(mockedUser);
 		});
 
 	}
 
 	@Test
 	void testRegisterUserDefaultRoleNotFound() {
-		User user = new User("user", "A".repeat(60), LoginProvider.INTERNAL, "User", "User", null, null);
+		User mockedUser = SecurityMockUtil.getMockedDefaultUserInternal();
 
 		this.given(roleRepository.findByName(USER_ROLE_NAME)).willReturn(Optional.empty());
 
 		this.assertThatExceptionOfType(RuntimeException.class).isThrownBy(() -> {
-			userService.registerUser(user);
+			userService.registerUser(mockedUser);
 		});
 	}
 
 	@Test
 	void testUpdateLastLoginDateTimeFirstLogin() {
-		String username = "user";
-		User user = new User(username, "A".repeat(60), LoginProvider.INTERNAL, "User", "User", null, null);
+		User mockedUser = SecurityMockUtil.getMockedDefaultUserInternal();
 
-		this.given(userRepository.findByUsername(username)).willReturn(Optional.of(user));
-		this.given(userRepository.save(user)).willReturn(user);
+		this.given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
+		this.given(userRepository.save(mockedUser)).willReturn(mockedUser);
 
 		LocalDateTime minTime = LocalDateTime.now();
 		
-		this.assertThat(userService.updateLastLoginDateTime(username)).isEqualTo(user);
-		this.assertThat(user.getLastLoginDateTime()).isBetween(minTime, LocalDateTime.now());
-		this.assertThat(user.getPreviousLoginDateTime()).isBetween(minTime, LocalDateTime.now());
+		this.assertThat(userService.updateLastLoginDateTime(mockedUser.getUsername())).isEqualTo(mockedUser);
+		this.assertThat(mockedUser.getLastLoginDateTime()).isBetween(minTime, LocalDateTime.now());
+		this.assertThat(mockedUser.getPreviousLoginDateTime()).isBetween(minTime, LocalDateTime.now());
 	}
 	
 	@Test
 	void testUpdateLastLoginDateTimeSecondLogin() {
-		String username = "user";
+		User mockedUser = SecurityMockUtil.getMockedDefaultUserInternal();
 		LocalDateTime lastLoginDateTime = LocalDateTime.of(LocalDate.of(2021, 9, 26), LocalTime.of(12, 53));
-		User user = new User(username, "A".repeat(60), LoginProvider.INTERNAL, "User", "User", lastLoginDateTime, lastLoginDateTime);
+		mockedUser.setLastLoginDateTime(lastLoginDateTime);
+		mockedUser.setPreviousLoginDateTime(lastLoginDateTime);
 		
-		this.given(userRepository.findByUsername(username)).willReturn(Optional.of(user));
-		this.given(userRepository.save(user)).willReturn(user);
+		this.given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
+		this.given(userRepository.save(mockedUser)).willReturn(mockedUser);
 
 		LocalDateTime minTime = LocalDateTime.now();
 		
-		this.assertThat(userService.updateLastLoginDateTime(username)).isEqualTo(user);
-		this.assertThat(user.getLastLoginDateTime()).isBetween(minTime, LocalDateTime.now());
-		this.assertThat(user.getPreviousLoginDateTime()).isEqualTo(lastLoginDateTime);
+		this.assertThat(userService.updateLastLoginDateTime(mockedUser.getUsername())).isEqualTo(mockedUser);
+		this.assertThat(mockedUser.getLastLoginDateTime()).isBetween(minTime, LocalDateTime.now());
+		this.assertThat(mockedUser.getPreviousLoginDateTime()).isEqualTo(lastLoginDateTime);
 	}
 	
 	@Test
 	void testUpdateLastLoginDateTimeUserDoesNotExist() {
-		String username = "userx";		
+		String username = "userx";
 		this.given(userRepository.findByUsername(username)).willReturn(Optional.empty());
 		
 		this.assertThat(userService.updateLastLoginDateTime(username)).isNull();
@@ -107,41 +106,38 @@ public class UserServiceTest extends UnitTestTemplate {
 
 	@Test
 	void testUpdateUserOkUserExists() {
-		String username = "user";
-		User user = new User("user", "A".repeat(60), LoginProvider.INTERNAL, "User", "User", null, null);
-		UserInfo userInfo = new UserInfo("user", "User", "User", null, null, null);
+		User mockedUser = SecurityMockUtil.getMockedDefaultUserInternal();
+		UserInfo mockedUserInfo = mockedUser.toUserInfo();
 
-		this.given(userRepository.findByUsername(username)).willReturn(Optional.of(user));
-		this.given(userRepository.save(userInfo.toUser(user))).willReturn(user);
-		this.assertThat(userService.updateUser(userInfo)).isEqualTo(user);
+		this.given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
+		this.given(userRepository.save(mockedUserInfo.toUser(mockedUser))).willReturn(mockedUser);
+		this.assertThat(userService.updateUser(mockedUserInfo)).isEqualTo(mockedUser);
 	}
 
 	@Test
 	void testRegisterUserNewAdminUser() {
 		Role role1 = new Role(USER_ROLE_NAME);
 		Role role2 = new Role(ADMIN_ROLE_NAME);
-		User user = new User("user", "A".repeat(60), LoginProvider.INTERNAL, "User", "User", null, null);
-		user.addRole(role1);
-		user.addRole(role2);
+		User mockedUser = SecurityMockUtil.getMockedAdminUser();
 
 		this.given(roleRepository.findByName(USER_ROLE_NAME)).willReturn(Optional.of(role1));
 		this.given(roleRepository.findByName(ADMIN_ROLE_NAME)).willReturn(Optional.of(role2));
 		this.given(userRepository.findByUsername("user")).willReturn(Optional.empty());
-		this.given(userRepository.save(user)).willReturn(user);
+		this.given(userRepository.save(mockedUser)).willReturn(mockedUser);
 
-		this.assertThat(userService.registerAdminUser(user)).isEqualTo(user);
+		this.assertThat(userService.registerAdminUser(mockedUser)).isEqualTo(mockedUser);
 	}
 
 	@Test
 	void testRegisterAdminUserAdminRoleNotFound() {
-		User user = new User("user", "A".repeat(60), LoginProvider.INTERNAL, "User", "User", null, null);
+		User mockedUser = SecurityMockUtil.getMockedDefaultUserInternal();
 
 		Role role1 = new Role(USER_ROLE_NAME);
 		this.given(roleRepository.findByName(USER_ROLE_NAME)).willReturn(Optional.of(role1));
 		this.given(roleRepository.findByName(ADMIN_ROLE_NAME)).willReturn(Optional.empty());
 
 		this.assertThatExceptionOfType(RuntimeException.class).isThrownBy(() -> {
-			userService.registerAdminUser(user);
+			userService.registerAdminUser(mockedUser);
 		});
 	}
 
