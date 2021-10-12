@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
+import svobodavlad.imagesprocessing.parameters.ProcessingParametersUserService;
 import svobodavlad.imagesprocessing.testutil.SecurityMockUtil;
 import svobodavlad.imagesprocessing.testutil.UnitTestTemplate;
 
@@ -24,6 +25,9 @@ public class UserServiceTest extends UnitTestTemplate {
 
 	@MockBean
 	private UserRepository userRepository;
+	
+	@MockBean
+	private ProcessingParametersUserService parametersService;	
 
 	@Autowired
 	private UserService userService;
@@ -38,6 +42,7 @@ public class UserServiceTest extends UnitTestTemplate {
 		this.given(userRepository.save(mockedUser)).willReturn(mockedUser);
 
 		this.assertThat(userService.registerUser(mockedUser)).isEqualTo(mockedUser);
+		this.verify(parametersService, this.times(1)).setInitialParameters(mockedUser.getUsername());
 	}
 
 	@Test
@@ -118,22 +123,25 @@ public class UserServiceTest extends UnitTestTemplate {
 	void testRegisterUserNewAdminUser() {
 		Role role1 = new Role(USER_ROLE_NAME);
 		Role role2 = new Role(ADMIN_ROLE_NAME);
-		User mockedUser = SecurityMockUtil.getMockedAdminUser();
+		User mockedUser = SecurityMockUtil.getMockedDefaultUserInternal();
 
 		this.given(roleRepository.findByName(USER_ROLE_NAME)).willReturn(Optional.of(role1));
 		this.given(roleRepository.findByName(ADMIN_ROLE_NAME)).willReturn(Optional.of(role2));
-		this.given(userRepository.findByUsername("user")).willReturn(Optional.empty());
+		this.given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.empty());
 		this.given(userRepository.save(mockedUser)).willReturn(mockedUser);
 
 		this.assertThat(userService.registerAdminUser(mockedUser)).isEqualTo(mockedUser);
+		this.verify(parametersService, this.times(1)).setInitialParameters(mockedUser.getUsername());
 	}
 
 	@Test
 	void testRegisterAdminUserAdminRoleNotFound() {
+		Role role1 = new Role(USER_ROLE_NAME);
 		User mockedUser = SecurityMockUtil.getMockedDefaultUserInternal();
 
-		Role role1 = new Role(USER_ROLE_NAME);
 		this.given(roleRepository.findByName(USER_ROLE_NAME)).willReturn(Optional.of(role1));
+		this.given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.empty());
+		this.given(userRepository.save(mockedUser)).willReturn(mockedUser);
 		this.given(roleRepository.findByName(ADMIN_ROLE_NAME)).willReturn(Optional.empty());
 
 		this.assertThatExceptionOfType(RuntimeException.class).isThrownBy(() -> {

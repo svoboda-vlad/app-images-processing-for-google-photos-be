@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import svobodavlad.imagesprocessing.parameters.ProcessingParametersUserService;
+
 @Service
 @Transactional
 public class UserService {
@@ -21,6 +23,9 @@ public class UserService {
 
 	@Autowired
 	private UserRepository userRepository;
+	
+	@Autowired
+	private ProcessingParametersUserService parametersService;
 
 	private static final String USER_ROLE_NAME = "ROLE_USER";
 	private static final String ADMIN_ROLE_NAME = "ROLE_ADMIN";
@@ -36,12 +41,14 @@ public class UserService {
 			if (userRepository.findByUsername(user.getUsername()).isPresent())
 				throw new EntityExistsException("User already exists.");
 			user.addRole(optRole.get());
-			return userRepository.save(user);
+			user = userRepository.save(user);
+			parametersService.setInitialParameters(user.getUsername());
+			return user;
 		}
 	}
 
 	public User registerAdminUser(User user) {
-		registerUser(user);
+		user = registerUser(user);
 
 		Optional<Role> optRole = roleRepository.findByName(ADMIN_ROLE_NAME);
 

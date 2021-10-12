@@ -34,5 +34,17 @@ public class ProcessingParametersUserService {
 		ProcessingParametersUser parameters = optParameters.get().resetToDefault(parametersDefaultList.get(0));
 		return parametersRepository.save(parameters);
 	}
+	
+	public ProcessingParametersUser setInitialParameters(String username) {
+		Optional<User> optUser = userRepository.findByUsername(username);
+		Optional<ProcessingParametersUser> optParameters = parametersRepository.findByUser(optUser.get());
+		if (optParameters.isEmpty()) {
+			List<ProcessingParametersDefault> parametersDefaultList = parametersDefaultRepository.findAll();
+			if (parametersDefaultList.isEmpty()) throw new RuntimeException("Default parameters not found.");
+			ProcessingParametersUser parameters = parametersDefaultList.get(0).toProcessingParametersUser(optUser.get());
+			return parametersRepository.save(parameters);
+		}
+		return null;
+	}	
 
 }

@@ -86,6 +86,13 @@ public class UserControllerIT extends IntegTestTemplate {
 
 		mvcResult = this.mockMvcPerformGetAuthorizationForUsername(requestUrl, username);
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
+		
+		requestUrl = "/parameters";
+		expectedStatus = 200;
+		expectedJson = "{\"timeDiffGroup\":1800,\"resizeWidth\":1000,\"resizeHeight\":1000}";
+		
+		mvcResult = this.mockMvcPerformGetAuthorizationForUsername(requestUrl, username);
+		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
 
 	}
 
