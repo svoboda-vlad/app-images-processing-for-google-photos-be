@@ -37,18 +37,15 @@ Response:
 {"id":6,"currencyCode":"EUR","country":"EMU","rateQty":1}
 ```
 
-restricted (administrator):
-- GET "/admin/parameters-default" (ProcessingParametersDefaultController)
+restricted:
+- GET + PUT "/parameters" (ProcessingParametersUserController)
+- GET "/parameters-reset-to-default" (ProcessingParametersUserController)
 
 ## REST API endpoints - security + administration
 unrestricted:
 - POST "/login" (LoginFilter)
 - POST "/google-login" (GoogleLoginFilter)
 - GET + POST "/user" (UserController)
-
-unrestricted, but not REST API:
-- GET "/h2-console/**"
-- GET "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html"
 
 restricted:
 - PUT + DELETE "/user" (UserController)
@@ -73,7 +70,16 @@ Heroku: [https://images-proc-for-google-photos.herokuapp.com/h2-console](https:/
 ## Models - domain
 
 ProcessingParametersDefault - id (long), timeDiffGroup (int, min = 60, max = 86400), resizeWidth (int, min = 1, max = 10000), resizeHeight (int, min = 1, max = 10000)
+- no endpoint
+
+ProcessingParametersDefaultTemplate - timeDiffGroup (int, min = 60, max = 86400), resizeWidth (int, min = 1, max = 10000), resizeHeight (int, min = 1, max = 10000)
 - GET "/admin/parameters-default": {"timeDiffGroup":1800,"resizeWidth":1000,"resizeHeight":1000}
+
+ProcessingParametersUser - id (long), timeDiffGroup (int, min = 60, max = 86400), resizeWidth (int, min = 1, max = 10000), resizeHeight (int, min = 1, max = 10000), user (User)
+- no endpoint
+
+ProcessingParametersUserTemplate - timeDiffGroup (int, min = 60, max = 86400), resizeWidth (int, min = 1, max = 10000), resizeHeight (int, min = 1, max = 10000)
+- GET "/parameters": {"timeDiffGroup":1800,"resizeWidth":1000,"resizeHeight":1000}
 
 ## Models - security
 
@@ -107,6 +113,7 @@ JDBC URL: "jdbc:h2:mem:testdb"
 
 Database tables - domain:
 - processing_parameters_default - id (int PRIMARY KEY), time_diff_group (int NOT NULL), resize_width (int NOT NULL), resize_height (int NOT NULL)
+- processing_parameters_user - id (int PRIMARY KEY), time_diff_group (int NOT NULL), resize_width (int NOT NULL), resize_height (int NOT NULL), user_id (int NOT NULL)
 
 Database tables - security:
 - user - id (int PRIMARY KEY), username (VARCHAR(255) NOT NULL UNIQUE), password (VARCHAR(255) NOT NULL), last_login_date_time (TIMESTAMP), previous_login_date_time (TIMESTAMP), login_provider(VARCHAR(255), given_name(VARCHAR(255), family_name(VARCHAR(255))
@@ -173,9 +180,13 @@ DEFAULT:
 
 spring.liquibase.change-log=classpath:db/changelog/db.changelog-master.xml
 
+spring.liquibase.enabled=true
+
 spring.profiles.active=dev
 
 google.client.clientids=...
+
+spring.liquibase.enabled=false
 
 DEV:
 
@@ -184,6 +195,10 @@ spring.h2.console.enabled=true
 spring.h2.console.settings.web-allow-others=true
 
 spring.datasource.generate-unique-name=false
+
+LIQUIBASE:
+
+spring.liquibase.enabled=true
 
 INTEG:
 
@@ -197,6 +212,8 @@ PROD:
 
 spring.h2.console.enabled=false
 
+spring.liquibase.enabled=true
+
 ## Heroku Config Vars
 
 SPRING_PROFILES_ACTIVE=prod
@@ -209,19 +226,59 @@ ADMIN_PASSWORD=...
 
 ## Maven build
 
-default "dev" profile
+default "dev" profile - unit testing (mocked repositories)
+
+```
+sudo mvn clean package -Dhttps.protocols=TLSv1.2
+```
+
+default "dev" + "liquibase" profile - testing against H2 database
 
 ```
 sudo mvn clean install -Dhttps.protocols=TLSv1.2
 ```
 
-"integration" profile - integration testing
+"integ" + "liquibase" profile - integration testing against PostgreSQL database
 
 ```
 sudo mvn clean install -Dhttps.protocols=TLSv1.2 -Dspring.profiles.active=integ
 ```
 ## Administrator account
 
+default "dev" + "liquibase" profile - using H2 database
+
 ```
-sudo java -Dadmin.username=admin -Dadmin.password=admin123 -jar target/*.jar
+sudo java -Dadmin.username=admin -Dadmin.password=admin123 -Dspring.profiles.active=dev,liquibase -jar target/*.jar
+```
+
+"prod" profile - using PostgreSQL database
+
+```
+sudo java -Dadmin.username=admin -Dadmin.password=admin123 -Dspring.profiles.active=prod -jar target/*.jar
+```
+
+## PostgreSQL within Homestead Vagrant box
+SQL queries
+
+```
+psql -U homestead -h localhost -c '\x' -c 'SELECT * FROM mytable;'
+```
+Starting/stopping database
+
+```
+sudo service postgresql status
+sudo service postgresql start
+sudo service postgresql stop
+```
+PostgreSQL version
+
+```
+psql --version
+```
+
+Drop and create database
+
+```
+dropdb homestead -U homestead -h localhost
+createdb homestead -U homestead -h localhost
 ```

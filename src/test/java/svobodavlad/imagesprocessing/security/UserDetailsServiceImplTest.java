@@ -1,26 +1,17 @@
 package svobodavlad.imagesprocessing.security;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.mockito.BDDMockito.given;
-
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
-import svobodavlad.imagesprocessing.security.User.LoginProvider;
+import svobodavlad.imagesprocessing.testutil.SecurityMockUtil;
+import svobodavlad.imagesprocessing.testutil.UnitTestTemplate;
 
-@SpringBootTest
-class UserDetailsServiceImplTest {
-
-	@Autowired
-	private PasswordEncoder encoder;
+class UserDetailsServiceImplTest extends UnitTestTemplate {
 
 	@Autowired
 	private UserDetailsService userDetailsService;
@@ -30,21 +21,19 @@ class UserDetailsServiceImplTest {
 
 	@Test
 	void testLoadUserByUsernameOk() {
-		User user = new User("user", encoder.encode("password"), LoginProvider.INTERNAL, "User", "User");
+		User mockedUser = SecurityMockUtil.getMockedDefaultUserInternal();
+		this.given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
 
-		given(userRepository.findByUsername(user.getUsername())).willReturn(Optional.of(user));
-
-		assertThat(userDetailsService.loadUserByUsername(user.getUsername())).isEqualTo(user);
+		this.assertThat(userDetailsService.loadUserByUsername(mockedUser.getUsername())).isEqualTo(mockedUser);
 	}
 
 	@Test
 	void testLoadUserByUsernameThrowsException() {
-		User user = new User("user", encoder.encode("password"), LoginProvider.INTERNAL, "User", "User");
+		User mockedUser = SecurityMockUtil.getMockedDefaultUserInternal();
+		this.given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.empty());
 
-		given(userRepository.findByUsername(user.getUsername())).willReturn(Optional.empty());
-
-		assertThatExceptionOfType(UsernameNotFoundException.class).isThrownBy(() -> {
-			userDetailsService.loadUserByUsername(user.getUsername());
+		this.assertThatExceptionOfType(UsernameNotFoundException.class).isThrownBy(() -> {
+			userDetailsService.loadUserByUsername(mockedUser.getUsername());
 		});
 	}
 

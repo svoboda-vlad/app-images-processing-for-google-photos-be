@@ -9,8 +9,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import svobodavlad.imagesprocessing.parametersdefault.ProcessingParametersDefault;
-import svobodavlad.imagesprocessing.parametersdefault.ProcessingParametersDefaultRepository;
+import svobodavlad.imagesprocessing.parameters.ProcessingParametersDefault;
+import svobodavlad.imagesprocessing.parameters.ProcessingParametersDefaultRepository;
 import svobodavlad.imagesprocessing.security.User;
 import svobodavlad.imagesprocessing.security.UserRegister;
 import svobodavlad.imagesprocessing.security.UserService;
@@ -38,14 +38,14 @@ public class StartupCommandLineRunner implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		saveAdminUser();
 		saveProcessingParametersDefault();
+		saveAdminUser();
 	}
 
-	private void saveAdminUser() {
+	void saveAdminUser() {
 		if (adminUser.getUsername() != null && adminUser.getPassword() != null) {
 			UserRegister userRegister = new UserRegister(adminUser.getUsername(), adminUser.getPassword(),
-					"Administator", "Administrator");
+					"Administrator", "Administrator");
 			User user = userRegister.toUserInternal(encoder);
 			try {
 				userService.registerAdminUser(user);
@@ -55,7 +55,7 @@ public class StartupCommandLineRunner implements CommandLineRunner {
 		}
 	}
 
-	private void saveProcessingParametersDefault() {
+	void saveProcessingParametersDefault() {
 		if (parametersRepository.findAll().isEmpty()) {
 			ProcessingParametersDefault parameters = new ProcessingParametersDefault(TIME_DIFF_GROUP_DEFAULT,
 					RESIZE_WIDTH_DEFAULT, RESIZE_HEIGHT_DEFAULT);

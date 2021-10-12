@@ -2,9 +2,8 @@ package svobodavlad.imagesprocessing.google;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.util.Collections;
+import java.util.Optional;
 
-import javax.persistence.EntityExistsException;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -25,13 +24,14 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken.Payload;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 
 import svobodavlad.imagesprocessing.security.AuthenticationService;
 import svobodavlad.imagesprocessing.security.User;
+import svobodavlad.imagesprocessing.security.User.LoginProvider;
 import svobodavlad.imagesprocessing.security.UserRegister;
+import svobodavlad.imagesprocessing.security.UserRepository;
 import svobodavlad.imagesprocessing.security.UserService;
-
-import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 
 public class GoogleLoginFilter extends AbstractAuthenticationProcessingFilter {
 
@@ -45,6 +45,9 @@ public class GoogleLoginFilter extends AbstractAuthenticationProcessingFilter {
 
 	@Autowired
 	private UserService userService;
+
+	@Autowired
+	private UserRepository userRepository;
 
 	public GoogleLoginFilter(AuthenticationManager authManager) {
 		super(new AntPathRequestMatcher("/google-login", "POST"));
@@ -66,29 +69,28 @@ public class GoogleLoginFilter extends AbstractAuthenticationProcessingFilter {
 				Payload payload = idToken.getPayload();
 				username = payload.getSubject();
 
-				String familyName = (String) payload.get("family_name");
-				String givenName = (String) payload.get("given_name");
-				UserRegister userRegister = new UserRegister(username, username, givenName, familyName);
-				User user = userRegister.toUserGoogle(encoder);
-				try {
+				Optional<User> optUser = userRepository.findByUsername(username);
+				if (optUser.isPresent() && optUser.get().getLoginProvider() != LoginProvider.GOOGLE)
+					throw new BadCredentialsException("");
+				if (optUser.isEmpty()) {
+					String familyName = (String) payload.get("family_name");
+					String givenName = (String) payload.get("given_name");
+					UserRegister userRegister = new UserRegister(username, username, givenName, familyName);
+					User user = userRegister.toUserGoogle(encoder);
 					userService.registerUser(user);
-				} catch (EntityExistsException e) {
-					log.info(e.toString());
 				}
 			}
 		} catch (GeneralSecurityException | IOException e) {
 			log.info("Google ID token verification failed");
 			throw new BadCredentialsException("");
 		}
-		return getAuthenticationManager()
-				.authenticate(new UsernamePasswordAuthenticationToken(username, username, Collections.emptyList()));
+		return getAuthenticationManager().authenticate(new UsernamePasswordAuthenticationToken(username, username));
 	}
 
 	@Override
 	protected void successfulAuthentication(HttpServletRequest req, HttpServletResponse res, FilterChain chain,
 			Authentication auth) throws IOException, ServletException {
 		AuthenticationService.addToken(res, auth.getName());
-
 		userService.updateLastLoginDateTime(auth.getName());
 	}
 

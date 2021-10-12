@@ -1,4 +1,4 @@
-package svobodavlad.imagesprocessing.integration;
+package svobodavlad.imagesprocessing.testutil;
 
 import java.util.Optional;
 
@@ -35,31 +35,37 @@ public class SecurityTestUtil {
 	private static final String DEFAULT_PASSWORD = "pass123";
 	private static final String DEFAULT_GIVEN_NAME = "User 1";
 	private static final String DEFAULT_FAMILY_NAME = "User 1";
+	private static final String DEFAULT_USERNAME_GOOGLE = "usergoogle1";
 
-	public void saveAdminUser() {
+	public User saveAdminUser() {
 		User user = new User(ADMIN_USERNAME, encoder.encode(ADMIN_PASSWORD), LoginProvider.INTERNAL, ADMIN_GIVEN_NAME,
-				ADMIN_FAMILY_NAME);
+				ADMIN_FAMILY_NAME, null, null);
 		user = userRepository.save(user);
 		Optional<Role> optRole1 = roleRepository.findByName(ROLE_USER);
 		Optional<Role> optRole2 = roleRepository.findByName(ROLE_ADMIN);
 		user.addRole(optRole1.get());
 		user.addRole(optRole2.get());
-		userRepository.save(user);
+		return userRepository.save(user);
 	}
 	
-	public void saveDefaultUser() {
+	public User saveDefaultUserInternal() {
 		User user = new User(DEFAULT_USERNAME, encoder.encode(DEFAULT_PASSWORD), LoginProvider.INTERNAL, DEFAULT_GIVEN_NAME,
-				DEFAULT_FAMILY_NAME);
+				DEFAULT_FAMILY_NAME, null, null);
 		user = userRepository.save(user);
 		Optional<Role> optRole1 = roleRepository.findByName(ROLE_USER);
 		user.addRole(optRole1.get());
-		userRepository.save(user);
+		return userRepository.save(user);
 	}
 
-	public void deleteAllUsers() {
-		userRepository.deleteAll();
-	}
-
+	public User saveDefaultUserGoogle() {
+		User user = new User(DEFAULT_USERNAME_GOOGLE, encoder.encode(DEFAULT_USERNAME_GOOGLE), LoginProvider.GOOGLE, DEFAULT_GIVEN_NAME,
+				DEFAULT_FAMILY_NAME, null, null);
+		user = userRepository.save(user);
+		Optional<Role> optRole1 = roleRepository.findByName(ROLE_USER);
+		user.addRole(optRole1.get());
+		return userRepository.save(user);
+	}	
+	
 	public static String createBearerTokenAdminUser() {
 		return AuthenticationService.createBearerToken(ADMIN_USERNAME);
 	}

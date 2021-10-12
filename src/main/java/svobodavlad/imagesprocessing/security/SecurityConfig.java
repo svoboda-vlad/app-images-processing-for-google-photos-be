@@ -28,7 +28,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http.csrf().disable().cors().and().authorizeRequests().antMatchers(HttpMethod.POST, "/login", "/user")
+		http.csrf().disable().cors().and().authorizeRequests().antMatchers(HttpMethod.POST, "/login", "/user", "/google-login")
 				.permitAll().antMatchers(HttpMethod.GET, "/user").permitAll().antMatchers("/h2-console/**").permitAll()
 				.antMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
 				.antMatchers("/admin/**").hasRole("ADMIN").anyRequest().hasRole("USER").and()
