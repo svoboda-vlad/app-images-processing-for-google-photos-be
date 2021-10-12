@@ -186,6 +186,8 @@ spring.profiles.active=dev
 
 google.client.clientids=...
 
+spring.liquibase.enabled=false
+
 DEV:
 
 spring.h2.console.enabled=true
@@ -193,8 +195,6 @@ spring.h2.console.enabled=true
 spring.h2.console.settings.web-allow-others=true
 
 spring.datasource.generate-unique-name=false
-
-spring.liquibase.enabled=false
 
 LIQUIBASE:
 
@@ -211,6 +211,8 @@ spring.datasource.password=secret
 PROD:
 
 spring.h2.console.enabled=false
+
+spring.liquibase.enabled=true
 
 ## Heroku Config Vars
 
