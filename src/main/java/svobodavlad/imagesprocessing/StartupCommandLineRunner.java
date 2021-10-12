@@ -38,8 +38,8 @@ public class StartupCommandLineRunner implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		saveAdminUser();
 		saveProcessingParametersDefault();
+		saveAdminUser();
 	}
 
 	void saveAdminUser() {

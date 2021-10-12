@@ -230,22 +230,31 @@ default "dev" profile - unit testing (mocked repositories)
 sudo mvn clean package -Dhttps.protocols=TLSv1.2
 ```
 
-default "dev" + "liquibase" profile - testing against H2 databae
+default "dev" + "liquibase" profile - testing against H2 database
 
 ```
 sudo mvn clean install -Dhttps.protocols=TLSv1.2
 ```
 
-"integ" + "liquibase" profile - integration testing against PostgreSQL
+"integ" + "liquibase" profile - integration testing against PostgreSQL database
 
 ```
 sudo mvn clean install -Dhttps.protocols=TLSv1.2 -Dspring.profiles.active=integ
 ```
 ## Administrator account
 
+default "dev" + "liquibase" profile - using H2 database
+
 ```
-sudo java -Dadmin.username=admin -Dadmin.password=admin123 -jar target/*.jar
+sudo java -Dadmin.username=admin -Dadmin.password=admin123 -Dspring.profiles.active=dev,liquibase -jar target/*.jar
 ```
+
+"prod" profile - using PostgreSQL database
+
+```
+sudo java -Dadmin.username=admin -Dadmin.password=admin123 -Dspring.profiles.active=prod -jar target/*.jar
+```
+
 ## PostgreSQL within Homestead Vagrant box
 SQL queries
 
