@@ -48,7 +48,7 @@ public abstract class MockMvcUtil {
 
 	public ResultActions mockMvcPerformGetAuthorizationInvalidToken(String requestUrl) throws Exception {
 		return this.mockMvc
-				.perform(get(requestUrl).header("Authorization", "invalidtoken").accept(MediaType.APPLICATION_JSON));
+				.perform(get(requestUrl).header("Authorization", "Bearer invalidtoken").accept(MediaType.APPLICATION_JSON));
 	}
 
 	public ResultActions mockMvcPerformPostNoAuthorization(String requestUrl, String requestJson) throws Exception {
