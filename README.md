@@ -1,47 +1,216 @@
 # Images Processing For Google Photos (app-images-processing-for-google-photos-be)
 
-## REST API Authentication
 
-cURL (WINDOWS + LINUX) - username + password login:
+This repository contains only backend of the application providing a REST API. There is no UI.
+
+The [app-images-processing-for-google-photos-fe](https://github.com/svoboda-vlad/app-images-processing-for-google-photos-fe) project is a Angular front-end application which consumes the REST API.
+
+## Live demo
+
+**Front-end based on Angular (hosted on GitHub pages)**
+
+[https://svoboda-vlad.github.io/app-images-processing-for-google-photos-fe](https://svoboda-vlad.github.io/app-images-processing-for-google-photos-fe)
+
+**Back-end based on Spring Boot with REST API (hosted on Heroku)**
+
+Swagger UI
+
+[https://images-proc-for-google-photos.herokuapp.com/swagger-ui.html](https://images-proc-for-google-photos.herokuapp.com/swagger-ui.html)
+
+## Front-end - Registration of a new user and log in
+
+- creating a new account and log in:
+
+Menu > User > User registration
+
+- using an existing Google account and log in:
+
+Menu > User > Log in > "Log In With Google" button
+
+## Back-end - Registration of a new user and log in
+
+using cURL command line tool
+
+- creating a new account:
+
+Step 1 - registration of a new user
 
 ```
-curl -i http://localhost:8080/login -d "{\"username\": \"user1\", \"password\": \"pass123\"}"
+curl -i https://images-proc-for-google-photos.herokuapp.com/user -d "{\"username\": \"test1\",\"password\": \"pass123\", \"givenName\": \"Test 1\", \"familyName\": \"Test 1\"}" -H "Content-Type: application/json"
 ```
 
-cURL (WINDOWS + LINUX) - Google ID token login + automatic registration of a new user:
+Step 2 - log in and obtaining a JWT token
 
 ```
-curl -i http://localhost:8080/google-login -d "{\"idToken\": \"abcdef\"}"
+curl -i https://images-proc-for-google-photos.herokuapp.com/login -d "{\"username\": \"test1\", \"password\": \"pass123\"}"
 ```
 
-Returned JWT token:
+JWT token in HTTP response header:
 
 ```
 Authorization: Bearer abcdef
 ```
 
-## REST API endpoints - domain
-http://localhost:8080/
+- using an existing Google account:
 
-Example of POST request with JWT token:
+Step 1 - log in to Google account to obtain Google ID token (using allowed redirect uri "localhost:4200")
 
-cURL (WINDOWS + LINUX)
+[https://accounts.google.com/o/oauth2/v2/auth/identifier?client_id=733460469950-rnm4b6pek82bfrnd8f5hf5esa5an0ikk.apps.googleusercontent.com&redirect_uri=http%3A%2F%2Flocalhost%3A4200%2Fgoogle-login&response_type=id_token%20token&scope=profile&nonce=abcdef&flowName=GeneralOAuthFlow](https://accounts.google.com/o/oauth2/v2/auth/identifier?client_id=733460469950-rnm4b6pek82bfrnd8f5hf5esa5an0ikk.apps.googleusercontent.com&redirect_uri=http%3A%2F%2Flocalhost%3A4200%2Fgoogle-login&response_type=id_token%20token&scope=profile&nonce=abcdef&flowName=GeneralOAuthFlow)
+
+ID token returned in URL fragment identifier (after hash mark #)
+
+http://localhost:4200/google-login#access_token=abcdef&token_type=Bearer&expires_in=3599&scope=profile%20https://www.googleapis.com/auth/userinfo.profile&id_token=abcdef
+
+Step 2 - log in and obtaining a JWT token
 
 ```
-curl -i http://localhost:8080/currency-code -d "{\"id\":0,\"currencyCode\": \"EUR\",\"country\": \"EMU\",\"rateQty\":1}" -H "Content-Type: application/json" -H "Authorization: Bearer abcdef"
+curl -i https://images-proc-for-google-photos.herokuapp.com/google-login -d "{\"idToken\": \"abcdef\"}"
+```
+
+JWT token in HTTP response header:
+
+```
+Authorization: Bearer abcdef
+```
+
+## Back-end - Accessing restricted REST APIs using JWT token
+
+GET /parameters REST API endpoint:
+
+- using cURL tool:
+
+```
+curl -i https://images-proc-for-google-photos.herokuapp.com/parameters -H "Authorization: Bearer abcdef"
+```
+
+data in JSON format returned in HTTP response body:
+
+```
+{"timeDiffGroup":1800,"resizeWidth":1000,"resizeHeight":1000}
+```
+
+- using Swagger (OpenAPI) interface of the application 
+
+[https://images-proc-for-google-photos.herokuapp.com/swagger-ui.html](https://images-proc-for-google-photos.herokuapp.com/swagger-ui.html)
+
+"Authorize" button > enter JWT token to "bearer-key  (http, Bearer)" field > "Authorize" button
+
+processing-parameters-user-controller
+GET /parameters > "Try it out" button" > "Execute" button
+
+Server response - response body:
+
+```
+{
+  "timeDiffGroup": 1800,
+  "resizeWidth": 1000,
+  "resizeHeight": 1000
+}
+```
+
+## Heroku configuration details
+
+Application deployed on a free dyno (512MB RAM, sleeps after 30 mins of inactivity) with Heroku Postgres add-on Hobby Dev (max. 10K rows).
+
+Config vars:
+
+SPRING_PROFILES_ACTIVE=prod
+
+DATABASE_URL=...
+
+ADMIN_USERNAME=...
+
+ADMIN_PASSWORD=...
+
+
+## Development
+
+Software requirements
+
+- Git
+- OpenJDK 11
+- Apache Maven
+- Eclipse IDE
+- for integration testing: PostgreSQL database
+
+## Running the application locally
+
+Download GitHub repository + open the folder
+
+```
+git clone https://github.com/svoboda-vlad/app-images-processing-for-google-photos-be.git
+cd app-images-processing-for-google-photos-be
+```
+
+Build JAR file from the source code with Maven (without running tests)
+
+```
+sudo mvn clean install -Dhttps.protocols=TLSv1.2 -DskipTests
+```
+
+Run the JAR file (application) with defining administrator account (username: admin, password: pass123) and Sprng profiles (dev, liquibase) using in-memory H2 database
+
+```
+sudo java -Dadmin.username=admin -Dadmin.password=pass123 -Dspring.profiles.active=dev,liquibase -jar target/*.jar
+```
+
+After JAR is running successfully, URLs are available:
+
+Swagger UI
+
+[http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
+
+H2 database console
+
+[http://localhost:8080/h2-console](http://localhost:8080/h2-console)
+
+
+## Maven build - Spring profiles
+
+default "dev" profile - unit testing (mocked repositories)
+
+```
+sudo mvn clean package -Dhttps.protocols=TLSv1.2
+```
+
+default "dev" + "liquibase" profile - testing against H2 database
+
+```
+sudo mvn clean install -Dhttps.protocols=TLSv1.2
+```
+
+"integ" + "liquibase" profile - integration testing against PostgreSQL database
+
+```
+sudo mvn clean install -Dhttps.protocols=TLSv1.2 -Dspring.profiles.active=integ
+```
+
+## REST API endpoints
+
+All REST API endpoints documentation available in Swagger UI after running the application:
+
+[http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
+
+Example of PUT request with JWT token:
+
+```
+curl -i -X PUT http://localhost:8080/parameters -d "{\"timeDiffGroup\": 7200,\"resizeWidth\": 1000,\"resizeHeight\": 1000}" -H "Content-Type: application/json" -H "Authorization: Bearer abcdef"
 ```
 
 Response:
 
 ```
-{"id":6,"currencyCode":"EUR","country":"EMU","rateQty":1}
+{"timeDiffGroup":7200,"resizeWidth":1000,"resizeHeight":1000}
 ```
+
+** REST API endpoints - domain **
 
 restricted:
 - GET + PUT "/parameters" (ProcessingParametersUserController)
 - GET "/parameters-reset-to-default" (ProcessingParametersUserController)
 
-## REST API endpoints - security + administration
+** REST API endpoints - security + administration**
+
 unrestricted:
 - POST "/login" (LoginFilter)
 - POST "/google-login" (GoogleLoginFilter)
@@ -54,20 +223,9 @@ restricted (administrator):
 - GET "/admin/users" (UserAdminController)
 - GET + PUT "/admin/parameters-default" (ProcessingParametersDefaultController)
 
-Swagger / OpenAPI
+## Models
 
-[http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
-
-Heroku: [https://images-proc-for-google-photos.herokuapp.com/swagger-ui.html](https://images-proc-for-google-photos.herokuapp.com/swagger-ui.html)
-
-H2 console
-
-[http://localhost:8080/h2-console](http://localhost:8080/h2-console)
-
-Heroku: [https://images-proc-for-google-photos.herokuapp.com/h2-console](https://images-proc-for-google-photos.herokuapp.com/h2-console)
-
-
-## Models - domain
+** Domain **
 
 ProcessingParametersDefault - id (long), timeDiffGroup (int, min = 60, max = 86400), resizeWidth (int, min = 1, max = 10000), resizeHeight (int, min = 1, max = 10000)
 - no endpoint
@@ -81,7 +239,7 @@ ProcessingParametersUser - id (long), timeDiffGroup (int, min = 60, max = 86400)
 ProcessingParametersUserTemplate - timeDiffGroup (int, min = 60, max = 86400), resizeWidth (int, min = 1, max = 10000), resizeHeight (int, min = 1, max = 10000)
 - GET "/parameters": {"timeDiffGroup":1800,"resizeWidth":1000,"resizeHeight":1000}
 
-## Models - security
+** Security **
 
 User - id (long), username (String, min = 1, max = 255), password (String, min = 60, max = 60), lastLoginDateTime (LocalDateTime), previousLoginDateTime (LocalDateTime), loginProvider (LoginProvider - enum - INTERNAL, GOOGLE), givenName (String, min = 1, max = 255), familyName (String, min = 1, max = 255)
 - no endpoint
@@ -120,7 +278,7 @@ Database tables - security:
 - user_roles - user_id (int NOT NULL), role_id (int NOT NULL), user_id + role_id - PRIMARY KEY
 - role - id (int PRIMARY KEY), name (VARCHAR(255) NOT NULL UNIQUE) - default values: "ROLE_USER", "ROLE_ADMIN"
 
-## Authentication
+## Authentication - Spring Security
 
 UserDetailsService + BCryptPasswordEncoder
 
@@ -128,25 +286,9 @@ Login endpoints:
 
 - POST "/login"
 
-{"username": "user1", "password": "pass123"}
-
 - POST "/google-login"
 
-{"idToken": "abcdef"}
-
 SessionCreationPolicy.STATELESS
-
-## Registration
-
-- POST "/register"
-
-{"username": "test", "password": "test", "givenName": "Test", "familyName": "Test"}
-
-cURL (WINDOWS + LINUX):
-
-```
-curl -i http://localhost:8080/register -d "{\"username\": \"test\", \"password\": \"test123\", \"givenName\": \"Test\", \"familyName\": \"Test\"}" -H "Content-Type: application/json"
-```
 
 ## Dependencies
 
@@ -214,48 +356,6 @@ spring.h2.console.enabled=false
 
 spring.liquibase.enabled=true
 
-## Heroku Config Vars
-
-SPRING_PROFILES_ACTIVE=prod
-
-DATABASE_URL=...
-
-ADMIN_USERNAME=...
-
-ADMIN_PASSWORD=...
-
-## Maven build
-
-default "dev" profile - unit testing (mocked repositories)
-
-```
-sudo mvn clean package -Dhttps.protocols=TLSv1.2
-```
-
-default "dev" + "liquibase" profile - testing against H2 database
-
-```
-sudo mvn clean install -Dhttps.protocols=TLSv1.2
-```
-
-"integ" + "liquibase" profile - integration testing against PostgreSQL database
-
-```
-sudo mvn clean install -Dhttps.protocols=TLSv1.2 -Dspring.profiles.active=integ
-```
-## Administrator account
-
-default "dev" + "liquibase" profile - using H2 database
-
-```
-sudo java -Dadmin.username=admin -Dadmin.password=admin123 -Dspring.profiles.active=dev,liquibase -jar target/*.jar
-```
-
-"prod" profile - using PostgreSQL database
-
-```
-sudo java -Dadmin.username=admin -Dadmin.password=admin123 -Dspring.profiles.active=prod -jar target/*.jar
-```
 
 ## PostgreSQL within Homestead Vagrant box
 SQL queries
