@@ -1,20 +1,23 @@
 # Images Processing For Google Photos (app-images-processing-for-google-photos-be)
 
-## Application hosted on Heroku + GitHub pages
 
-**Front-end (based on Angular) hosted on GitHub pages**
+This repository contains only backend of the application providing a REST API. There is no UI.
+
+The [app-images-processing-for-google-photos-fe](https://github.com/svoboda-vlad/app-images-processing-for-google-photos-fe) project is a Angular front-end application which consumes the REST API.
+
+## Live demo
+
+**Front-end based on Angular (hosted on GitHub pages)**
 
 [https://svoboda-vlad.github.io/app-images-processing-for-google-photos-fe](https://svoboda-vlad.github.io/app-images-processing-for-google-photos-fe)
 
-**Back-end with REST API hosted on Heroku**
+**Back-end based on Spring Boot with REST API (hosted on Heroku)**
 
-Swagger (OpenAPI) interface of the application 
+Swagger UI
 
 [https://images-proc-for-google-photos.herokuapp.com/swagger-ui.html](https://images-proc-for-google-photos.herokuapp.com/swagger-ui.html)
 
 ## Front-end - Registration of a new user and log in
-
-** Front-end **
 
 - creating a new account and log in:
 
@@ -50,11 +53,11 @@ Authorization: Bearer abcdef
 
 - using an existing Google account:
 
-Step 1 - log in to Google account to obtain Google ID token (using "localhost:4200" redirect uri)
+Step 1 - log in to Google account to obtain Google ID token (using allowed redirect uri "localhost:4200")
 
 [https://accounts.google.com/o/oauth2/v2/auth/identifier?client_id=733460469950-rnm4b6pek82bfrnd8f5hf5esa5an0ikk.apps.googleusercontent.com&redirect_uri=http%3A%2F%2Flocalhost%3A4200%2Fgoogle-login&response_type=id_token%20token&scope=profile&nonce=abcdef&flowName=GeneralOAuthFlow](https://accounts.google.com/o/oauth2/v2/auth/identifier?client_id=733460469950-rnm4b6pek82bfrnd8f5hf5esa5an0ikk.apps.googleusercontent.com&redirect_uri=http%3A%2F%2Flocalhost%3A4200%2Fgoogle-login&response_type=id_token%20token&scope=profile&nonce=abcdef&flowName=GeneralOAuthFlow)
 
-ID token returned in URL
+ID token returned in URL fragment identifier (after hash mark #)
 
 http://localhost:4200/google-login#access_token=abcdef&token_type=Bearer&expires_in=3599&scope=profile%20https://www.googleapis.com/auth/userinfo.profile&id_token=abcdef
 
@@ -120,7 +123,7 @@ ADMIN_USERNAME=...
 ADMIN_PASSWORD=...
 
 
-## Development on local machine
+## Development
 
 Software requirements
 
@@ -130,6 +133,8 @@ Software requirements
 - Eclipse IDE
 - for integration testing: PostgreSQL database
 
+## Running the application locally
+
 Download GitHub repository + open the folder
 
 ```
@@ -137,13 +142,13 @@ git clone https://github.com/svoboda-vlad/app-images-processing-for-google-photo
 cd app-images-processing-for-google-photos-be
 ```
 
-Build JAR file from the source code with Maven
+Build JAR file from the source code with Maven (without running tests)
 
 ```
-sudo mvn clean install -Dhttps.protocols=TLSv1.2
+sudo mvn clean install -Dhttps.protocols=TLSv1.2 -DskipTests
 ```
 
-Run the JAR file (application) with defining administrator account (username: admin, password: pass123)
+Run the JAR file (application) with defining administrator account (username: admin, password: pass123) and Sprng profiles (dev, liquibase) using in-memory H2 database
 
 ```
 sudo java -Dadmin.username=admin -Dadmin.password=pass123 -Dspring.profiles.active=dev,liquibase -jar target/*.jar
@@ -151,45 +156,16 @@ sudo java -Dadmin.username=admin -Dadmin.password=pass123 -Dspring.profiles.acti
 
 After JAR is running successfully, URLs are available:
 
-Swagger (OpenAPI) interface of the application
+Swagger UI
 
 [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
 
-H2 console for H2 database
+H2 database console
 
 [http://localhost:8080/h2-console](http://localhost:8080/h2-console)
 
 
-## REST API Authentication (using cURL)
-
-Authentication using username + password:
-
-username: admin, password: pass123
-
-```
-curl -i http://localhost:8080/login -d "{\"username\": \"admin\", \"password\": \"pass123\"}"
-```
-
-Returned JWT token:
-
-```
-Authorization: Bearer abcdef
-```
-
-Authentication using Google ID token (automatic registration of a new user):
-
-```
-curl -i http://localhost:8080/google-login -d "{\"idToken\": \"abcdef\"}"
-```
-
-Returned JWT token:
-
-```
-Authorization: Bearer abcdef
-```
-
-
-## Maven build
+## Maven build - Spring profiles
 
 default "dev" profile - unit testing (mocked repositories)
 
@@ -208,40 +184,33 @@ sudo mvn clean install -Dhttps.protocols=TLSv1.2
 ```
 sudo mvn clean install -Dhttps.protocols=TLSv1.2 -Dspring.profiles.active=integ
 ```
-## Running the application (compiled JAR file) + creating administrator account
 
-default "dev" + "liquibase" profile - using H2 database
+## REST API endpoints
 
-```
-sudo java -Dadmin.username=admin -Dadmin.password=pass123 -Dspring.profiles.active=dev,liquibase -jar target/*.jar
-```
+All REST API endpoints documentation available in Swagger UI after running the application:
 
-"prod" profile - using PostgreSQL database
+[http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
 
-```
-sudo java -Dadmin.username=admin -Dadmin.password=pass123 -Dspring.profiles.active=prod -jar target/*.jar
-```
-
-## REST API endpoints - domain
-http://localhost:8080/
-
-Example of POST request with JWT token:
+Example of PUT request with JWT token:
 
 ```
-curl -i http://localhost:8080/currency-code -d "{\"id\":0,\"currencyCode\": \"EUR\",\"country\": \"EMU\",\"rateQty\":1}" -H "Content-Type: application/json" -H "Authorization: Bearer abcdef"
+curl -i -X PUT http://localhost:8080/parameters -d "{\"timeDiffGroup\": 7200,\"resizeWidth\": 1000,\"resizeHeight\": 1000}" -H "Content-Type: application/json" -H "Authorization: Bearer abcdef"
 ```
 
 Response:
 
 ```
-{"id":6,"currencyCode":"EUR","country":"EMU","rateQty":1}
+{"timeDiffGroup":7200,"resizeWidth":1000,"resizeHeight":1000}
 ```
+
+** REST API endpoints - domain **
 
 restricted:
 - GET + PUT "/parameters" (ProcessingParametersUserController)
 - GET "/parameters-reset-to-default" (ProcessingParametersUserController)
 
-## REST API endpoints - security + administration
+** REST API endpoints - security + administration**
+
 unrestricted:
 - POST "/login" (LoginFilter)
 - POST "/google-login" (GoogleLoginFilter)
@@ -254,7 +223,9 @@ restricted (administrator):
 - GET "/admin/users" (UserAdminController)
 - GET + PUT "/admin/parameters-default" (ProcessingParametersDefaultController)
 
-## Models - domain
+## Models
+
+** Domain **
 
 ProcessingParametersDefault - id (long), timeDiffGroup (int, min = 60, max = 86400), resizeWidth (int, min = 1, max = 10000), resizeHeight (int, min = 1, max = 10000)
 - no endpoint
@@ -268,7 +239,7 @@ ProcessingParametersUser - id (long), timeDiffGroup (int, min = 60, max = 86400)
 ProcessingParametersUserTemplate - timeDiffGroup (int, min = 60, max = 86400), resizeWidth (int, min = 1, max = 10000), resizeHeight (int, min = 1, max = 10000)
 - GET "/parameters": {"timeDiffGroup":1800,"resizeWidth":1000,"resizeHeight":1000}
 
-## Models - security
+** Security **
 
 User - id (long), username (String, min = 1, max = 255), password (String, min = 60, max = 60), lastLoginDateTime (LocalDateTime), previousLoginDateTime (LocalDateTime), loginProvider (LoginProvider - enum - INTERNAL, GOOGLE), givenName (String, min = 1, max = 255), familyName (String, min = 1, max = 255)
 - no endpoint
@@ -307,7 +278,7 @@ Database tables - security:
 - user_roles - user_id (int NOT NULL), role_id (int NOT NULL), user_id + role_id - PRIMARY KEY
 - role - id (int PRIMARY KEY), name (VARCHAR(255) NOT NULL UNIQUE) - default values: "ROLE_USER", "ROLE_ADMIN"
 
-## Authentication
+## Authentication - Spring Security
 
 UserDetailsService + BCryptPasswordEncoder
 
