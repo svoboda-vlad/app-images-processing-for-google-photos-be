@@ -21,6 +21,8 @@ import svobodavlad.imagesprocessing.security.User;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProcessingParametersDefault extends JpaEntityTemplate {
+	
+	private static final long serialVersionUID = 1L;
 
 	@Min(60) @Max(86400)
 	private int timeDiffGroup;

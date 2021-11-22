@@ -21,6 +21,8 @@ import svobodavlad.imagesprocessing.jpautil.JpaEntityTemplateUserRelationship;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProcessingParametersUser extends JpaEntityTemplateUserRelationship {
+	
+	private static final long serialVersionUID = 1L;
 
 	@NotNull
 	@Min(60) @Max(86400)

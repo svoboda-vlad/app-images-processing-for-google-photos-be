@@ -19,6 +19,8 @@ import svobodavlad.imagesprocessing.security.User;
 @EqualsAndHashCode(callSuper=true)
 @NoArgsConstructor
 public abstract class JpaEntityTemplateUserRelationship extends JpaEntityTemplate {
+	
+	private static final long serialVersionUID = 1L;
 
 	@NotNull
 	// fetch - changed to lazy

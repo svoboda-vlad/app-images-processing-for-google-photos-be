@@ -33,6 +33,8 @@ import svobodavlad.imagesprocessing.jpautil.JpaEntityTemplateUserRolesRelationsh
 @NoArgsConstructor
 @AllArgsConstructor
 public class User extends JpaEntityTemplateUserRolesRelationship implements UserDetails {
+	
+	private static final long serialVersionUID = 1L;
 
     @NotNull
     @Size(min = 1, max = 255)

@@ -24,6 +24,8 @@ import svobodavlad.imagesprocessing.jpautil.JpaEntityTemplate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Role extends JpaEntityTemplate implements GrantedAuthority {
+	
+	private static final long serialVersionUID = 1L;
 
 	@NotNull
 	@Size(min = 1, max = 255)
