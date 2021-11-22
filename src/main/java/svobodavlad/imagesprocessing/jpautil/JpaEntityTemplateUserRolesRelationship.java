@@ -20,6 +20,8 @@ import svobodavlad.imagesprocessing.security.UserRoles;
 @EqualsAndHashCode(callSuper=true)
 @NoArgsConstructor
 public abstract class JpaEntityTemplateUserRolesRelationship extends JpaEntityTemplate {
+	
+	private static final long serialVersionUID = 1L;
 
     // CascadeType.ALL - enable removing the relation (user_roles.user_id)
     // orphanRemoval - enable removing the related entity (user_roles)

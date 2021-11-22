@@ -16,7 +16,7 @@ import lombok.ToString;
 @Getter @Setter @ToString @EqualsAndHashCode
 public abstract class JpaEntityTemplate implements Serializable {
 
-	public static final long serialVersionUID = 1L;
+    public static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
