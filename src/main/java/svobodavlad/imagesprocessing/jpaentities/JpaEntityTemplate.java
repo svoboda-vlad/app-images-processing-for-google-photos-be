@@ -1,4 +1,4 @@
-package svobodavlad.imagesprocessing.jpautil;
+package svobodavlad.imagesprocessing.jpaentities;
 
 import java.io.Serializable;
 

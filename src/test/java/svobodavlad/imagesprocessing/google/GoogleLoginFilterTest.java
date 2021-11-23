@@ -16,9 +16,9 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken.Payload;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.json.webtoken.JsonWebSignature.Header;
 
-import svobodavlad.imagesprocessing.security.User;
+import svobodavlad.imagesprocessing.jpaentities.User;
+import svobodavlad.imagesprocessing.jpaentities.UserRoles;
 import svobodavlad.imagesprocessing.security.UserRepository;
-import svobodavlad.imagesprocessing.security.UserRoles;
 import svobodavlad.imagesprocessing.security.UserService;
 import svobodavlad.imagesprocessing.testutil.SecurityMockUtil;
 import svobodavlad.imagesprocessing.testutil.UnitTestTemplate;

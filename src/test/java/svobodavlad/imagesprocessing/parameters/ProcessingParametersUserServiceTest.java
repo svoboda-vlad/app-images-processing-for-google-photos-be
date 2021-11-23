@@ -9,7 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
 
-import svobodavlad.imagesprocessing.security.User;
+import svobodavlad.imagesprocessing.jpaentities.ProcessingParametersDefault;
+import svobodavlad.imagesprocessing.jpaentities.ProcessingParametersUser;
+import svobodavlad.imagesprocessing.jpaentities.User;
 import svobodavlad.imagesprocessing.security.UserRepository;
 import svobodavlad.imagesprocessing.testutil.SecurityMockUtil;
 import svobodavlad.imagesprocessing.testutil.UnitTestTemplate;
@@ -32,8 +34,7 @@ class ProcessingParametersUserServiceTest extends UnitTestTemplate {
 	@Test
 	void testResetToDefaultReturnsDefault() {
 		User mockedUser = SecurityMockUtil.getMockedDefaultUserInternal();
-		ProcessingParametersUser parameters = new ProcessingParametersUser(1800, 1000, 1000);
-		parameters.setUser(mockedUser);
+		ProcessingParametersUser parameters = new ProcessingParametersUser(1800, 1000, 1000, mockedUser);
 		
 		this.given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
 		this.given(parametersRepository.findByUser(mockedUser)).willReturn(Optional.of(parameters));
@@ -41,8 +42,7 @@ class ProcessingParametersUserServiceTest extends UnitTestTemplate {
 		ProcessingParametersDefault parametersDefault = new ProcessingParametersDefault(3600, 1000, 1000);
 		this.given(parametersDefaultRepository.findAll()).willReturn(new ArrayList<ProcessingParametersDefault>(List.of(parametersDefault)));
 		
-		ProcessingParametersUser parametersAfterReset = new ProcessingParametersUser(parametersDefault.getTimeDiffGroup(), parametersDefault.getResizeWidth(), parametersDefault.getResizeHeight());
-		parametersAfterReset.setUser(mockedUser);
+		ProcessingParametersUser parametersAfterReset = new ProcessingParametersUser(parametersDefault.getTimeDiffGroup(), parametersDefault.getResizeWidth(), parametersDefault.getResizeHeight(), mockedUser);
 		this.given(parametersRepository.save(parametersAfterReset)).willReturn(parametersAfterReset);
 		
 		this.assertThat(parametersService.resetToDefault()).isEqualTo(parametersAfterReset);
@@ -51,8 +51,7 @@ class ProcessingParametersUserServiceTest extends UnitTestTemplate {
 	@Test
 	void testResetToDefaultThrowsError() {
 		User mockedUser = SecurityMockUtil.getMockedDefaultUserInternal();
-		ProcessingParametersUser parameters = new ProcessingParametersUser(1800, 1000, 1000);
-		parameters.setUser(mockedUser);
+		ProcessingParametersUser parameters = new ProcessingParametersUser(1800, 1000, 1000, mockedUser);
 		
 		this.given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
 		this.given(parametersRepository.findByUser(mockedUser)).willReturn(Optional.of(parameters));
@@ -75,8 +74,7 @@ class ProcessingParametersUserServiceTest extends UnitTestTemplate {
 		ProcessingParametersDefault parametersDefault = new ProcessingParametersDefault(3600, 1000, 1000);
 		this.given(parametersDefaultRepository.findAll()).willReturn(new ArrayList<ProcessingParametersDefault>(List.of(parametersDefault)));
 		
-		ProcessingParametersUser parametersAfterReset = new ProcessingParametersUser(parametersDefault.getTimeDiffGroup(), parametersDefault.getResizeWidth(), parametersDefault.getResizeHeight());
-		parametersAfterReset.setUser(mockedUser);
+		ProcessingParametersUser parametersAfterReset = new ProcessingParametersUser(parametersDefault.getTimeDiffGroup(), parametersDefault.getResizeWidth(), parametersDefault.getResizeHeight(), mockedUser);
 		
 		this.given(parametersRepository.save(parametersAfterReset)).willReturn(parametersAfterReset);
 		
@@ -93,8 +91,7 @@ class ProcessingParametersUserServiceTest extends UnitTestTemplate {
 		ProcessingParametersDefault parametersDefault = new ProcessingParametersDefault(3600, 1000, 1000);
 		this.given(parametersDefaultRepository.findAll()).willReturn(new ArrayList<ProcessingParametersDefault>(List.of(parametersDefault)));
 		
-		ProcessingParametersUser initialParameters = new ProcessingParametersUser(parametersDefault.getTimeDiffGroup(), parametersDefault.getResizeWidth(), parametersDefault.getResizeHeight());
-		initialParameters.setUser(mockedUser);
+		ProcessingParametersUser initialParameters = new ProcessingParametersUser(parametersDefault.getTimeDiffGroup(), parametersDefault.getResizeWidth(), parametersDefault.getResizeHeight(), mockedUser);
 		this.given(parametersRepository.save(initialParameters)).willReturn(initialParameters);
 		
 		this.assertThat(parametersService.setInitialParameters(mockedUser.getUsername())).isEqualTo(initialParameters);
@@ -121,8 +118,7 @@ class ProcessingParametersUserServiceTest extends UnitTestTemplate {
 		this.given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
 		
 		ProcessingParametersDefault parametersDefault = new ProcessingParametersDefault(3600, 1000, 1000);
-		ProcessingParametersUser parameters = new ProcessingParametersUser(parametersDefault.getTimeDiffGroup(), parametersDefault.getResizeWidth(), parametersDefault.getResizeHeight());
-		parameters.setUser(mockedUser);
+		ProcessingParametersUser parameters = new ProcessingParametersUser(parametersDefault.getTimeDiffGroup(), parametersDefault.getResizeWidth(), parametersDefault.getResizeHeight(), mockedUser);
 		this.given(parametersRepository.findByUser(mockedUser)).willReturn(Optional.of(parameters));
 		
 		this.assertThat(parametersService.setInitialParameters(mockedUser.getUsername())).isNull();	

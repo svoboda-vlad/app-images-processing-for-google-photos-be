@@ -10,6 +10,8 @@ import javax.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import svobodavlad.imagesprocessing.jpaentities.User;
+import svobodavlad.imagesprocessing.jpaentities.UserRoles;
 
 @Data
 @AllArgsConstructor

@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class GoogleIdTokenEntity {
+public class GoogleIdTokenTemplate {
 
 	@NotNull
 	@Size(min = 1, max = 2048)

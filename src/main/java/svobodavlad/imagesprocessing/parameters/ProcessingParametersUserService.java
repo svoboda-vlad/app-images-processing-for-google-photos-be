@@ -9,7 +9,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
-import svobodavlad.imagesprocessing.security.User;
+import svobodavlad.imagesprocessing.jpaentities.ProcessingParametersDefault;
+import svobodavlad.imagesprocessing.jpaentities.ProcessingParametersUser;
+import svobodavlad.imagesprocessing.jpaentities.User;
 import svobodavlad.imagesprocessing.security.UserRepository;
 
 @Service

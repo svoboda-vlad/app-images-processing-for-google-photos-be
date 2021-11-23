@@ -9,9 +9,9 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import svobodavlad.imagesprocessing.parameters.ProcessingParametersDefault;
+import svobodavlad.imagesprocessing.jpaentities.ProcessingParametersDefault;
+import svobodavlad.imagesprocessing.jpaentities.User;
 import svobodavlad.imagesprocessing.parameters.ProcessingParametersDefaultRepository;
-import svobodavlad.imagesprocessing.security.User;
 import svobodavlad.imagesprocessing.security.UserRegister;
 import svobodavlad.imagesprocessing.security.UserService;
 

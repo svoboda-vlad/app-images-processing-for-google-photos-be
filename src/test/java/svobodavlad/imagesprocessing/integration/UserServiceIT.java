@@ -4,8 +4,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import svobodavlad.imagesprocessing.jpaentities.User;
 import svobodavlad.imagesprocessing.security.RoleRepository;
-import svobodavlad.imagesprocessing.security.User;
 import svobodavlad.imagesprocessing.security.UserRegister;
 import svobodavlad.imagesprocessing.security.UserService;
 import svobodavlad.imagesprocessing.testutil.IntegTestTemplate;

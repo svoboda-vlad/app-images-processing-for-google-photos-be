@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
+import svobodavlad.imagesprocessing.jpaentities.User;
 
 @Service
 @RequiredArgsConstructor

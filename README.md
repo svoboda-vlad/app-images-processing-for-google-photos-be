@@ -258,7 +258,7 @@ UserInfo - username (String, min = 1, max = 255), lastLoginDateTime (LocalDateTi
 UserRegister - username (String, min = 1, max = 255), password (String, min = 4, max = 100)
 - POST "/register": {"username": "test","password": "test123", "givenName": "Test", "familyName": "Test"}
 
-GoogleIdTokenEntity - idToken (String, min = 1, max = 2048)
+GoogleIdTokenTemplate - idToken (String, min = 1, max = 2048)
 - no endpoint
 - parsed from endpoint POST "/google-login"
 
