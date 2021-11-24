@@ -60,7 +60,7 @@ class LoginFilterIT extends IntegTestTemplate {
 		String expectedHeader = "Authorization";
 
 		User userWithLastLogin = new User("user322", encoder.encode("pass322"), LoginProvider.INTERNAL, "User 322",
-				"User 322", null, null, null);
+				"User 322");
 		LocalDateTime lastLoginDateTime = LocalDateTime.now();
 		userWithLastLogin.setLastLoginDateTime(lastLoginDateTime);
 		userRepository.save(userWithLastLogin);
@@ -98,7 +98,7 @@ class LoginFilterIT extends IntegTestTemplate {
 		String unexpectedHeader = "Authorization";
 
 		User userWithGoogleLogin = new User("user323", encoder.encode("pass323"), LoginProvider.GOOGLE, "User 323",
-				"User 323", null, null, null);
+				"User 323");
 		LocalDateTime lastLoginDateTime = LocalDateTime.now();
 		userWithGoogleLogin.setLastLoginDateTime(lastLoginDateTime);
 		userRepository.save(userWithGoogleLogin);

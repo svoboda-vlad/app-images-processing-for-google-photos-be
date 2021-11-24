@@ -1,6 +1,6 @@
 package svobodavlad.imagesprocessing.security;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Optional;
 
 import javax.persistence.EntityExistsException;
@@ -124,7 +124,7 @@ class UserControllerTest extends UnitTestTemplate {
 
 		this.given(userDetailsService.loadUserByUsername(SecurityMockUtil.getMockedDefaultUserInternal().getUsername())).willReturn(SecurityMockUtil.getMockedDefaultUserInternal());
 
-		UserInfo userInfo = new UserInfo(SecurityMockUtil.getMockedDefaultUserInternal().getUsername(), "User X", "User Y", null, null, new ArrayList<UserRoles>());
+		UserInfo userInfo = new UserInfo(SecurityMockUtil.getMockedDefaultUserInternal().getUsername(), "User X", "User Y", null, null, new HashSet<UserRoles>());
 
 		this.given(userService.updateUser(userInfo)).willReturn(userInfo.toUser(SecurityMockUtil.getMockedDefaultUserInternal()));
 		

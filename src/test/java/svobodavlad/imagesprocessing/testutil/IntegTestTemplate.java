@@ -12,12 +12,10 @@ import org.assertj.core.api.ThrowableTypeAssert;
 import org.junit.jupiter.api.AfterEach;
 import org.mockito.BDDMockito;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
 @Transactional
-@ActiveProfiles("liquibase")
 public class IntegTestTemplate extends MockMvcUtil {
 	
 	@PersistenceContext

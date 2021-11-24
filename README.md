@@ -149,11 +149,11 @@ mvn clean install -Dhttps.protocols=TLSv1.2 -DskipTests
 sudo mvn clean install -Dhttps.protocols=TLSv1.2 -DskipTests
 ```
 
-Run the JAR file (application) with defining administrator account (username: admin, password: pass123) and Sprng profiles (dev, liquibase) using in-memory H2 database
+Run the JAR file (application) with defining administrator account (username: admin, password: pass123) and Sprng profiles (dev) using in-memory H2 database
 
 ```
-java -Dadmin.username=admin -Dadmin.password=pass123 -Dspring.profiles.active=dev,liquibase -jar target/*.jar
-sudo java -Dadmin.username=admin -Dadmin.password=pass123 -Dspring.profiles.active=dev,liquibase -jar target/*.jar
+java -Dadmin.username=admin -Dadmin.password=pass123 -jar target/*.jar
+sudo java -Dadmin.username=admin -Dadmin.password=pass123 -jar target/*.jar
 ```
 
 After JAR is running successfully, URLs are available:
@@ -176,14 +176,14 @@ mvn clean package -Dhttps.protocols=TLSv1.2
 sudo mvn clean package -Dhttps.protocols=TLSv1.2
 ```
 
-default "dev" + "liquibase" profile - testing against H2 database
+default "dev" profile - testing against H2 database
 
 ```
 mvn clean install -Dhttps.protocols=TLSv1.2
 sudo mvn clean install -Dhttps.protocols=TLSv1.2
 ```
 
-"integ" + "liquibase" profile - integration testing against PostgreSQL database
+"integ" profile - integration testing against PostgreSQL database
 
 ```
 mvn clean install -Dhttps.protocols=TLSv1.2 -Dspring.profiles.active=integ
@@ -333,7 +333,7 @@ spring.profiles.active=dev
 
 google.client.clientids=...
 
-spring.liquibase.enabled=false
+spring.jpa.hibernate.ddl-auto=none
 
 DEV:
 
@@ -343,9 +343,7 @@ spring.h2.console.settings.web-allow-others=true
 
 spring.datasource.generate-unique-name=false
 
-LIQUIBASE:
-
-spring.liquibase.enabled=true
+spring.jpa.show-sql=true
 
 INTEG:
 

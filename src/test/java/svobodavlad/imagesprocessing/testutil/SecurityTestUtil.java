@@ -30,19 +30,19 @@ public class SecurityTestUtil {
 
 	public User saveAdminUser() {
 		User user = new User(ADMIN_USERNAME, encoder.encode(ADMIN_PASSWORD), LoginProvider.INTERNAL, ADMIN_GIVEN_NAME,
-				ADMIN_FAMILY_NAME, null, null, null);
+				ADMIN_FAMILY_NAME);
 		return userService.registerAdminUser(user);
 	}
 	
 	public User saveDefaultUserInternal() {
 		User user = new User(DEFAULT_USERNAME, encoder.encode(DEFAULT_PASSWORD), LoginProvider.INTERNAL, DEFAULT_GIVEN_NAME,
-				DEFAULT_FAMILY_NAME, null, null, null);
+				DEFAULT_FAMILY_NAME);
 		return userService.registerUser(user);
 	}
 
 	public User saveDefaultUserGoogle() {
 		User user = new User(DEFAULT_USERNAME_GOOGLE, encoder.encode(DEFAULT_USERNAME_GOOGLE), LoginProvider.GOOGLE, DEFAULT_GIVEN_NAME,
-				DEFAULT_FAMILY_NAME, null, null, null);
+				DEFAULT_FAMILY_NAME);
 		return userService.registerUser(user);
 	}	
 	

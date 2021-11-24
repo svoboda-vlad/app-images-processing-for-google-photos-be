@@ -1,10 +1,8 @@
 package svobodavlad.imagesprocessing.jpaentities;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -23,10 +21,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import svobodavlad.imagesprocessing.security.UserInfo;
@@ -34,42 +33,48 @@ import svobodavlad.imagesprocessing.security.UserInfo;
 @Entity
 @Table(name = "user", schema = "public") // needed for PostgreSQL
 @Getter @Setter @ToString(callSuper = true)
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = true, exclude = {"roles", "parameters"}) // roles excluded to avoid circular dependency
 @NoArgsConstructor
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class User extends JpaEntityTemplate implements UserDetails {
 	
 	private static final long serialVersionUID = 1L;
 
     @NotNull
     @Size(min = 1, max = 255)
-	private String username;
+	@NonNull private String username;
 
     @NotNull
     @Size(min = 60, max = 60)
     @JsonIgnore
-    private String password;
+    @NonNull private String password;
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    private LoginProvider loginProvider;    
+    @NonNull private LoginProvider loginProvider;    
     
     @NotNull
     @Size(min = 1, max = 255)
-	private String givenName;
+    @NonNull private String givenName;
 
     @NotNull
     @Size(min = 1, max = 255)
-	private String familyName;
+    @NonNull private String familyName;
     
     private LocalDateTime lastLoginDateTime;
     private LocalDateTime previousLoginDateTime;
     
-    // CascadeType.ALL - enable removing the relation (user_roles.user_id)
-    // orphanRemoval - enable removing the related entity (user_roles)
+    // CascadeType.ALL - enable insert, select, update and delete of user roles using user entity
+    // orphanRemoval - enable delete of user roles with user set to null
     // fetch - changed to eager
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-	public List<UserRoles> roles = new ArrayList<UserRoles>();    
+	public Set<UserRoles> roles = new HashSet<UserRoles>();
+    
+    // CascadeType.ALL - enable insert, select, update and delete of processing parameters user using user entity
+    // orphanRemoval - enable delete of processing parameters user with user set to null
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+	public Set<ProcessingParametersUser> parameters = new HashSet<ProcessingParametersUser>();    
     
 	public void addRole(Role role) {
 		UserRoles userRoles = new UserRoles(this,role);

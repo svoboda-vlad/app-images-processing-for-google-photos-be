@@ -1,11 +1,8 @@
 package svobodavlad.imagesprocessing.testutil;
 
-import java.util.ArrayList;
-
 import svobodavlad.imagesprocessing.jpaentities.Role;
 import svobodavlad.imagesprocessing.jpaentities.User;
 import svobodavlad.imagesprocessing.jpaentities.User.LoginProvider;
-import svobodavlad.imagesprocessing.jpaentities.UserRoles;
 
 public class SecurityMockUtil {
 	
@@ -22,20 +19,20 @@ public class SecurityMockUtil {
 	private static final String DEFAULT_USERNAME_GOOGLE = "usergoogle1";	
 		
 	public static User getMockedAdminUser() {
-		User user = new User(ADMIN_USERNAME, ADMIN_PASSWORD, LoginProvider.INTERNAL, ADMIN_GIVEN_NAME, ADMIN_FAMILY_NAME, null, null, new ArrayList<UserRoles>());
+		User user = new User(ADMIN_USERNAME, ADMIN_PASSWORD, LoginProvider.INTERNAL, ADMIN_GIVEN_NAME, ADMIN_FAMILY_NAME);
 		user.addRole(new Role(ROLE_USER));
 		user.addRole(new Role(ROLE_ADMIN));
 		return user;
 	}
 	
 	public static User getMockedDefaultUserInternal() {
-		User user = new User(DEFAULT_USERNAME, DEFAULT_PASSWORD, LoginProvider.INTERNAL, DEFAULT_GIVEN_NAME, DEFAULT_FAMILY_NAME, null, null, new ArrayList<UserRoles>());
+		User user = new User(DEFAULT_USERNAME, DEFAULT_PASSWORD, LoginProvider.INTERNAL, DEFAULT_GIVEN_NAME, DEFAULT_FAMILY_NAME);
 		user.addRole(new Role(ROLE_USER));
 		return user;
 	}
 	
 	public static User getMockedDefaultUserGoogle() {
-		User user = new User(DEFAULT_USERNAME_GOOGLE, DEFAULT_USERNAME_GOOGLE, LoginProvider.GOOGLE, DEFAULT_GIVEN_NAME, DEFAULT_FAMILY_NAME, null, null, new ArrayList<UserRoles>());
+		User user = new User(DEFAULT_USERNAME_GOOGLE, DEFAULT_USERNAME_GOOGLE, LoginProvider.GOOGLE, DEFAULT_GIVEN_NAME, DEFAULT_FAMILY_NAME);
 		user.addRole(new Role(ROLE_USER));
 		return user;
 	}	
