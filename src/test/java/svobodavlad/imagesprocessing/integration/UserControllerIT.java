@@ -143,14 +143,21 @@ public class UserControllerIT extends IntegTestTemplate {
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
 	}
 
-	@Test
+	@Test	
 	void testDeleteUserNoContent204() throws Exception {
 		String requestUrl = "/user";
 		int expectedStatus = 204;
 		String expectedJson = "";
 
-		ResultActions mvcResult = this.mockMvcPerformDeleteAuthorizationDefaultUser(requestUrl);
-		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);		
+		ResultActions mvcResult = this.mockMvcPerformDeleteAuthorizationDefaultUser(requestUrl);	
+		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
+		
+		requestUrl = "/user";
+		expectedStatus = 404;
+		expectedJson = "";
+
+		mvcResult = this.mockMvcPerformGetAuthorizationDefaultUser(requestUrl);
+		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
 	}
 
 }

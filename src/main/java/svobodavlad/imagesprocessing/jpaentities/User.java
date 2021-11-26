@@ -33,71 +33,70 @@ import svobodavlad.imagesprocessing.security.UserInfo;
 @Entity
 @Table(name = "user", schema = "public") // needed for PostgreSQL
 @Getter @Setter @ToString(callSuper = true)
-@EqualsAndHashCode(callSuper = true, exclude = {"roles", "parameters"}) // roles excluded to avoid circular dependency
+@EqualsAndHashCode(callSuper = true, exclude = "roles") // roles excluded to avoid circular dependency
 @NoArgsConstructor
 @RequiredArgsConstructor
 public class User extends JpaEntityTemplate implements UserDetails {
 	
 	private static final long serialVersionUID = 1L;
 
-    @NotNull
-    @Size(min = 1, max = 255)
-	@NonNull private String username;
+	@NotNull
+	@Size(min = 1, max = 255)
+	@NonNull
+	private String username;
 
-    @NotNull
-    @Size(min = 60, max = 60)
-    @JsonIgnore
-    @NonNull private String password;
+	@NotNull
+	@Size(min = 60, max = 60)
+	@JsonIgnore
+	@NonNull
+	private String password;
 
-    @NotNull
-    @Enumerated(EnumType.STRING)
-    @NonNull private LoginProvider loginProvider;    
-    
-    @NotNull
-    @Size(min = 1, max = 255)
-    @NonNull private String givenName;
+	@NotNull
+	@Enumerated(EnumType.STRING)
+	@NonNull
+	private LoginProvider loginProvider;
 
-    @NotNull
-    @Size(min = 1, max = 255)
-    @NonNull private String familyName;
-    
-    private LocalDateTime lastLoginDateTime;
-    private LocalDateTime previousLoginDateTime;
-    
-    // CascadeType.ALL - enable insert, select, update and delete of user roles using user entity
-    // orphanRemoval - enable delete of user roles with user set to null
-    // fetch - changed to eager
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+	@NotNull
+	@Size(min = 1, max = 255)
+	@NonNull
+	private String givenName;
+
+	@NotNull
+	@Size(min = 1, max = 255)
+	@NonNull
+	private String familyName;
+
+	private LocalDateTime lastLoginDateTime;
+	private LocalDateTime previousLoginDateTime;
+
+	// CascadeType.MERGE, PERSIST - enable insert, select, update of user roles
+	// using user entity
+	// fetch - changed to eager
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	public Set<UserRoles> roles = new HashSet<UserRoles>();
-    
-    // CascadeType.ALL - enable insert, select, update and delete of processing parameters user using user entity
-    // orphanRemoval - enable delete of processing parameters user with user set to null
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore
-	public Set<ProcessingParametersUser> parameters = new HashSet<ProcessingParametersUser>();    
-    
+
 	public void addRole(Role role) {
-		UserRoles userRoles = new UserRoles(this,role);
+		UserRoles userRoles = new UserRoles(this, role);
 		roles.add(userRoles);
 		// role.getUsers().add(userRoles);
 	}
 
 	public void removeRole(Role role) {
-		UserRoles userRoles = new UserRoles(this,role);
+		UserRoles userRoles = new UserRoles(this, role);
 		// role.getUsers().remove(userRoles);
 		roles.remove(userRoles);
 		// @NotNull applied on user + role
 		// userRoles.setUser(null);
 		// userRoles.setRole(null);
-	}    
+	}
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-        Set<GrantedAuthority> authorities = new HashSet<GrantedAuthority>();
-        for (UserRoles role : this.roles) {
-        	authorities.add(new SimpleGrantedAuthority(role.getRole().getName()));
-        }
-        return authorities;
+		Set<GrantedAuthority> authorities = new HashSet<GrantedAuthority>();
+		for (UserRoles role : this.roles) {
+			authorities.add(new SimpleGrantedAuthority(role.getRole().getName()));
+		}
+		return authorities;
 	}
 
 	@Override
@@ -119,7 +118,7 @@ public class User extends JpaEntityTemplate implements UserDetails {
 	public boolean isEnabled() {
 		return true;
 	}
-	
+
 	public void updateLastLoginDateTime() {
 		LocalDateTime currentDateTime = LocalDateTime.now();
 		if (this.lastLoginDateTime == null) {
@@ -129,14 +128,14 @@ public class User extends JpaEntityTemplate implements UserDetails {
 		}
 		this.lastLoginDateTime = currentDateTime;
 	}
-	
-	public enum LoginProvider {	
-		INTERNAL,
-		GOOGLE
+
+	public enum LoginProvider {
+		INTERNAL, GOOGLE
 	}
-	
+
 	public UserInfo toUserInfo() {
-		UserInfo userInfo = new UserInfo(this.getUsername(), this.getGivenName(), this.getFamilyName(), this.getLastLoginDateTime(), this.getPreviousLoginDateTime(), this.getRoles());
+		UserInfo userInfo = new UserInfo(this.getUsername(), this.getGivenName(), this.getFamilyName(),
+				this.getLastLoginDateTime(), this.getPreviousLoginDateTime(), this.getRoles());
 		return userInfo;
 	}
 	

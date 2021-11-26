@@ -110,5 +110,5 @@ http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibas
 		<dropForeignKeyConstraint
 			baseTableName="processing_parameters_user"
 			constraintName="fk_processing_parameters_user_user_id_cascade" />
-	</changeSet>	
+	</changeSet>
 </databaseChangeLog>

@@ -6,6 +6,7 @@ import java.util.Date;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,7 @@ class AuthenticationServiceTest extends UnitTestTemplate {
 	private AuthenticationService authenticationService;
 
 	@Test
+	@Disabled
 	void testAddToken() {
 		String username = "user1";
 		Date expirationDateTime = Date.from(LocalDateTime.now().plusMinutes(AuthenticationService.EXPIRY_MINS)
