@@ -47,6 +47,14 @@ public class ProcessingParametersUserService {
 			return parametersRepository.save(parameters);
 		}
 		return null;
+	}
+	
+	public void delete() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		Optional<User> optUser = userRepository.findByUsername(authentication.getName());
+		Optional<ProcessingParametersUser> optParameters = parametersRepository.findByUser(optUser.get());
+		parametersRepository.deleteById(optParameters.get().getId());
+		parametersRepository.flush();
 	}	
 
 }

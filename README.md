@@ -343,8 +343,6 @@ spring.h2.console.settings.web-allow-others=true
 
 spring.datasource.generate-unique-name=false
 
-spring.jpa.show-sql=true
-
 INTEG:
 
 spring.datasource.url=jdbc:postgresql://localhost:5432/homestead

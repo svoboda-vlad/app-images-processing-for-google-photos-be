@@ -64,9 +64,7 @@ public class UserController {
 	@Operation(security = { @SecurityRequirement(name = "bearer-key") })
 	@DeleteMapping(USER_URL)
 	public ResponseEntity<UserInfo> deleteUser() {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		Optional<User> optUser = userRepository.findByUsername(authentication.getName());
-		userRepository.deleteById(optUser.get().getId());
+		userService.deleteUser();
 		return ResponseEntity.noContent().build();
 	}
 

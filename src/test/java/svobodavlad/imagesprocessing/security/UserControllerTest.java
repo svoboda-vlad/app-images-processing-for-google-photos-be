@@ -155,12 +155,11 @@ class UserControllerTest extends UnitTestTemplate {
 		user.setId(1L);
 
 		this.given(userDetailsService.loadUserByUsername(user.getUsername())).willReturn(user);
-		this.given(userRepository.findByUsername(user.getUsername())).willReturn(Optional.of(user));
 		
 		ResultActions mvcResult = this.mockMvcPerformDeleteAuthorizationDefaultUser(requestUrl);
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
 
-		this.verify(userRepository, this.times(1)).deleteById(1L);
+		this.verify(userService, this.times(1)).deleteUser();
 	}
 
 }
