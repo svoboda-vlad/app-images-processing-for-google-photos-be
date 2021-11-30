@@ -142,18 +142,18 @@ git clone https://github.com/svoboda-vlad/app-images-processing-for-google-photo
 cd app-images-processing-for-google-photos-be
 ```
 
-Build JAR file from the source code with Maven (without running tests)
+scripts/maveninstallandjavarunh2.sh - Build JAR file from the source code with Maven (without running tests)
 
 ```
 mvn clean install -Dhttps.protocols=TLSv1.2 -DskipTests
-sudo mvn clean install -Dhttps.protocols=TLSv1.2 -DskipTests
+(sudo mvn clean install -Dhttps.protocols=TLSv1.2 -DskipTests)
 ```
 
-Run the JAR file (application) with defining administrator account (username: admin, password: pass123) and Sprng profiles (dev) using in-memory H2 database
+Run the JAR file (application) with defining administrator account (username: admin, password: pass123) and Spring profiles (dev) using in-memory H2 database
 
 ```
 java -Dadmin.username=admin -Dadmin.password=pass123 -jar target/*.jar
-sudo java -Dadmin.username=admin -Dadmin.password=pass123 -jar target/*.jar
+(sudo java -Dadmin.username=admin -Dadmin.password=pass123 -jar target/*.jar)
 ```
 
 After JAR is running successfully, URLs are available:
@@ -169,21 +169,21 @@ H2 database console
 
 ## Maven build - Spring profiles
 
-default "dev" profile - unit testing (mocked repositories)
+scripts/mavenunittest.sh - default "dev" profile - unit testing (mocked repositories)
 
 ```
 mvn clean package -Dhttps.protocols=TLSv1.2
-sudo mvn clean package -Dhttps.protocols=TLSv1.2
+(sudo mvn clean package -Dhttps.protocols=TLSv1.2)
 ```
 
-default "dev" profile - testing against H2 database
+scripts/mavenintegtesth2.sh - default "dev" profile - integration testing against H2 database
 
 ```
 mvn clean install -Dhttps.protocols=TLSv1.2
-sudo mvn clean install -Dhttps.protocols=TLSv1.2
+(sudo mvn clean install -Dhttps.protocols=TLSv1.2)
 ```
 
-"integ" profile - integration testing against PostgreSQL database
+mavenintegtestpostgres.sh - "integ" profile - integration testing against PostgreSQL database (see details in section PostgreSQL within Homestead Vagrant box)
 
 ```
 mvn clean install -Dhttps.protocols=TLSv1.2 -Dspring.profiles.active=integ
@@ -208,13 +208,13 @@ Response:
 {"timeDiffGroup":7200,"resizeWidth":1000,"resizeHeight":1000}
 ```
 
-** REST API endpoints - domain **
+**REST API endpoints - domain**
 
 restricted:
 - GET + PUT "/parameters" (ProcessingParametersUserController)
 - GET "/parameters-reset-to-default" (ProcessingParametersUserController)
 
-** REST API endpoints - security + administration**
+**REST API endpoints - security + administration**
 
 unrestricted:
 - POST "/login" (LoginFilter)
@@ -230,7 +230,7 @@ restricted (administrator):
 
 ## Models
 
-** Domain **
+**Domain**
 
 ProcessingParametersDefault - id (long), timeDiffGroup (int, min = 60, max = 86400), resizeWidth (int, min = 1, max = 10000), resizeHeight (int, min = 1, max = 10000)
 - no endpoint
@@ -244,7 +244,7 @@ ProcessingParametersUser - id (long), timeDiffGroup (int, min = 60, max = 86400)
 ProcessingParametersUserTemplate - timeDiffGroup (int, min = 60, max = 86400), resizeWidth (int, min = 1, max = 10000), resizeHeight (int, min = 1, max = 10000)
 - GET "/parameters": {"timeDiffGroup":1800,"resizeWidth":1000,"resizeHeight":1000}
 
-** Security **
+**Security**
 
 User - id (long), username (String, min = 1, max = 255), password (String, min = 60, max = 60), lastLoginDateTime (LocalDateTime), previousLoginDateTime (LocalDateTime), loginProvider (LoginProvider - enum - INTERNAL, GOOGLE), givenName (String, min = 1, max = 255), familyName (String, min = 1, max = 255)
 - no endpoint
@@ -359,6 +359,13 @@ spring.liquibase.enabled=true
 
 
 ## PostgreSQL within Homestead Vagrant box
+
+URL: jdbc:postgresql://localhost:5432/homestead
+
+username: homestead
+
+password: secret
+
 SQL queries
 
 ```
