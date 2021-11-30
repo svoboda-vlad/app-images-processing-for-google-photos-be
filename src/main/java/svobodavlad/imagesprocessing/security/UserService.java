@@ -74,14 +74,17 @@ public class UserService {
 		}
 		return null;
 	}
-
-	public User updateUser(UserInfo userInfo) {
+	
+	public User updateCurrentUser(UserInfo userInfo) {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		if (!authentication.getName().equals(userInfo.getUsername())) return null;
 		Optional<User> optUser = userRepository.findByUsername(userInfo.getUsername());
+		if (optUser.isEmpty()) return null;
 		User user = optUser.get();
 		return userRepository.save(userInfo.toUser(user));
-	}
+	}	
 	
-	public void deleteUser() {
+	public void deleteCurrentUser() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		Optional<User> optUser = userRepository.findByUsername(authentication.getName());
 		if (optUser.isPresent()) {
@@ -90,5 +93,12 @@ public class UserService {
 			userRepository.flush();
 		}
 	}
+	
+	public User getCurrentUser() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		Optional<User> optUser = userRepository.findByUsername(authentication.getName());
+		if (optUser.isPresent()) return optUser.get();
+		return null;
+	}	
 
 }

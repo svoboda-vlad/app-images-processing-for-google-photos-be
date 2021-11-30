@@ -12,7 +12,7 @@ public class SecurityMockUtil {
 	private static final String ADMIN_FAMILY_NAME = "Administrator";
 	private static final String ROLE_USER = "ROLE_USER";
 	private static final String ROLE_ADMIN = "ROLE_ADMIN";
-	private static final String DEFAULT_USERNAME = "user1";
+	public static final String DEFAULT_USERNAME = "user1";
 	private static final String DEFAULT_PASSWORD = "A".repeat(60);
 	private static final String DEFAULT_GIVEN_NAME = "User 1";
 	private static final String DEFAULT_FAMILY_NAME = "User 1";

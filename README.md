@@ -219,10 +219,10 @@ restricted:
 unrestricted:
 - POST "/login" (LoginFilter)
 - POST "/google-login" (GoogleLoginFilter)
-- GET + POST "/user" (UserController)
+- POST "/user" (UserController)
 
 restricted:
-- PUT + DELETE "/user" (UserController)
+- GET + PUT + DELETE "/user" (UserController)
 
 restricted (administrator):
 - GET "/admin/users" (UserAdminController)

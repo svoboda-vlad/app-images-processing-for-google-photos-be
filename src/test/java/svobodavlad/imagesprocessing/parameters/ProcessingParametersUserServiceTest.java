@@ -16,7 +16,7 @@ import svobodavlad.imagesprocessing.security.UserRepository;
 import svobodavlad.imagesprocessing.testutil.SecurityMockUtil;
 import svobodavlad.imagesprocessing.testutil.UnitTestTemplate;
 
-@WithMockUser(username = "user1") // mocking of SecurityContextHolder
+@WithMockUser(username = SecurityMockUtil.DEFAULT_USERNAME) // mocking of SecurityContextHolder
 class ProcessingParametersUserServiceTest extends UnitTestTemplate {
 
 	@MockBean

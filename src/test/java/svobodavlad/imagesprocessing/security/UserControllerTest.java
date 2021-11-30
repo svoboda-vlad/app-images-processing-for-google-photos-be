@@ -1,7 +1,6 @@
 package svobodavlad.imagesprocessing.security;
 
 import java.util.HashSet;
-import java.util.Optional;
 
 import javax.persistence.EntityExistsException;
 
@@ -41,16 +40,16 @@ class UserControllerTest extends UnitTestTemplate {
 		String expectedJson = "{\"username\":\"user1\",\"givenName\":\"User 1\",\"familyName\":\"User 1\",\"userRoles\":[{\"role\":{\"id\":0,\"name\":\"ROLE_USER\"}}],\"lastLoginDateTime\":null,\"previousLoginDateTime\":null}";
 
 		this.given(userDetailsService.loadUserByUsername(SecurityMockUtil.getMockedDefaultUserInternal().getUsername())).willReturn(SecurityMockUtil.getMockedDefaultUserInternal());
-		this.given(userRepository.findByUsername(SecurityMockUtil.getMockedDefaultUserInternal().getUsername())).willReturn(Optional.of(SecurityMockUtil.getMockedDefaultUserInternal()));
+		this.given(userService.getCurrentUser()).willReturn(SecurityMockUtil.getMockedDefaultUserInternal());
 
 		ResultActions mvcResult = this.mockMvcPerformGetAuthorizationDefaultUser(requestUrl);
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
 	}
 
 	@Test
-	void testGetCurrentUserMissingAuthorizationHeaderNotFound404() throws Exception {
+	void testGetCurrentUserMissingAuthorizationHeaderForbidden403() throws Exception {
 		String requestUrl = "/user";
-		int expectedStatus = 404;
+		int expectedStatus = 403;
 		String expectedJson = "";
 		
 		ResultActions mvcResult = this.mockMvcPerformGetNoAuthorization(requestUrl);
@@ -58,9 +57,9 @@ class UserControllerTest extends UnitTestTemplate {
 	}
 
 	@Test
-	void testGetCurrentUserInvalidAuthorizationHeaderNotFound404() throws Exception {
+	void testGetCurrentUserInvalidAuthorizationHeaderForbidden403() throws Exception {
 		String requestUrl = "/user";
-		int expectedStatus = 404;
+		int expectedStatus = 403;
 		String expectedJson = "";
 		String invalidUsername = "userinvalid";
 
@@ -72,9 +71,9 @@ class UserControllerTest extends UnitTestTemplate {
 	}
 
 	@Test
-	void testGetCurrentUserInvalidTokenNotFound404() throws Exception {
+	void testGetCurrentUserInvalidTokenForbidden403() throws Exception {
 		String requestUrl = "/user";
-		int expectedStatus = 404;
+		int expectedStatus = 403;
 		String expectedJson = "";
 		
 		ResultActions mvcResult = this.mockMvcPerformGetAuthorizationInvalidToken(requestUrl);
@@ -126,7 +125,7 @@ class UserControllerTest extends UnitTestTemplate {
 
 		UserInfo userInfo = new UserInfo(SecurityMockUtil.getMockedDefaultUserInternal().getUsername(), "User X", "User Y", null, null, new HashSet<UserRoles>());
 
-		this.given(userService.updateUser(userInfo)).willReturn(userInfo.toUser(SecurityMockUtil.getMockedDefaultUserInternal()));
+		this.given(userService.updateCurrentUser(userInfo)).willReturn(userInfo.toUser(SecurityMockUtil.getMockedDefaultUserInternal()));
 		
 		ResultActions mvcResult = this.mockMvcPerformPutAuthorizationDefaultUser(requestUrl, requestJson);
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
@@ -159,7 +158,7 @@ class UserControllerTest extends UnitTestTemplate {
 		ResultActions mvcResult = this.mockMvcPerformDeleteAuthorizationDefaultUser(requestUrl);
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
 
-		this.verify(userService, this.times(1)).deleteUser();
+		this.verify(userService, this.times(1)).deleteCurrentUser();
 	}
 
 }
