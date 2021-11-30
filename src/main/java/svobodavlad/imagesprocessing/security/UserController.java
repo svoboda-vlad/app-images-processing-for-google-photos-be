@@ -1,12 +1,8 @@
 package svobodavlad.imagesprocessing.security;
 
-import java.util.Optional;
-
 import javax.validation.Valid;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -19,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
+import svobodavlad.imagesprocessing.jpaentities.User;
 
 @RestController
 @RequiredArgsConstructor
@@ -26,7 +23,6 @@ import lombok.RequiredArgsConstructor;
 public class UserController {
 
 	private static final String USER_URL = "/user";
-	private final UserRepository userRepository;
 	private final PasswordEncoder encoder;
 	private final UserService userService;
 
@@ -44,28 +40,21 @@ public class UserController {
 	@Operation(security = { @SecurityRequirement(name = "bearer-key") })
 	@GetMapping(USER_URL)
 	public ResponseEntity<UserInfo> getUserInfo() {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		if (authentication == null)
-			return ResponseEntity.notFound().build();
-		Optional<User> optUser = userRepository.findByUsername(authentication.getName());
-		return ResponseEntity.ok(optUser.get().toUserInfo());
+		return ResponseEntity.ok(userService.getCurrentUser().toUserInfo());
 	}
 
 	@Operation(security = { @SecurityRequirement(name = "bearer-key") })
 	@PutMapping(USER_URL)
 	public ResponseEntity<UserInfo> updateUser(@Valid @RequestBody UserInfo userInfo) {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		if (!authentication.getName().equals(userInfo.getUsername()))
-			return ResponseEntity.badRequest().build();
-		return ResponseEntity.ok(userService.updateUser(userInfo).toUserInfo());
+		User updatedUser = userService.updateCurrentUser(userInfo);
+		if (updatedUser == null) return ResponseEntity.badRequest().build();
+		return ResponseEntity.ok(updatedUser.toUserInfo());
 	}
 
 	@Operation(security = { @SecurityRequirement(name = "bearer-key") })
 	@DeleteMapping(USER_URL)
 	public ResponseEntity<UserInfo> deleteUser() {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		Optional<User> optUser = userRepository.findByUsername(authentication.getName());
-		userRepository.deleteById(optUser.get().getId());
+		userService.deleteCurrentUser();
 		return ResponseEntity.noContent().build();
 	}
 

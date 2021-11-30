@@ -1,4 +1,4 @@
-package svobodavlad.imagesprocessing.parameters;
+package svobodavlad.imagesprocessing.jpaentities;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -11,8 +11,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import svobodavlad.imagesprocessing.jpautil.JpaEntityTemplate;
-import svobodavlad.imagesprocessing.security.User;
+import svobodavlad.imagesprocessing.parameters.ProcessingParametersDefaultTemplate;
 
 @Entity
 @Table(name = "processing_parameters_default", schema = "public") // needed for PostgreSQL
@@ -38,8 +37,7 @@ public class ProcessingParametersDefault extends JpaEntityTemplate {
 	}
 	
 	public ProcessingParametersUser toProcessingParametersUser(User user) {
-		ProcessingParametersUser parameters = new ProcessingParametersUser(timeDiffGroup, resizeWidth, resizeHeight);
-		parameters.setUser(user);
+		ProcessingParametersUser parameters = new ProcessingParametersUser(timeDiffGroup, resizeWidth, resizeHeight, user);
 		return parameters;
 	}
 

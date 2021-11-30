@@ -38,9 +38,9 @@ public class UserControllerIT extends IntegTestTemplate {
 	}
 
 	@Test
-	void testGetCurrentUserMissingAuthroizationHeaderNotFound404() throws Exception {
+	void testGetCurrentUserMissingAuthroizationHeaderForbidden403() throws Exception {
 		String requestUrl = "/user";
-		int expectedStatus = 404;
+		int expectedStatus = 403;
 		String expectedJson = "";
 
 		ResultActions mvcResult = this.mockMvcPerformGetNoAuthorization(requestUrl);
@@ -48,9 +48,9 @@ public class UserControllerIT extends IntegTestTemplate {
 	}
 
 	@Test
-	void testGetCurrentUserInvalidAuthroizationHeaderNotFound404() throws Exception {
+	void testGetCurrentUserInvalidAuthroizationHeaderForbidden403() throws Exception {
 		String requestUrl = "/user";
-		int expectedStatus = 404;
+		int expectedStatus = 403;
 		String expectedJson = "";
 		String invalidUsername = "invaliduser";
 
@@ -59,9 +59,9 @@ public class UserControllerIT extends IntegTestTemplate {
 	}
 
 	@Test
-	void testGetCurrentUserInvalidTokenNotFound404() throws Exception {
+	void testGetCurrentUserInvalidTokenForbidden403() throws Exception {
 		String requestUrl = "/user";
-		int expectedStatus = 404;
+		int expectedStatus = 403;
 		String expectedJson = "";
 
 		ResultActions mvcResult = this.mockMvcPerformGetAuthorizationInvalidToken(requestUrl);
@@ -143,14 +143,14 @@ public class UserControllerIT extends IntegTestTemplate {
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
 	}
 
-	@Test
+	@Test	
 	void testDeleteUserNoContent204() throws Exception {
 		String requestUrl = "/user";
 		int expectedStatus = 204;
 		String expectedJson = "";
 
-		ResultActions mvcResult = this.mockMvcPerformDeleteAuthorizationDefaultUser(requestUrl);
-		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);		
+		ResultActions mvcResult = this.mockMvcPerformDeleteAuthorizationDefaultUser(requestUrl);	
+		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
 	}
 
 }

@@ -1,13 +1,16 @@
-package svobodavlad.imagesprocessing.security;
+package svobodavlad.imagesprocessing.jpaentities;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -18,70 +21,82 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import svobodavlad.imagesprocessing.jpautil.JpaEntityTemplateUserRolesRelationship;
+import svobodavlad.imagesprocessing.security.UserInfo;
 
 @Entity
 @Table(name = "user", schema = "public") // needed for PostgreSQL
 @Getter @Setter @ToString(callSuper = true)
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = true, exclude = "roles") // roles excluded to avoid circular dependency
 @NoArgsConstructor
-@AllArgsConstructor
-public class User extends JpaEntityTemplateUserRolesRelationship implements UserDetails {
+@RequiredArgsConstructor
+public class User extends JpaEntityTemplate implements UserDetails {
 	
 	private static final long serialVersionUID = 1L;
 
-    @NotNull
-    @Size(min = 1, max = 255)
+	@NotNull
+	@Size(min = 1, max = 255)
+	@NonNull
 	private String username;
 
-    @NotNull
-    @Size(min = 60, max = 60)
-    @JsonIgnore
-    private String password;
+	@NotNull
+	@Size(min = 60, max = 60)
+	@JsonIgnore
+	@NonNull
+	private String password;
 
-    @NotNull
-    @Enumerated(EnumType.STRING)
-    private LoginProvider loginProvider;    
-    
-    @NotNull
-    @Size(min = 1, max = 255)
+	@NotNull
+	@Enumerated(EnumType.STRING)
+	@NonNull
+	private LoginProvider loginProvider;
+
+	@NotNull
+	@Size(min = 1, max = 255)
+	@NonNull
 	private String givenName;
 
-    @NotNull
-    @Size(min = 1, max = 255)
+	@NotNull
+	@Size(min = 1, max = 255)
+	@NonNull
 	private String familyName;
-    
-    private LocalDateTime lastLoginDateTime;
-    private LocalDateTime previousLoginDateTime;
-    
+
+	private LocalDateTime lastLoginDateTime;
+	private LocalDateTime previousLoginDateTime;
+
+	// CascadeType.MERGE, PERSIST - enable insert, select, update of user roles
+	// using user entity
+	// fetch - changed to eager
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	public Set<UserRoles> roles = new HashSet<UserRoles>();
+
 	public void addRole(Role role) {
-		UserRoles userRoles = new UserRoles(this,role);
+		UserRoles userRoles = new UserRoles(this, role);
 		roles.add(userRoles);
 		// role.getUsers().add(userRoles);
 	}
 
 	public void removeRole(Role role) {
-		UserRoles userRoles = new UserRoles(this,role);
+		UserRoles userRoles = new UserRoles(this, role);
 		// role.getUsers().remove(userRoles);
 		roles.remove(userRoles);
 		// @NotNull applied on user + role
 		// userRoles.setUser(null);
 		// userRoles.setRole(null);
-	}    
+	}
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-        Set<GrantedAuthority> authorities = new HashSet<GrantedAuthority>();
-        for (UserRoles role : this.roles) {
-        	authorities.add(new SimpleGrantedAuthority(role.getRole().getName()));
-        }
-        return authorities;
+		Set<GrantedAuthority> authorities = new HashSet<GrantedAuthority>();
+		for (UserRoles role : this.roles) {
+			authorities.add(new SimpleGrantedAuthority(role.getRole().getName()));
+		}
+		return authorities;
 	}
 
 	@Override
@@ -103,7 +118,7 @@ public class User extends JpaEntityTemplateUserRolesRelationship implements User
 	public boolean isEnabled() {
 		return true;
 	}
-	
+
 	public void updateLastLoginDateTime() {
 		LocalDateTime currentDateTime = LocalDateTime.now();
 		if (this.lastLoginDateTime == null) {
@@ -113,14 +128,14 @@ public class User extends JpaEntityTemplateUserRolesRelationship implements User
 		}
 		this.lastLoginDateTime = currentDateTime;
 	}
-	
-	public enum LoginProvider {	
-		INTERNAL,
-		GOOGLE
+
+	public enum LoginProvider {
+		INTERNAL, GOOGLE
 	}
-	
+
 	public UserInfo toUserInfo() {
-		UserInfo userInfo = new UserInfo(this.getUsername(), this.getGivenName(), this.getFamilyName(), this.getLastLoginDateTime(), this.getPreviousLoginDateTime(), this.getRoles());
+		UserInfo userInfo = new UserInfo(this.getUsername(), this.getGivenName(), this.getFamilyName(),
+				this.getLastLoginDateTime(), this.getPreviousLoginDateTime(), this.getRoles());
 		return userInfo;
 	}
 	

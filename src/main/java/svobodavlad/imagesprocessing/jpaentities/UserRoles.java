@@ -1,4 +1,4 @@
-package svobodavlad.imagesprocessing.security;
+package svobodavlad.imagesprocessing.jpaentities;
 
 import java.io.Serializable;
 
@@ -16,6 +16,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import svobodavlad.imagesprocessing.security.UserRolesId;
 
 @Entity
 @Table(name = "user_roles", schema = "public") // needed for PostgreSQL

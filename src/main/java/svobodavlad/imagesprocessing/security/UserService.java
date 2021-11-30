@@ -7,9 +7,13 @@ import javax.persistence.EntityExistsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import svobodavlad.imagesprocessing.jpaentities.Role;
+import svobodavlad.imagesprocessing.jpaentities.User;
 import svobodavlad.imagesprocessing.parameters.ProcessingParametersUserService;
 
 @Service
@@ -70,11 +74,31 @@ public class UserService {
 		}
 		return null;
 	}
-
-	public User updateUser(UserInfo userInfo) {
+	
+	public User updateCurrentUser(UserInfo userInfo) {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		if (!authentication.getName().equals(userInfo.getUsername())) return null;
 		Optional<User> optUser = userRepository.findByUsername(userInfo.getUsername());
+		if (optUser.isEmpty()) return null;
 		User user = optUser.get();
 		return userRepository.save(userInfo.toUser(user));
+	}	
+	
+	public void deleteCurrentUser() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		Optional<User> optUser = userRepository.findByUsername(authentication.getName());
+		if (optUser.isPresent()) {
+			parametersService.deleteForCurrentUser();
+			userRepository.delete(optUser.get());
+			userRepository.flush();
+		}
 	}
+	
+	public User getCurrentUser() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		Optional<User> optUser = userRepository.findByUsername(authentication.getName());
+		if (optUser.isPresent()) return optUser.get();
+		return null;
+	}	
 
 }

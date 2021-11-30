@@ -9,7 +9,9 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.test.web.servlet.ResultActions;
 
-import svobodavlad.imagesprocessing.security.User.LoginProvider;
+import svobodavlad.imagesprocessing.jpaentities.Role;
+import svobodavlad.imagesprocessing.jpaentities.User;
+import svobodavlad.imagesprocessing.jpaentities.User.LoginProvider;
 import svobodavlad.imagesprocessing.testutil.SecurityMockUtil;
 import svobodavlad.imagesprocessing.testutil.UnitTestTemplate;
 
@@ -36,9 +38,9 @@ class UserAdminControllerTest extends UnitTestTemplate {
 		String expectedJson = "[{\"username\":\"user1\",\"givenName\":\"User 1\",\"familyName\":\"User 1\",\"lastLoginDateTime\":null,\"previousLoginDateTime\":null,\"userRoles\":[{\"role\":{\"id\":0,\"name\":\"ROLE_USER\"}}]},"
 				+ "{\"username\":\"user2\",\"givenName\":\"User 2\",\"familyName\":\"User 2\",\"lastLoginDateTime\":null,\"previousLoginDateTime\":null,\"userRoles\":[{\"role\":{\"id\":0,\"name\":\"ROLE_USER\"}},{\"role\":{\"id\":0,\"name\":\"ROLE_ADMIN\"}}]}]";
 
-		User user1 = new User("user1", "A".repeat(60), LoginProvider.INTERNAL, "User 1", "User 1", null, null);
+		User user1 = new User("user1", "A".repeat(60), LoginProvider.INTERNAL, "User 1", "User 1");
 		user1.addRole(new Role(ROLE_USER));
-		User user2 = new User("user2", "A".repeat(60), LoginProvider.INTERNAL, "User 2", "User 2", null, null);
+		User user2 = new User("user2", "A".repeat(60), LoginProvider.INTERNAL, "User 2", "User 2");
 		user2.addRole(new Role(ROLE_USER));
 		user2.addRole(new Role(ROLE_ADMIN));
 

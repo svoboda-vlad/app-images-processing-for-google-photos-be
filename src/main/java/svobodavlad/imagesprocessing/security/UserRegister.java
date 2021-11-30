@@ -8,7 +8,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import svobodavlad.imagesprocessing.security.User.LoginProvider;
+import svobodavlad.imagesprocessing.jpaentities.User;
+import svobodavlad.imagesprocessing.jpaentities.User.LoginProvider;
 
 @Data
 @AllArgsConstructor
@@ -32,12 +33,12 @@ public class UserRegister {
 	private String familyName;
 
 	public User toUserInternal(PasswordEncoder passwordEncoder) {
-		User user = new User(username, passwordEncoder.encode(password), LoginProvider.INTERNAL, givenName, familyName, null, null);
+		User user = new User(username, passwordEncoder.encode(password), LoginProvider.INTERNAL, givenName, familyName);
 		return user;
 	}
 
 	public User toUserGoogle(PasswordEncoder passwordEncoder) {
-		User user = new User(username, passwordEncoder.encode(password), LoginProvider.GOOGLE, givenName, familyName, null, null);
+		User user = new User(username, passwordEncoder.encode(password), LoginProvider.GOOGLE, givenName, familyName);
 		return user;
 	}
 

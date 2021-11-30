@@ -10,11 +10,15 @@ import javax.persistence.EntityExistsException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.test.context.support.WithMockUser;
 
+import svobodavlad.imagesprocessing.jpaentities.Role;
+import svobodavlad.imagesprocessing.jpaentities.User;
 import svobodavlad.imagesprocessing.parameters.ProcessingParametersUserService;
 import svobodavlad.imagesprocessing.testutil.SecurityMockUtil;
 import svobodavlad.imagesprocessing.testutil.UnitTestTemplate;
 
+@WithMockUser(username = SecurityMockUtil.DEFAULT_USERNAME) // mocking of SecurityContextHolder
 public class UserServiceTest extends UnitTestTemplate {
 
 	private static final String USER_ROLE_NAME = "ROLE_USER";
@@ -31,7 +35,7 @@ public class UserServiceTest extends UnitTestTemplate {
 
 	@Autowired
 	private UserService userService;
-
+	
 	@Test
 	void testRegisterUserNewUser() {
 		Role role = new Role(USER_ROLE_NAME);
@@ -116,7 +120,7 @@ public class UserServiceTest extends UnitTestTemplate {
 
 		this.given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
 		this.given(userRepository.save(mockedUserInfo.toUser(mockedUser))).willReturn(mockedUser);
-		this.assertThat(userService.updateUser(mockedUserInfo)).isEqualTo(mockedUser);
+		this.assertThat(userService.updateCurrentUser(mockedUserInfo)).isEqualTo(mockedUser);
 	}
 
 	@Test
@@ -148,5 +152,25 @@ public class UserServiceTest extends UnitTestTemplate {
 			userService.registerAdminUser(mockedUser);
 		});
 	}
+	
+	@Test
+	void testDeleteUserOkUserDeleted() {
+		User mockedUser = SecurityMockUtil.getMockedDefaultUserInternal();
+
+		this.given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));		
+		userService.deleteCurrentUser();
+
+		this.verify(parametersService, this.times(1)).deleteForCurrentUser();
+		this.verify(userRepository, this.times(1)).delete(mockedUser);
+		this.verify(userRepository, this.times(1)).flush();		
+	}
+	
+	@Test
+	void testGetCurrentUserOkUserExists() {
+		User mockedUser = SecurityMockUtil.getMockedDefaultUserInternal();
+
+		this.given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));		
+		this.assertThat(userService.getCurrentUser()).isEqualTo(mockedUser);
+	}	
 
 }

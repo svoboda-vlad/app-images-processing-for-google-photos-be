@@ -1,7 +1,7 @@
 package svobodavlad.imagesprocessing.google;
 
 import java.security.GeneralSecurityException;
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -16,9 +16,9 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken.Payload;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.json.webtoken.JsonWebSignature.Header;
 
-import svobodavlad.imagesprocessing.security.User;
+import svobodavlad.imagesprocessing.jpaentities.User;
+import svobodavlad.imagesprocessing.jpaentities.UserRoles;
 import svobodavlad.imagesprocessing.security.UserRepository;
-import svobodavlad.imagesprocessing.security.UserRoles;
 import svobodavlad.imagesprocessing.security.UserService;
 import svobodavlad.imagesprocessing.testutil.SecurityMockUtil;
 import svobodavlad.imagesprocessing.testutil.UnitTestTemplate;
@@ -72,7 +72,7 @@ class GoogleLoginFilterTest extends UnitTestTemplate {
 		this.mockMvcExpectHeaderExists(mvcResult, expectedHeader);
 		
 		User mockedUserWithoutRoles = SecurityMockUtil.getMockedDefaultUserGoogle();
-		mockedUserWithoutRoles.setRoles(new ArrayList<UserRoles>());
+		mockedUserWithoutRoles.setRoles(new HashSet<UserRoles>());
 		
 		this.verify(userService, this.never()).registerUser(mockedUserWithoutRoles);
 		this.verify(userService, this.times(1)).updateLastLoginDateTime(mockedUser.getUsername());
@@ -101,7 +101,7 @@ class GoogleLoginFilterTest extends UnitTestTemplate {
 		this.mockMvcExpectHeaderDoesNotExist(mvcResult, unexpectedHeader);
 		
 		User mockedUserWithoutRoles = SecurityMockUtil.getMockedDefaultUserGoogle();
-		mockedUserWithoutRoles.setRoles(new ArrayList<UserRoles>());
+		mockedUserWithoutRoles.setRoles(new HashSet<UserRoles>());
 		
 		this.verify(userService, this.never()).registerUser(mockedUserWithoutRoles);
 		this.verify(userService, this.never()).updateLastLoginDateTime(mockedUser.getUsername());
@@ -129,7 +129,7 @@ class GoogleLoginFilterTest extends UnitTestTemplate {
 		this.mockMvcExpectHeaderExists(mvcResult, expectedHeader);
 		
 		User mockedUserWithoutRoles = SecurityMockUtil.getMockedDefaultUserGoogle();
-		mockedUserWithoutRoles.setRoles(new ArrayList<UserRoles>());
+		mockedUserWithoutRoles.setRoles(new HashSet<UserRoles>());
 		
 		this.verify(userService, this.times(1)).registerUser(mockedUserWithoutRoles);
 		this.verify(userService, this.times(1)).updateLastLoginDateTime(mockedUser.getUsername());
@@ -150,7 +150,7 @@ class GoogleLoginFilterTest extends UnitTestTemplate {
 		this.mockMvcExpectHeaderDoesNotExist(mvcResult, unexpectedHeader);
 		
 		User mockedUserWithoutRoles = SecurityMockUtil.getMockedDefaultUserGoogle();
-		mockedUserWithoutRoles.setRoles(new ArrayList<UserRoles>());
+		mockedUserWithoutRoles.setRoles(new HashSet<UserRoles>());
 		
 		this.verify(userService, this.never()).registerUser(mockedUserWithoutRoles);
 		this.verify(userService, this.never()).updateLastLoginDateTime(mockedUser.getUsername());
@@ -171,7 +171,7 @@ class GoogleLoginFilterTest extends UnitTestTemplate {
 		this.verify(googleIdTokenVerifier, this.never()).verify("abcdef");
 		
 		User mockedUserWithoutRoles = SecurityMockUtil.getMockedDefaultUserGoogle();
-		mockedUserWithoutRoles.setRoles(new ArrayList<UserRoles>());
+		mockedUserWithoutRoles.setRoles(new HashSet<UserRoles>());
 		
 		this.verify(userService, this.never()).registerUser(mockedUserWithoutRoles);
 		this.verify(userService, this.never()).updateLastLoginDateTime(mockedUser.getUsername());
@@ -192,7 +192,7 @@ class GoogleLoginFilterTest extends UnitTestTemplate {
 		this.mockMvcExpectHeaderDoesNotExist(mvcResult, unexpectedHeader);
 		
 		User mockedUserWithoutRoles = SecurityMockUtil.getMockedDefaultUserGoogle();
-		mockedUserWithoutRoles.setRoles(new ArrayList<UserRoles>());
+		mockedUserWithoutRoles.setRoles(new HashSet<UserRoles>());
 		
 		this.verify(userService, this.never()).registerUser(mockedUserWithoutRoles);
 		this.verify(userService, this.never()).updateLastLoginDateTime(mockedUser.getUsername());		

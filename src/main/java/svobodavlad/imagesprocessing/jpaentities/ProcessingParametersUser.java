@@ -1,10 +1,14 @@
-package svobodavlad.imagesprocessing.parameters;
+package svobodavlad.imagesprocessing.jpaentities;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -12,7 +16,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import svobodavlad.imagesprocessing.jpautil.JpaEntityTemplateUserRelationship;
+import svobodavlad.imagesprocessing.parameters.ProcessingParametersUserTemplate;
 
 @Entity
 @Table(name = "processing_parameters_user", schema = "public") // needed for PostgreSQL
@@ -20,7 +24,7 @@ import svobodavlad.imagesprocessing.jpautil.JpaEntityTemplateUserRelationship;
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProcessingParametersUser extends JpaEntityTemplateUserRelationship {
+public class ProcessingParametersUser extends JpaEntityTemplate {
 	
 	private static final long serialVersionUID = 1L;
 
@@ -35,6 +39,13 @@ public class ProcessingParametersUser extends JpaEntityTemplateUserRelationship 
 	@NotNull
 	@Min(1) @Max(10000)
 	private int resizeHeight;
+	
+	@NotNull
+	// fetch - changed to lazy
+	// @JoinColumn(name = "user_id") - specified by default
+	@OneToOne(fetch = FetchType.LAZY)
+	@JsonIgnore
+	private User user;	
 	
 	public ProcessingParametersUserTemplate toProcessingParametersUserTemplate() {
 		return new ProcessingParametersUserTemplate(this.getTimeDiffGroup(), this.getResizeWidth(), this.getResizeHeight());

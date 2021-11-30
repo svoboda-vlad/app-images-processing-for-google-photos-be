@@ -9,7 +9,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
-import svobodavlad.imagesprocessing.security.User;
+import svobodavlad.imagesprocessing.jpaentities.ProcessingParametersDefault;
+import svobodavlad.imagesprocessing.jpaentities.ProcessingParametersUser;
+import svobodavlad.imagesprocessing.jpaentities.User;
 import svobodavlad.imagesprocessing.security.UserRepository;
 
 @Service
@@ -45,6 +47,14 @@ public class ProcessingParametersUserService {
 			return parametersRepository.save(parameters);
 		}
 		return null;
+	}
+	
+	public void deleteForCurrentUser() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		Optional<User> optUser = userRepository.findByUsername(authentication.getName());
+		Optional<ProcessingParametersUser> optParameters = parametersRepository.findByUser(optUser.get());
+		parametersRepository.deleteById(optParameters.get().getId());
+		parametersRepository.flush();
 	}	
 
 }

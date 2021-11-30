@@ -6,6 +6,7 @@ import javax.validation.constraints.NotNull;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import svobodavlad.imagesprocessing.jpaentities.ProcessingParametersUser;
 
 @Data
 @AllArgsConstructor

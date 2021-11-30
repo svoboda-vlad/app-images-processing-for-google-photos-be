@@ -26,9 +26,9 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken.Payload;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 
+import svobodavlad.imagesprocessing.jpaentities.User;
+import svobodavlad.imagesprocessing.jpaentities.User.LoginProvider;
 import svobodavlad.imagesprocessing.security.AuthenticationService;
-import svobodavlad.imagesprocessing.security.User;
-import svobodavlad.imagesprocessing.security.User.LoginProvider;
 import svobodavlad.imagesprocessing.security.UserRegister;
 import svobodavlad.imagesprocessing.security.UserRepository;
 import svobodavlad.imagesprocessing.security.UserService;
@@ -58,7 +58,7 @@ public class GoogleLoginFilter extends AbstractAuthenticationProcessingFilter {
 	public Authentication attemptAuthentication(HttpServletRequest req, HttpServletResponse res)
 			throws AuthenticationException, IOException {
 
-		GoogleIdTokenEntity tokenEntity = resolveGoogleIdTokenEntity(req);
+		GoogleIdTokenTemplate tokenEntity = resolveGoogleIdTokenTemplate(req);
 		if (tokenEntity == null)
 			throw new BadCredentialsException("");
 		String username = "";
@@ -94,9 +94,9 @@ public class GoogleLoginFilter extends AbstractAuthenticationProcessingFilter {
 		userService.updateLastLoginDateTime(auth.getName());
 	}
 
-	private GoogleIdTokenEntity resolveGoogleIdTokenEntity(HttpServletRequest request) {
+	private GoogleIdTokenTemplate resolveGoogleIdTokenTemplate(HttpServletRequest request) {
 		try {
-			return new ObjectMapper().readValue(request.getInputStream(), GoogleIdTokenEntity.class);
+			return new ObjectMapper().readValue(request.getInputStream(), GoogleIdTokenTemplate.class);
 		} catch (Exception e) {
 			log.info("ID token parsing from request body failed: {}.", e.getMessage());
 		}

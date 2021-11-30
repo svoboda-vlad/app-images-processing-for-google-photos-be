@@ -9,8 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.ResultActions;
 
-import svobodavlad.imagesprocessing.security.User;
-import svobodavlad.imagesprocessing.security.User.LoginProvider;
+import svobodavlad.imagesprocessing.jpaentities.User;
+import svobodavlad.imagesprocessing.jpaentities.User.LoginProvider;
 import svobodavlad.imagesprocessing.security.UserRepository;
 import svobodavlad.imagesprocessing.testutil.IntegTestTemplate;
 import svobodavlad.imagesprocessing.testutil.SecurityTestUtil;
@@ -60,7 +60,7 @@ class LoginFilterIT extends IntegTestTemplate {
 		String expectedHeader = "Authorization";
 
 		User userWithLastLogin = new User("user322", encoder.encode("pass322"), LoginProvider.INTERNAL, "User 322",
-				"User 322", null, null);
+				"User 322");
 		LocalDateTime lastLoginDateTime = LocalDateTime.now();
 		userWithLastLogin.setLastLoginDateTime(lastLoginDateTime);
 		userRepository.save(userWithLastLogin);
@@ -98,7 +98,7 @@ class LoginFilterIT extends IntegTestTemplate {
 		String unexpectedHeader = "Authorization";
 
 		User userWithGoogleLogin = new User("user323", encoder.encode("pass323"), LoginProvider.GOOGLE, "User 323",
-				"User 323", null, null);
+				"User 323");
 		LocalDateTime lastLoginDateTime = LocalDateTime.now();
 		userWithGoogleLogin.setLastLoginDateTime(lastLoginDateTime);
 		userRepository.save(userWithGoogleLogin);

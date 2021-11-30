@@ -10,7 +10,9 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.test.web.servlet.ResultActions;
 
-import svobodavlad.imagesprocessing.security.User;
+import svobodavlad.imagesprocessing.jpaentities.ProcessingParametersDefault;
+import svobodavlad.imagesprocessing.jpaentities.ProcessingParametersUser;
+import svobodavlad.imagesprocessing.jpaentities.User;
 import svobodavlad.imagesprocessing.security.UserRepository;
 import svobodavlad.imagesprocessing.testutil.SecurityMockUtil;
 import svobodavlad.imagesprocessing.testutil.UnitTestTemplate;
@@ -46,8 +48,7 @@ public class ProcessingParametersUserControllerTest extends UnitTestTemplate {
 		int expectedStatus = 200;
 		String expectedJson = "{\"timeDiffGroup\":1800,\"resizeWidth\":1000,\"resizeHeight\":1000}";
 		
-		ProcessingParametersUser parameters = new ProcessingParametersUser(1800, 1000, 1000);
-		parameters.setUser(mockedUser);
+		ProcessingParametersUser parameters = new ProcessingParametersUser(1800, 1000, 1000, mockedUser);
 		parameters.setId(1);
 		
 		this.given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
@@ -77,8 +78,7 @@ public class ProcessingParametersUserControllerTest extends UnitTestTemplate {
 		int expectedStatus = 200;
 		String expectedJson = "{\"timeDiffGroup\":3600,\"resizeWidth\":1000,\"resizeHeight\":1000}";
 		
-		ProcessingParametersUser parameters = new ProcessingParametersUser(3600, 1000, 1000);
-		parameters.setUser(mockedUser);
+		ProcessingParametersUser parameters = new ProcessingParametersUser(3600, 1000, 1000, mockedUser);
 		parameters.setId(1);
 		
 		this.given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
@@ -97,8 +97,7 @@ public class ProcessingParametersUserControllerTest extends UnitTestTemplate {
 		int expectedStatus = 404;
 		String expectedJson = "";
 		
-		ProcessingParametersUser parameters = new ProcessingParametersUser(3600, 1000, 1000);
-		parameters.setUser(mockedUser);
+		ProcessingParametersUser parameters = new ProcessingParametersUser(3600, 1000, 1000, mockedUser);
 		parameters.setId(1);
 		
 		this.given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));

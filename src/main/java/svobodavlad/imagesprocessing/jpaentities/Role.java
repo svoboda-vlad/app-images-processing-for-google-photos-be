@@ -1,4 +1,4 @@
-package svobodavlad.imagesprocessing.security;
+package svobodavlad.imagesprocessing.jpaentities;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -15,7 +15,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import svobodavlad.imagesprocessing.jpautil.JpaEntityTemplate;
 
 @Entity
 @Table(name = "role", schema = "public") // needed for PostgreSQL
