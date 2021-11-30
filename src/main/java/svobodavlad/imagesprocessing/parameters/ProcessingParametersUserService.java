@@ -49,7 +49,7 @@ public class ProcessingParametersUserService {
 		return null;
 	}
 	
-	public void delete() {
+	public void deleteForCurrentUser() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		Optional<User> optUser = userRepository.findByUsername(authentication.getName());
 		Optional<ProcessingParametersUser> optParameters = parametersRepository.findByUser(optUser.get());

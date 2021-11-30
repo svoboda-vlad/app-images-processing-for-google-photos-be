@@ -82,11 +82,13 @@ public class UserService {
 	}
 	
 	public void deleteUser() {
-		parametersService.delete();
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		Optional<User> optUser = userRepository.findByUsername(authentication.getName());
-		userRepository.deleteById(optUser.get().getId());
-		userRepository.flush();		
+		if (optUser.isPresent()) {
+			parametersService.deleteForCurrentUser();
+			userRepository.delete(optUser.get());
+			userRepository.flush();
+		}
 	}
 
 }

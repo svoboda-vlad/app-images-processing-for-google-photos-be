@@ -122,5 +122,20 @@ class ProcessingParametersUserServiceTest extends UnitTestTemplate {
 		this.given(parametersRepository.findByUser(mockedUser)).willReturn(Optional.of(parameters));
 		
 		this.assertThat(parametersService.setInitialParameters(mockedUser.getUsername())).isNull();	
+	}
+	
+	@Test
+	void testDeleteReturnsDefault() {
+		User mockedUser = SecurityMockUtil.getMockedDefaultUserInternal();
+		ProcessingParametersUser parameters = new ProcessingParametersUser(1800, 1000, 1000, mockedUser);
+		parameters.setId(1L);
+		
+		this.given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
+		this.given(parametersRepository.findByUser(mockedUser)).willReturn(Optional.of(parameters));
+		
+		parametersService.deleteForCurrentUser();
+		
+		this.verify(parametersRepository, this.times(1)).deleteById(parameters.getId());
+		this.verify(parametersRepository, this.times(1)).flush();		
 	}	
 }
