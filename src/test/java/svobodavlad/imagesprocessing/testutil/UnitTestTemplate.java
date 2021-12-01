@@ -10,8 +10,10 @@ import org.mockito.BDDMockito;
 import org.mockito.Mockito;
 import org.mockito.verification.VerificationMode;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
+@ActiveProfiles(value = {"dev", "noliquibase"})
 public class UnitTestTemplate extends MockMvcUtil {
 
 	public <T> BDDMockito.BDDMyOngoingStubbing<T> given(T methodCall) {
