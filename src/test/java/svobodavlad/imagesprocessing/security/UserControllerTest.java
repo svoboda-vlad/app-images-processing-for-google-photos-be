@@ -7,7 +7,6 @@ import javax.persistence.EntityExistsException;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.ResultActions;
 
@@ -42,41 +41,7 @@ class UserControllerTest extends UnitTestTemplate {
 		this.given(userDetailsService.loadUserByUsername(SecurityMockUtil.getMockedDefaultUserInternal().getUsername())).willReturn(SecurityMockUtil.getMockedDefaultUserInternal());
 		this.given(userService.getCurrentUser()).willReturn(SecurityMockUtil.getMockedDefaultUserInternal());
 
-		ResultActions mvcResult = this.mockMvcPerformGetAuthorizationDefaultUser(requestUrl);
-		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
-	}
-
-	@Test
-	void testGetCurrentUserMissingAuthorizationHeaderForbidden403() throws Exception {
-		String requestUrl = "/user";
-		int expectedStatus = 403;
-		String expectedJson = "";
-		
 		ResultActions mvcResult = this.mockMvcPerformGetNoAuthorization(requestUrl);
-		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
-	}
-
-	@Test
-	void testGetCurrentUserInvalidAuthorizationHeaderForbidden403() throws Exception {
-		String requestUrl = "/user";
-		int expectedStatus = 403;
-		String expectedJson = "";
-		String invalidUsername = "userinvalid";
-
-		this.given(userDetailsService.loadUserByUsername(invalidUsername))
-				.willThrow(new UsernameNotFoundException("User not found."));
-		
-		ResultActions mvcResult = this.mockMvcPerformGetAuthorizationForUsername(requestUrl, invalidUsername);
-		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
-	}
-
-	@Test
-	void testGetCurrentUserInvalidTokenForbidden403() throws Exception {
-		String requestUrl = "/user";
-		int expectedStatus = 403;
-		String expectedJson = "";
-		
-		ResultActions mvcResult = this.mockMvcPerformGetAuthorizationInvalidToken(requestUrl);
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
 	}
 
@@ -127,7 +92,7 @@ class UserControllerTest extends UnitTestTemplate {
 
 		this.given(userService.updateCurrentUser(userInfo)).willReturn(userInfo.toUser(SecurityMockUtil.getMockedDefaultUserInternal()));
 		
-		ResultActions mvcResult = this.mockMvcPerformPutAuthorizationDefaultUser(requestUrl, requestJson);
+		ResultActions mvcResult = this.mockMvcPerformPutNoAuthorization(requestUrl, requestJson);
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
 	}
 
@@ -140,7 +105,7 @@ class UserControllerTest extends UnitTestTemplate {
 
 		this.given(userDetailsService.loadUserByUsername(SecurityMockUtil.getMockedDefaultUserInternal().getUsername())).willReturn(SecurityMockUtil.getMockedDefaultUserInternal());
 
-		ResultActions mvcResult = this.mockMvcPerformPutAuthorizationDefaultUser(requestUrl, requestJson);
+		ResultActions mvcResult = this.mockMvcPerformPutNoAuthorization(requestUrl, requestJson);
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
 	}
 
@@ -155,7 +120,7 @@ class UserControllerTest extends UnitTestTemplate {
 
 		this.given(userDetailsService.loadUserByUsername(user.getUsername())).willReturn(user);
 		
-		ResultActions mvcResult = this.mockMvcPerformDeleteAuthorizationDefaultUser(requestUrl);
+		ResultActions mvcResult = this.mockMvcPerformDeleteNoAuthorization(requestUrl);
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
 
 		this.verify(userService, this.times(1)).deleteCurrentUser();

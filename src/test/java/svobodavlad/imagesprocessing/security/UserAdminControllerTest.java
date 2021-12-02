@@ -32,7 +32,7 @@ class UserAdminControllerTest extends UnitTestTemplate {
 	}
 
 	@Test
-	void testgetAllUsersOk200() throws Exception {
+	void testGetAllUsersOk200() throws Exception {
 		String requestUrl = "/admin/users";
 		int expectedStatus = 200;
 		String expectedJson = "[{\"username\":\"user1\",\"givenName\":\"User 1\",\"familyName\":\"User 1\",\"lastLoginDateTime\":null,\"previousLoginDateTime\":null,\"userRoles\":[{\"role\":{\"id\":0,\"name\":\"ROLE_USER\"}}]},"
@@ -46,7 +46,7 @@ class UserAdminControllerTest extends UnitTestTemplate {
 
 		this.given(userRepository.findAll()).willReturn(new ArrayList<User>(List.of(user1, user2)));
 		
-		ResultActions mvcResult = this.mockMvcPerformGetAuthorizationAdminUser(requestUrl);
+		ResultActions mvcResult = this.mockMvcPerformGetNoAuthorization(requestUrl);
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
 	}
 

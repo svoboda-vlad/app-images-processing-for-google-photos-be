@@ -12,9 +12,9 @@ import org.springframework.test.web.servlet.ResultActions;
 import svobodavlad.imagesprocessing.jpaentities.User;
 import svobodavlad.imagesprocessing.jpaentities.User.LoginProvider;
 import svobodavlad.imagesprocessing.testutil.SecurityMockUtil;
-import svobodavlad.imagesprocessing.testutil.UnitTestTemplate;
+import svobodavlad.imagesprocessing.testutil.UnitTestTemplateWithSecurity;
 
-class LoginFilterTest extends UnitTestTemplate {
+class LoginFilterTest extends UnitTestTemplateWithSecurity {
 	
 	@MockBean
 	private PasswordEncoder encoder;

@@ -14,9 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
-import svobodavlad.imagesprocessing.security.AuthenticationService;
-
-@AutoConfigureMockMvc
+@AutoConfigureMockMvc(addFilters = false)
 //@WithMockUser - not needed
 public abstract class MockMvcUtil {
 
@@ -27,51 +25,16 @@ public abstract class MockMvcUtil {
 		return this.mockMvc.perform(get(requestUrl).accept(MediaType.APPLICATION_JSON));
 	}
 
-	public ResultActions mockMvcPerformGetAuthorizationAdminUser(String requestUrl) throws Exception {
-		return this.mockMvc
-				.perform(get(requestUrl).header("Authorization", SecurityTestUtil.createBearerTokenAdminUser())
-						.accept(MediaType.APPLICATION_JSON));
-	}
-
-	public ResultActions mockMvcPerformGetAuthorizationDefaultUser(String requestUrl) throws Exception {
-		return this.mockMvc
-				.perform(get(requestUrl).header("Authorization", SecurityTestUtil.createBearerTokenDefaultUser())
-						.accept(MediaType.APPLICATION_JSON));
-	}
-
-	public ResultActions mockMvcPerformGetAuthorizationForUsername(String requestUrl, String username)
-			throws Exception {
-		return this.mockMvc
-				.perform(get(requestUrl).header("Authorization", AuthenticationService.createBearerToken(username))
-						.accept(MediaType.APPLICATION_JSON));
-	}
-
-	public ResultActions mockMvcPerformGetAuthorizationInvalidToken(String requestUrl) throws Exception {
-		return this.mockMvc
-				.perform(get(requestUrl).header("Authorization", "Bearer invalidtoken").accept(MediaType.APPLICATION_JSON));
-	}
-
 	public ResultActions mockMvcPerformPostNoAuthorization(String requestUrl, String requestJson) throws Exception {
 		return this.mockMvc.perform(post(requestUrl).content(requestJson).contentType(MediaType.APPLICATION_JSON));
 	}
-
-	public ResultActions mockMvcPerformPutAuthorizationAdminUser(String requestUrl, String requestJson)
-			throws Exception {
-		return this.mockMvc.perform(put(requestUrl).content(requestJson)
-				.header("Authorization", SecurityTestUtil.createBearerTokenAdminUser())
-				.contentType(MediaType.APPLICATION_JSON));
-	}
-
-	public ResultActions mockMvcPerformPutAuthorizationDefaultUser(String requestUrl, String requestJson)
-			throws Exception {
-		return this.mockMvc.perform(put(requestUrl).content(requestJson)
-				.header("Authorization", SecurityTestUtil.createBearerTokenDefaultUser())
-				.contentType(MediaType.APPLICATION_JSON));
-	}
-
-	public ResultActions mockMvcPerformDeleteAuthorizationDefaultUser(String requestUrl) throws Exception {
-		return this.mockMvc
-				.perform(delete(requestUrl).header("Authorization", SecurityTestUtil.createBearerTokenDefaultUser()));
+	
+	public ResultActions mockMvcPerformPutNoAuthorization(String requestUrl, String requestJson) throws Exception {
+		return this.mockMvc.perform(put(requestUrl).content(requestJson).contentType(MediaType.APPLICATION_JSON));
+	}	
+	
+	public ResultActions mockMvcPerformDeleteNoAuthorization(String requestUrl) throws Exception {
+		return this.mockMvc.perform(delete(requestUrl));
 	}
 
 	public ResultActions mockMvcExpectStatusAndContent(ResultActions result, int expectedStatus, String expectedJson)

@@ -39,7 +39,7 @@ public class ProcessingParametersDefaultControllerTest extends UnitTestTemplate 
 		
 		this.given(parametersRepository.findAll()).willReturn(parametersList);
 		
-		ResultActions mvcResult = this.mockMvcPerformGetAuthorizationAdminUser(requestUrl);
+		ResultActions mvcResult = this.mockMvcPerformGetNoAuthorization(requestUrl);
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
 	}
 	
@@ -51,7 +51,7 @@ public class ProcessingParametersDefaultControllerTest extends UnitTestTemplate 
 		
 		this.given(parametersRepository.findAll()).willReturn(new ArrayList<ProcessingParametersDefault>());
 		
-		ResultActions mvcResult = this.mockMvcPerformGetAuthorizationAdminUser(requestUrl);
+		ResultActions mvcResult = this.mockMvcPerformGetNoAuthorization(requestUrl);
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
 	}	
 	
@@ -67,7 +67,7 @@ public class ProcessingParametersDefaultControllerTest extends UnitTestTemplate 
 		this.given(parametersRepository.findAll()).willReturn(new ArrayList<ProcessingParametersDefault>(List.of(parameters)));
 		this.given(parametersRepository.save(parameters)).willReturn(parameters);
 		
-		ResultActions mvcResult = this.mockMvcPerformPutAuthorizationAdminUser(requestUrl, requestJson);
+		ResultActions mvcResult = this.mockMvcPerformPutNoAuthorization(requestUrl, requestJson);
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
 	}	
 	
@@ -80,7 +80,7 @@ public class ProcessingParametersDefaultControllerTest extends UnitTestTemplate 
 		
 		this.given(parametersRepository.findAll()).willReturn(new ArrayList<ProcessingParametersDefault>());
 		
-		ResultActions mvcResult = this.mockMvcPerformPutAuthorizationAdminUser(requestUrl, requestJson);
+		ResultActions mvcResult = this.mockMvcPerformPutNoAuthorization(requestUrl, requestJson);
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
 	}
 	
