@@ -6,7 +6,6 @@ import javax.persistence.EntityExistsException;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.ResultActions;
 
@@ -24,9 +23,6 @@ class UserControllerTest extends UnitTestTemplate {
 	private UserService userService;
 
 	@MockBean
-	private UserDetailsService userDetailsService;
-
-	@MockBean
 	private PasswordEncoder encoder;
 
 	private static final String USERNAME_NEW = "usernew";
@@ -38,7 +34,6 @@ class UserControllerTest extends UnitTestTemplate {
 		int expectedStatus = 200;
 		String expectedJson = "{\"username\":\"user1\",\"givenName\":\"User 1\",\"familyName\":\"User 1\",\"userRoles\":[{\"role\":{\"id\":0,\"name\":\"ROLE_USER\"}}],\"lastLoginDateTime\":null,\"previousLoginDateTime\":null}";
 
-		this.given(userDetailsService.loadUserByUsername(SecurityMockUtil.getMockedDefaultUserInternal().getUsername())).willReturn(SecurityMockUtil.getMockedDefaultUserInternal());
 		this.given(userService.getCurrentUser()).willReturn(SecurityMockUtil.getMockedDefaultUserInternal());
 
 		ResultActions mvcResult = this.mockMvcPerformGetNoAuthorization(requestUrl);
@@ -86,8 +81,6 @@ class UserControllerTest extends UnitTestTemplate {
 		int expectedStatus = 200;
 		String expectedJson = "{\"username\":\"user1\",\"givenName\":\"User X\",\"familyName\":\"User Y\",\"userRoles\":[{\"role\":{\"id\":0,\"name\":\"ROLE_USER\"}}],\"lastLoginDateTime\":null,\"previousLoginDateTime\":null}";
 
-		this.given(userDetailsService.loadUserByUsername(SecurityMockUtil.getMockedDefaultUserInternal().getUsername())).willReturn(SecurityMockUtil.getMockedDefaultUserInternal());
-
 		UserInfo userInfo = new UserInfo(SecurityMockUtil.getMockedDefaultUserInternal().getUsername(), "User X", "User Y", null, null, new HashSet<UserRoles>());
 
 		this.given(userService.updateCurrentUser(userInfo)).willReturn(userInfo.toUser(SecurityMockUtil.getMockedDefaultUserInternal()));
@@ -103,8 +96,6 @@ class UserControllerTest extends UnitTestTemplate {
 		int expectedStatus = 400;
 		String expectedJson = "";
 
-		this.given(userDetailsService.loadUserByUsername(SecurityMockUtil.getMockedDefaultUserInternal().getUsername())).willReturn(SecurityMockUtil.getMockedDefaultUserInternal());
-
 		ResultActions mvcResult = this.mockMvcPerformPutNoAuthorization(requestUrl, requestJson);
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
 	}
@@ -117,8 +108,6 @@ class UserControllerTest extends UnitTestTemplate {
 
 		User user = SecurityMockUtil.getMockedDefaultUserInternal();
 		user.setId(1L);
-
-		this.given(userDetailsService.loadUserByUsername(user.getUsername())).willReturn(user);
 		
 		ResultActions mvcResult = this.mockMvcPerformDeleteNoAuthorization(requestUrl);
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);

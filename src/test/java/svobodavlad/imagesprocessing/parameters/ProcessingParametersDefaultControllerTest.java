@@ -3,28 +3,17 @@ package svobodavlad.imagesprocessing.parameters;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.test.web.servlet.ResultActions;
 
 import svobodavlad.imagesprocessing.jpaentities.ProcessingParametersDefault;
-import svobodavlad.imagesprocessing.testutil.SecurityMockUtil;
 import svobodavlad.imagesprocessing.testutil.UnitTestTemplate;
 
 public class ProcessingParametersDefaultControllerTest extends UnitTestTemplate {
 	
 	@MockBean
 	private ProcessingParametersDefaultRepository parametersRepository;
-	
-	@MockBean
-	private UserDetailsService userDetailsService;
-
-	@BeforeEach
-	private void initData() {
-		this.given(userDetailsService.loadUserByUsername(SecurityMockUtil.getMockedAdminUser().getUsername())).willReturn(SecurityMockUtil.getMockedAdminUser());
-	}
 
 	@Test
 	void testGetProcessingParametersDefaultTemplateOk200() throws Exception {

@@ -3,16 +3,13 @@ package svobodavlad.imagesprocessing.security;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.test.web.servlet.ResultActions;
 
 import svobodavlad.imagesprocessing.jpaentities.Role;
 import svobodavlad.imagesprocessing.jpaentities.User;
 import svobodavlad.imagesprocessing.jpaentities.User.LoginProvider;
-import svobodavlad.imagesprocessing.testutil.SecurityMockUtil;
 import svobodavlad.imagesprocessing.testutil.UnitTestTemplate;
 
 class UserAdminControllerTest extends UnitTestTemplate {
@@ -20,16 +17,8 @@ class UserAdminControllerTest extends UnitTestTemplate {
 	@MockBean
 	private UserRepository userRepository;
 
-	@MockBean
-	private UserDetailsService userDetailsService;
-
 	private static final String ROLE_USER = "ROLE_USER";
 	private static final String ROLE_ADMIN = "ROLE_ADMIN";
-
-	@BeforeEach
-	private void initData() {
-		this.given(userDetailsService.loadUserByUsername(SecurityMockUtil.getMockedAdminUser().getUsername())).willReturn(SecurityMockUtil.getMockedAdminUser());
-	}
 
 	@Test
 	void testGetAllUsersOk200() throws Exception {

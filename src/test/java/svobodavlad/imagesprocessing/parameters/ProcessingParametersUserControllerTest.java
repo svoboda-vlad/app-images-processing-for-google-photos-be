@@ -7,7 +7,6 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.ResultActions;
 
@@ -25,10 +24,7 @@ public class ProcessingParametersUserControllerTest extends UnitTestTemplate {
 	private ProcessingParametersUserRepository parametersRepository;
 	
 	@MockBean
-	private ProcessingParametersDefaultRepository parametersDefaultRepository;	
-	
-	@MockBean
-	private UserDetailsService userDetailsService;
+	private ProcessingParametersDefaultRepository parametersDefaultRepository;
 
 	@MockBean
 	private UserRepository userRepository;
@@ -41,7 +37,6 @@ public class ProcessingParametersUserControllerTest extends UnitTestTemplate {
 	@BeforeEach
 	private void initData() {
 		mockedUser = SecurityMockUtil.getMockedDefaultUserInternal();
-		this.given(userDetailsService.loadUserByUsername(mockedUser.getUsername())).willReturn(mockedUser);
 	}
 
 	@Test
