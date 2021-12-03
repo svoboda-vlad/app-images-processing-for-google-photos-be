@@ -14,7 +14,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
 @ActiveProfiles(value = {"dev", "noliquibase"})
-public class UnitTestTemplate extends MockMvcUtil {
+public class UnitTestTemplateWithSecurity extends MockMvcUtilWithSecurity {
 
 	public <T> BDDMockito.BDDMyOngoingStubbing<T> given(T methodCall) {
 		return BDDMockito.given(methodCall);

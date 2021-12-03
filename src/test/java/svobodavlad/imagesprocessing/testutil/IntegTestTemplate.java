@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
 @Transactional
-public class IntegTestTemplate extends MockMvcUtil {
+public class IntegTestTemplate extends MockMvcUtilWithSecurity {
 
 	public <T> BDDMockito.BDDMyOngoingStubbing<T> given(T methodCall) {
 		return BDDMockito.given(methodCall);

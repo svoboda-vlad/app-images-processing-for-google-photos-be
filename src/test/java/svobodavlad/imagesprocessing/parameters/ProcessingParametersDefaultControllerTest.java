@@ -3,28 +3,17 @@ package svobodavlad.imagesprocessing.parameters;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.test.web.servlet.ResultActions;
 
 import svobodavlad.imagesprocessing.jpaentities.ProcessingParametersDefault;
-import svobodavlad.imagesprocessing.testutil.SecurityMockUtil;
 import svobodavlad.imagesprocessing.testutil.UnitTestTemplate;
 
 public class ProcessingParametersDefaultControllerTest extends UnitTestTemplate {
 	
 	@MockBean
 	private ProcessingParametersDefaultRepository parametersRepository;
-	
-	@MockBean
-	private UserDetailsService userDetailsService;
-
-	@BeforeEach
-	private void initData() {
-		this.given(userDetailsService.loadUserByUsername(SecurityMockUtil.getMockedAdminUser().getUsername())).willReturn(SecurityMockUtil.getMockedAdminUser());
-	}
 
 	@Test
 	void testGetProcessingParametersDefaultTemplateOk200() throws Exception {
@@ -39,7 +28,7 @@ public class ProcessingParametersDefaultControllerTest extends UnitTestTemplate 
 		
 		this.given(parametersRepository.findAll()).willReturn(parametersList);
 		
-		ResultActions mvcResult = this.mockMvcPerformGetAuthorizationAdminUser(requestUrl);
+		ResultActions mvcResult = this.mockMvcPerformGetNoAuthorization(requestUrl);
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
 	}
 	
@@ -51,7 +40,7 @@ public class ProcessingParametersDefaultControllerTest extends UnitTestTemplate 
 		
 		this.given(parametersRepository.findAll()).willReturn(new ArrayList<ProcessingParametersDefault>());
 		
-		ResultActions mvcResult = this.mockMvcPerformGetAuthorizationAdminUser(requestUrl);
+		ResultActions mvcResult = this.mockMvcPerformGetNoAuthorization(requestUrl);
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
 	}	
 	
@@ -67,7 +56,7 @@ public class ProcessingParametersDefaultControllerTest extends UnitTestTemplate 
 		this.given(parametersRepository.findAll()).willReturn(new ArrayList<ProcessingParametersDefault>(List.of(parameters)));
 		this.given(parametersRepository.save(parameters)).willReturn(parameters);
 		
-		ResultActions mvcResult = this.mockMvcPerformPutAuthorizationAdminUser(requestUrl, requestJson);
+		ResultActions mvcResult = this.mockMvcPerformPutNoAuthorization(requestUrl, requestJson);
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
 	}	
 	
@@ -80,7 +69,7 @@ public class ProcessingParametersDefaultControllerTest extends UnitTestTemplate 
 		
 		this.given(parametersRepository.findAll()).willReturn(new ArrayList<ProcessingParametersDefault>());
 		
-		ResultActions mvcResult = this.mockMvcPerformPutAuthorizationAdminUser(requestUrl, requestJson);
+		ResultActions mvcResult = this.mockMvcPerformPutNoAuthorization(requestUrl, requestJson);
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
 	}
 	

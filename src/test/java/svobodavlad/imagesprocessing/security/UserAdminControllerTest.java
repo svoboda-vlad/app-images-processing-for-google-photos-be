@@ -3,16 +3,13 @@ package svobodavlad.imagesprocessing.security;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.test.web.servlet.ResultActions;
 
 import svobodavlad.imagesprocessing.jpaentities.Role;
 import svobodavlad.imagesprocessing.jpaentities.User;
 import svobodavlad.imagesprocessing.jpaentities.User.LoginProvider;
-import svobodavlad.imagesprocessing.testutil.SecurityMockUtil;
 import svobodavlad.imagesprocessing.testutil.UnitTestTemplate;
 
 class UserAdminControllerTest extends UnitTestTemplate {
@@ -20,19 +17,11 @@ class UserAdminControllerTest extends UnitTestTemplate {
 	@MockBean
 	private UserRepository userRepository;
 
-	@MockBean
-	private UserDetailsService userDetailsService;
-
 	private static final String ROLE_USER = "ROLE_USER";
 	private static final String ROLE_ADMIN = "ROLE_ADMIN";
 
-	@BeforeEach
-	private void initData() {
-		this.given(userDetailsService.loadUserByUsername(SecurityMockUtil.getMockedAdminUser().getUsername())).willReturn(SecurityMockUtil.getMockedAdminUser());
-	}
-
 	@Test
-	void testgetAllUsersOk200() throws Exception {
+	void testGetAllUsersOk200() throws Exception {
 		String requestUrl = "/admin/users";
 		int expectedStatus = 200;
 		String expectedJson = "[{\"username\":\"user1\",\"givenName\":\"User 1\",\"familyName\":\"User 1\",\"lastLoginDateTime\":null,\"previousLoginDateTime\":null,\"userRoles\":[{\"role\":{\"id\":0,\"name\":\"ROLE_USER\"}}]},"
@@ -46,7 +35,7 @@ class UserAdminControllerTest extends UnitTestTemplate {
 
 		this.given(userRepository.findAll()).willReturn(new ArrayList<User>(List.of(user1, user2)));
 		
-		ResultActions mvcResult = this.mockMvcPerformGetAuthorizationAdminUser(requestUrl);
+		ResultActions mvcResult = this.mockMvcPerformGetNoAuthorization(requestUrl);
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
 	}
 

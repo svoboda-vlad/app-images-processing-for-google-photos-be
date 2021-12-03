@@ -7,7 +7,7 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.ResultActions;
 
 import svobodavlad.imagesprocessing.jpaentities.ProcessingParametersDefault;
@@ -17,16 +17,14 @@ import svobodavlad.imagesprocessing.security.UserRepository;
 import svobodavlad.imagesprocessing.testutil.SecurityMockUtil;
 import svobodavlad.imagesprocessing.testutil.UnitTestTemplate;
 
+@WithMockUser(username = SecurityMockUtil.DEFAULT_USERNAME)
 public class ProcessingParametersUserControllerTest extends UnitTestTemplate {
 	
 	@MockBean
 	private ProcessingParametersUserRepository parametersRepository;
 	
 	@MockBean
-	private ProcessingParametersDefaultRepository parametersDefaultRepository;	
-	
-	@MockBean
-	private UserDetailsService userDetailsService;
+	private ProcessingParametersDefaultRepository parametersDefaultRepository;
 
 	@MockBean
 	private UserRepository userRepository;
@@ -39,7 +37,6 @@ public class ProcessingParametersUserControllerTest extends UnitTestTemplate {
 	@BeforeEach
 	private void initData() {
 		mockedUser = SecurityMockUtil.getMockedDefaultUserInternal();
-		this.given(userDetailsService.loadUserByUsername(mockedUser.getUsername())).willReturn(mockedUser);
 	}
 
 	@Test
@@ -54,7 +51,7 @@ public class ProcessingParametersUserControllerTest extends UnitTestTemplate {
 		this.given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
 		this.given(parametersRepository.findByUser(mockedUser)).willReturn(Optional.of(parameters));
 		
-		ResultActions mvcResult = this.mockMvcPerformGetAuthorizationDefaultUser(requestUrl);
+		ResultActions mvcResult = this.mockMvcPerformGetNoAuthorization(requestUrl);
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);		
 	}
 	
@@ -67,7 +64,7 @@ public class ProcessingParametersUserControllerTest extends UnitTestTemplate {
 		this.given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
 		this.given(parametersRepository.findByUser(mockedUser)).willReturn(Optional.empty());
 		
-		ResultActions mvcResult = this.mockMvcPerformGetAuthorizationDefaultUser(requestUrl);
+		ResultActions mvcResult = this.mockMvcPerformGetNoAuthorization(requestUrl);
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
 	}
 
@@ -85,7 +82,7 @@ public class ProcessingParametersUserControllerTest extends UnitTestTemplate {
 		this.given(parametersRepository.findByUser(mockedUser)).willReturn(Optional.of(parameters));
 		this.given(parametersRepository.save(parameters)).willReturn(parameters);
 		
-		ResultActions mvcResult = this.mockMvcPerformPutAuthorizationDefaultUser(requestUrl, requestJson);
+		ResultActions mvcResult = this.mockMvcPerformPutNoAuthorization(requestUrl, requestJson);
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
 	}	
 	
@@ -103,7 +100,7 @@ public class ProcessingParametersUserControllerTest extends UnitTestTemplate {
 		this.given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
 		this.given(parametersRepository.findByUser(mockedUser)).willReturn(Optional.empty());
 		
-		ResultActions mvcResult = this.mockMvcPerformPutAuthorizationDefaultUser(requestUrl, requestJson);
+		ResultActions mvcResult = this.mockMvcPerformPutNoAuthorization(requestUrl, requestJson);
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
 	}
 	
@@ -116,7 +113,7 @@ public class ProcessingParametersUserControllerTest extends UnitTestTemplate {
 		ProcessingParametersDefault parameters = new ProcessingParametersDefault(3600, 1000, 1000);
 		this.given(parametersDefaultRepository.findAll()).willReturn(new ArrayList<ProcessingParametersDefault>(List.of(parameters)));
 		
-		ResultActions mvcResult = this.mockMvcPerformGetAuthorizationDefaultUser(requestUrl);
+		ResultActions mvcResult = this.mockMvcPerformGetNoAuthorization(requestUrl);
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
 		
 		this.verify(this.parametersService, this.times(1)).resetToDefault();
@@ -130,7 +127,7 @@ public class ProcessingParametersUserControllerTest extends UnitTestTemplate {
 		
 		this.given(parametersDefaultRepository.findAll()).willReturn(new ArrayList<ProcessingParametersDefault>());
 				
-		ResultActions mvcResult = this.mockMvcPerformGetAuthorizationDefaultUser(requestUrl);
+		ResultActions mvcResult = this.mockMvcPerformGetNoAuthorization(requestUrl);
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
 		
 		this.verify(this.parametersService, never()).resetToDefault();		

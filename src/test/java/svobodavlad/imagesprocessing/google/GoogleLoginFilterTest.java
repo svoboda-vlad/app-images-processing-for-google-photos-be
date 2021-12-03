@@ -21,9 +21,9 @@ import svobodavlad.imagesprocessing.jpaentities.UserRoles;
 import svobodavlad.imagesprocessing.security.UserRepository;
 import svobodavlad.imagesprocessing.security.UserService;
 import svobodavlad.imagesprocessing.testutil.SecurityMockUtil;
-import svobodavlad.imagesprocessing.testutil.UnitTestTemplate;
+import svobodavlad.imagesprocessing.testutil.UnitTestTemplateWithSecurity;
 
-class GoogleLoginFilterTest extends UnitTestTemplate {
+class GoogleLoginFilterTest extends UnitTestTemplateWithSecurity {
 
 	@MockBean
 	private PasswordEncoder encoder;	
