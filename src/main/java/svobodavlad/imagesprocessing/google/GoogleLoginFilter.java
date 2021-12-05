@@ -18,7 +18,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -33,9 +33,12 @@ import svobodavlad.imagesprocessing.security.UserRegister;
 import svobodavlad.imagesprocessing.security.UserRepository;
 import svobodavlad.imagesprocessing.security.UserService;
 
-public class GoogleLoginFilter extends AbstractAuthenticationProcessingFilter {
+public class GoogleLoginFilter extends UsernamePasswordAuthenticationFilter {
 
 	private final Logger log = LoggerFactory.getLogger(GoogleLoginFilter.class);
+	
+	private static final AntPathRequestMatcher GOOGLE_ANT_PATH_REQUEST_MATCHER = new AntPathRequestMatcher("/google-login",
+			"POST");
 
 	@Autowired
 	private PasswordEncoder encoder;
@@ -48,15 +51,15 @@ public class GoogleLoginFilter extends AbstractAuthenticationProcessingFilter {
 
 	@Autowired
 	private UserRepository userRepository;
-
+	
 	public GoogleLoginFilter(AuthenticationManager authManager) {
-		super(new AntPathRequestMatcher("/google-login", "POST"));
-		this.setAuthenticationManager(authManager);
+		super(authManager);
+		this.setRequiresAuthenticationRequestMatcher(GOOGLE_ANT_PATH_REQUEST_MATCHER);
 	}
 
 	@Override
 	public Authentication attemptAuthentication(HttpServletRequest req, HttpServletResponse res)
-			throws AuthenticationException, IOException {
+			throws AuthenticationException {
 
 		GoogleIdTokenTemplate tokenEntity = resolveGoogleIdTokenTemplate(req);
 		if (tokenEntity == null)
