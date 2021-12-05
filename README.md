@@ -335,6 +335,8 @@ google.client.clientids=...
 
 spring.jpa.hibernate.ddl-auto=none
 
+springdoc.show-login-endpoint=true
+
 DEV:
 
 spring.h2.console.enabled=true

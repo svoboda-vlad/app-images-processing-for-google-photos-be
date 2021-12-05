@@ -16,15 +16,14 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import svobodavlad.imagesprocessing.jpaentities.User;
 import svobodavlad.imagesprocessing.jpaentities.User.LoginProvider;
 
-public class LoginFilter extends AbstractAuthenticationProcessingFilter {
+public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
 	private final Logger log = LoggerFactory.getLogger(LoginFilter.class);
 
@@ -35,13 +34,12 @@ public class LoginFilter extends AbstractAuthenticationProcessingFilter {
 	private UserService userService;
 
 	public LoginFilter(AuthenticationManager authManager) {
-		super(new AntPathRequestMatcher("/login", "POST"));
-		this.setAuthenticationManager(authManager);
+		super(authManager);
 	}
 
 	@Override
 	public Authentication attemptAuthentication(HttpServletRequest req, HttpServletResponse res)
-			throws AuthenticationException, IOException {
+			throws AuthenticationException {
 		LoginUser loginUser = resolveUser(req);
 
 		if (loginUser == null)
