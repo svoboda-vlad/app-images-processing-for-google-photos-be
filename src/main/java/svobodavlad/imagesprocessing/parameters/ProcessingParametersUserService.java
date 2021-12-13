@@ -76,7 +76,7 @@ public class ProcessingParametersUserService {
 		if (optUser.isEmpty()) return null;
 		Optional<ProcessingParametersUser> optParameters = parametersRepository.findByUser(optUser.get());
 		if (optParameters.isEmpty()) return null;
-		ProcessingParametersUser parameters = parametersTemplate.toProcessingParametersUser(optParameters.get());
+		ProcessingParametersUser parameters = optParameters.get().updateFromTemplate(parametersTemplate);
 		return parametersRepository.save(parameters);
 	}	
 

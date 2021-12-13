@@ -154,12 +154,13 @@ class ProcessingParametersUserServiceTest extends UnitTestTemplate {
 	void testUpdateForCurrentUser() {
 		User mockedUser = SecurityMockUtil.getMockedDefaultUserInternal();
 		ProcessingParametersUser parameters = new ProcessingParametersUser(1800, 1000, 1000, mockedUser);
-		ProcessingParametersUserTemplate parametersTemplate = parameters.toProcessingParametersUserTemplate();
+		ProcessingParametersUser parametersUpdated = new ProcessingParametersUser(3600, 1000, 1000, mockedUser);
+		ProcessingParametersUserTemplate parametersTemplate = parametersUpdated.toProcessingParametersUserTemplate();
 		
 		this.given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
 		this.given(parametersRepository.findByUser(mockedUser)).willReturn(Optional.of(parameters));
-		this.given(parametersRepository.save(parameters)).willReturn(parameters);
+		this.given(parametersRepository.save(parametersUpdated)).willReturn(parametersUpdated);
 		
-		this.assertThat(parametersService.updateForCurrentUser(parametersTemplate)).isEqualTo(parameters);
+		this.assertThat(parametersService.updateForCurrentUser(parametersTemplate)).isEqualTo(parametersUpdated);
 	}
 }

@@ -57,5 +57,12 @@ public class ProcessingParametersUser extends JpaEntityTemplate {
 		this.setResizeWidth(parametersDefault.getResizeWidth());
 		return this;
 	}
+	
+	public ProcessingParametersUser updateFromTemplate(ProcessingParametersUserTemplate template) {
+		this.setTimeDiffGroup(template.getTimeDiffGroup());
+		this.setResizeHeight(template.getResizeHeight());
+		this.setResizeWidth(template.getResizeWidth());
+		return this;
+	}
 
 }
