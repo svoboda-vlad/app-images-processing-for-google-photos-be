@@ -1,5 +1,7 @@
 package svobodavlad.imagesprocessing.security;
 
+import java.util.Optional;
+
 import javax.validation.Valid;
 
 import org.springframework.http.ResponseEntity;
@@ -36,12 +38,14 @@ public class UserController {
 		}
 		return ResponseEntity.created(null).build();
 	}
-
+	
 	@Operation(security = { @SecurityRequirement(name = "bearer-key") })
 	@GetMapping(USER_URL)
 	public ResponseEntity<UserInfo> getUserInfo() {
-		return ResponseEntity.ok(userService.getCurrentUser().toUserInfo());
-	}
+		Optional<User> currentUser = userService.getCurrentUser();
+		if (currentUser.isEmpty()) return ResponseEntity.notFound().build();
+		return ResponseEntity.ok(currentUser.get().toUserInfo());
+	}	
 
 	@Operation(security = { @SecurityRequirement(name = "bearer-key") })
 	@PutMapping(USER_URL)

@@ -170,7 +170,7 @@ public class UserServiceTest extends UnitTestTemplate {
 		User mockedUser = SecurityMockUtil.getMockedDefaultUserInternal();
 
 		this.given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));		
-		this.assertThat(userService.getCurrentUser()).isEqualTo(mockedUser);
+		this.assertThat(userService.getCurrentUser()).isEqualTo(Optional.of(mockedUser));
 	}	
 
 }
