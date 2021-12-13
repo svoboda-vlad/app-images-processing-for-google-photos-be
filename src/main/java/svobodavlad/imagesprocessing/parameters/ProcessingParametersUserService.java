@@ -52,9 +52,32 @@ public class ProcessingParametersUserService {
 	public void deleteForCurrentUser() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		Optional<User> optUser = userRepository.findByUsername(authentication.getName());
+		if (optUser.isPresent()) {
+			Optional<ProcessingParametersUser> optParameters = parametersRepository.findByUser(optUser.get());
+			if (optParameters.isPresent()) {
+				parametersRepository.delete(optParameters.get());
+				parametersRepository.flush();
+			}
+		}
+	}
+	
+	public Optional<ProcessingParametersUser> getForCurrentUser() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		Optional<User> optUser = userRepository.findByUsername(authentication.getName());
+		if (optUser.isEmpty()) return Optional.empty();
 		Optional<ProcessingParametersUser> optParameters = parametersRepository.findByUser(optUser.get());
-		parametersRepository.deleteById(optParameters.get().getId());
-		parametersRepository.flush();
+		if (optParameters.isEmpty()) return Optional.empty();
+		return optParameters;
+	}
+	
+	public ProcessingParametersUser updateForCurrentUser(ProcessingParametersUserTemplate parametersTemplate) {		
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		Optional<User> optUser = userRepository.findByUsername(authentication.getName());
+		if (optUser.isEmpty()) return null;
+		Optional<ProcessingParametersUser> optParameters = parametersRepository.findByUser(optUser.get());
+		if (optParameters.isEmpty()) return null;
+		ProcessingParametersUser parameters = parametersTemplate.toProcessingParametersUser(optParameters.get());
+		return parametersRepository.save(parameters);
 	}	
 
 }
