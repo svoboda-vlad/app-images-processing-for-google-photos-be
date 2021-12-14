@@ -1,6 +1,7 @@
 package svobodavlad.imagesprocessing.security;
 
 import java.util.HashSet;
+import java.util.Optional;
 
 import javax.persistence.EntityExistsException;
 
@@ -34,7 +35,7 @@ class UserControllerTest extends UnitTestTemplate {
 		int expectedStatus = 200;
 		String expectedJson = "{\"username\":\"user1\",\"givenName\":\"User 1\",\"familyName\":\"User 1\",\"userRoles\":[{\"role\":{\"id\":0,\"name\":\"ROLE_USER\"}}],\"lastLoginDateTime\":null,\"previousLoginDateTime\":null}";
 
-		this.given(userService.getCurrentUser()).willReturn(SecurityMockUtil.getMockedDefaultUserInternal());
+		this.given(userService.getCurrentUser()).willReturn(Optional.of(SecurityMockUtil.getMockedDefaultUserInternal()));
 
 		ResultActions mvcResult = this.mockMvcPerformGetNoAuthorization(requestUrl);
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);

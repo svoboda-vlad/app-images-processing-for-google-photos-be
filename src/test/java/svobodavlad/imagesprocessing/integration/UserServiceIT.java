@@ -41,7 +41,7 @@ public class UserServiceIT extends IntegTestTemplate {
 				mockedUser.getGivenName(), mockedUser.getFamilyName());
 		User user = userRegister.toUserInternal(encoder);
 		
-		roleRepository.deleteById(roleRepository.findByName("ROLE_ADMIN").get().getId());
+		roleRepository.delete(roleRepository.findByName("ROLE_ADMIN").get());
 
 		this.assertThatExceptionOfType(RuntimeException.class).isThrownBy(() -> {
 			userService.registerAdminUser(user);

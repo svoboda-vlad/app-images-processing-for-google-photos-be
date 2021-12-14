@@ -94,11 +94,9 @@ public class UserService {
 		}
 	}
 	
-	public User getCurrentUser() {
+	public Optional<User> getCurrentUser() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		Optional<User> optUser = userRepository.findByUsername(authentication.getName());
-		if (optUser.isPresent()) return optUser.get();
-		return null;
-	}	
+		return userRepository.findByUsername(authentication.getName());
+	}
 
 }

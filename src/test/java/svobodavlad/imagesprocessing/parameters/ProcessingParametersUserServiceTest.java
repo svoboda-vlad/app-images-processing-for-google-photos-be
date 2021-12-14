@@ -125,7 +125,7 @@ class ProcessingParametersUserServiceTest extends UnitTestTemplate {
 	}
 	
 	@Test
-	void testDeleteReturnsDefault() {
+	void testDeleteForCurrentUser() {
 		User mockedUser = SecurityMockUtil.getMockedDefaultUserInternal();
 		ProcessingParametersUser parameters = new ProcessingParametersUser(1800, 1000, 1000, mockedUser);
 		parameters.setId(1L);
@@ -135,7 +135,32 @@ class ProcessingParametersUserServiceTest extends UnitTestTemplate {
 		
 		parametersService.deleteForCurrentUser();
 		
-		this.verify(parametersRepository, this.times(1)).deleteById(parameters.getId());
-		this.verify(parametersRepository, this.times(1)).flush();		
-	}	
+		this.verify(parametersRepository, this.times(1)).delete(parameters);
+		this.verify(parametersRepository, this.times(1)).flush();
+	}
+
+	@Test
+	void testGetForCurrentUser() {
+		User mockedUser = SecurityMockUtil.getMockedDefaultUserInternal();
+		ProcessingParametersUser parameters = new ProcessingParametersUser(1800, 1000, 1000, mockedUser);
+		
+		this.given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
+		this.given(parametersRepository.findByUser(mockedUser)).willReturn(Optional.of(parameters));
+		
+		this.assertThat(parametersService.getForCurrentUser()).isEqualTo(Optional.of(parameters));
+	}
+
+	@Test
+	void testUpdateForCurrentUser() {
+		User mockedUser = SecurityMockUtil.getMockedDefaultUserInternal();
+		ProcessingParametersUser parameters = new ProcessingParametersUser(1800, 1000, 1000, mockedUser);
+		ProcessingParametersUser parametersUpdated = new ProcessingParametersUser(3600, 1000, 1000, mockedUser);
+		ProcessingParametersUserTemplate parametersTemplate = parametersUpdated.toProcessingParametersUserTemplate();
+		
+		this.given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
+		this.given(parametersRepository.findByUser(mockedUser)).willReturn(Optional.of(parameters));
+		this.given(parametersRepository.save(parametersUpdated)).willReturn(parametersUpdated);
+		
+		this.assertThat(parametersService.updateForCurrentUser(parametersTemplate)).isEqualTo(parametersUpdated);
+	}
 }
