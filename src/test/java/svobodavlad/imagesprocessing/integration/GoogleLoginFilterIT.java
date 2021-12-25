@@ -1,6 +1,7 @@
 package svobodavlad.imagesprocessing.integration;
 
 import java.security.GeneralSecurityException;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
@@ -100,13 +101,15 @@ class GoogleLoginFilterIT extends IntegTestTemplate {
 		ResultActions mvcResult = this.mockMvcPerformPostNoAuthorization(requestUrl, requestJson);
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
 		this.mockMvcExpectHeaderExists(mvcResult, expectedHeader);
+		
+		DateTimeFormatter formatter = DateTimeFormatter.ISO_INSTANT.withZone(ZoneId.systemDefault());
 
 		requestUrl = "/user";
 		expectedStatus = 200;
 		Optional<User> optUser = userRepository.findByUsername(newUserUsername);
 		expectedJson = "{\"username\":\"user322\",\"givenName\":\"User 322\",\"familyName\":\"User 322\",\"userRoles\":[{\"role\":{\"name\":\"ROLE_USER\"}}],\"lastLoginDateTime\":\""
-				+ optUser.get().getLastLoginDateTime().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME) + "\",\"previousLoginDateTime\":\""
-				+ optUser.get().getLastLoginDateTime().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME) + "\"}";
+				+ formatter.format(optUser.get().getLastLoginDateTime()) + "\",\"previousLoginDateTime\":\""
+				+ formatter.format(optUser.get().getLastLoginDateTime()) + "\"}";
 
 		mvcResult = this.mockMvcPerformGetAuthorizationForUsername(requestUrl, newUserUsername);
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
