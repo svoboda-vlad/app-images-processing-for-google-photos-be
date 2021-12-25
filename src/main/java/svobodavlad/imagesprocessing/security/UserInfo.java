@@ -1,6 +1,6 @@
 package svobodavlad.imagesprocessing.security;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -30,8 +30,8 @@ public class UserInfo {
 	@Size(min = 1, max = 255)
 	private String familyName;
 
-	private LocalDateTime lastLoginDateTime;
-	private LocalDateTime previousLoginDateTime;
+	private Instant lastLoginDateTime;
+	private Instant previousLoginDateTime;
 	private Set<UserRoles> userRoles = new HashSet<UserRoles>();
 
 	public User toUser(User user) {

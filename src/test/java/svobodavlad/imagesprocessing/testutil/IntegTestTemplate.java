@@ -1,7 +1,9 @@
 package svobodavlad.imagesprocessing.testutil;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 
+import org.assertj.core.api.AbstractInstantAssert;
 import org.assertj.core.api.AbstractLocalDateTimeAssert;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.ObjectAssert;
@@ -23,6 +25,10 @@ public class IntegTestTemplate extends MockMvcUtilWithSecurity {
 	}	
 	
 	public AbstractLocalDateTimeAssert<?> assertThat(LocalDateTime actual) {
+		return Assertions.assertThat(actual);
+	}
+	
+	public AbstractInstantAssert<?> assertThat(Instant actual) {
 		return Assertions.assertThat(actual);
 	}	
 	

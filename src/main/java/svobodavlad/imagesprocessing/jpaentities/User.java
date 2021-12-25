@@ -1,6 +1,6 @@
 package svobodavlad.imagesprocessing.jpaentities;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -66,8 +66,8 @@ public class User extends JpaEntityTemplate implements UserDetails {
 	@NonNull
 	private String familyName;
 
-	private LocalDateTime lastLoginDateTime;
-	private LocalDateTime previousLoginDateTime;
+	private Instant lastLoginDateTime;
+	private Instant previousLoginDateTime;
 
 	// CascadeType.MERGE, PERSIST - enable insert, select, update of user roles
 	// using user entity
@@ -120,7 +120,7 @@ public class User extends JpaEntityTemplate implements UserDetails {
 	}
 
 	public void updateLastLoginDateTime() {
-		LocalDateTime currentDateTime = LocalDateTime.now();
+		Instant currentDateTime = Instant.now();
 		if (this.lastLoginDateTime == null) {
 			this.previousLoginDateTime = currentDateTime;
 		} else {

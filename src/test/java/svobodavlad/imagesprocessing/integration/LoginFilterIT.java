@@ -1,6 +1,6 @@
 package svobodavlad.imagesprocessing.integration;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -61,7 +61,7 @@ class LoginFilterIT extends IntegTestTemplate {
 
 		User userWithLastLogin = new User("user322", encoder.encode("pass322"), LoginProvider.INTERNAL, "User 322",
 				"User 322");
-		LocalDateTime lastLoginDateTime = LocalDateTime.now();
+		Instant lastLoginDateTime = Instant.now();
 		userWithLastLogin.setLastLoginDateTime(lastLoginDateTime);
 		userRepository.save(userWithLastLogin);
 
@@ -99,7 +99,7 @@ class LoginFilterIT extends IntegTestTemplate {
 
 		User userWithGoogleLogin = new User("user323", encoder.encode("pass323"), LoginProvider.GOOGLE, "User 323",
 				"User 323");
-		LocalDateTime lastLoginDateTime = LocalDateTime.now();
+		Instant lastLoginDateTime = Instant.now();
 		userWithGoogleLogin.setLastLoginDateTime(lastLoginDateTime);
 		userRepository.save(userWithGoogleLogin);
 

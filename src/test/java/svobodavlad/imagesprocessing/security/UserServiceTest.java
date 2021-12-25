@@ -1,8 +1,10 @@
 package svobodavlad.imagesprocessing.security;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZoneOffset;
 import java.util.Optional;
 
 import javax.persistence.EntityExistsException;
@@ -81,27 +83,27 @@ public class UserServiceTest extends UnitTestTemplate {
 		this.given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
 		this.given(userRepository.save(mockedUser)).willReturn(mockedUser);
 
-		LocalDateTime minTime = LocalDateTime.now();
+		Instant minTime = Instant.now();
 		
 		this.assertThat(userService.updateLastLoginDateTime(mockedUser.getUsername())).isEqualTo(mockedUser);
-		this.assertThat(mockedUser.getLastLoginDateTime()).isBetween(minTime, LocalDateTime.now());
-		this.assertThat(mockedUser.getPreviousLoginDateTime()).isBetween(minTime, LocalDateTime.now());
+		this.assertThat(mockedUser.getLastLoginDateTime()).isBetween(minTime, Instant.now());
+		this.assertThat(mockedUser.getPreviousLoginDateTime()).isBetween(minTime, Instant.now());
 	}
 	
 	@Test
 	void testUpdateLastLoginDateTimeSecondLogin() {
 		User mockedUser = SecurityMockUtil.getMockedDefaultUserInternal();
-		LocalDateTime lastLoginDateTime = LocalDateTime.of(LocalDate.of(2021, 9, 26), LocalTime.of(12, 53));
+		Instant lastLoginDateTime = LocalDateTime.of(LocalDate.of(2021, 9, 26), LocalTime.of(12, 53)).toInstant(ZoneOffset.UTC);;
 		mockedUser.setLastLoginDateTime(lastLoginDateTime);
 		mockedUser.setPreviousLoginDateTime(lastLoginDateTime);
 		
 		this.given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
 		this.given(userRepository.save(mockedUser)).willReturn(mockedUser);
 
-		LocalDateTime minTime = LocalDateTime.now();
+		Instant minTime = Instant.now();
 		
 		this.assertThat(userService.updateLastLoginDateTime(mockedUser.getUsername())).isEqualTo(mockedUser);
-		this.assertThat(mockedUser.getLastLoginDateTime()).isBetween(minTime, LocalDateTime.now());
+		this.assertThat(mockedUser.getLastLoginDateTime()).isBetween(minTime, Instant.now());
 		this.assertThat(mockedUser.getPreviousLoginDateTime()).isEqualTo(lastLoginDateTime);
 	}
 	
