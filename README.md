@@ -19,37 +19,11 @@ Swagger UI
 
 ## Front-end - Registration of a new user and log in
 
-- creating a new account and log in:
-
-Menu > User > User registration
-
 - using an existing Google account and log in:
 
 Menu > User > Log in > "Log In With Google" button
 
 ## Back-end - Registration of a new user and log in
-
-using cURL command line tool
-
-- creating a new account:
-
-Step 1 - registration of a new user
-
-```
-curl -i https://images-proc-for-google-photos.herokuapp.com/user -d "{\"username\": \"test1\",\"password\": \"pass123\", \"givenName\": \"Test 1\", \"familyName\": \"Test 1\"}" -H "Content-Type: application/json"
-```
-
-Step 2 - log in and obtaining a JWT token
-
-```
-curl -i https://images-proc-for-google-photos.herokuapp.com/login -d "{\"username\": \"test1\", \"password\": \"pass123\"}"
-```
-
-JWT token in HTTP response header:
-
-```
-Authorization: Bearer abcdef
-```
 
 - using an existing Google account:
 
@@ -219,10 +193,9 @@ restricted:
 unrestricted:
 - POST "/login" (LoginFilter)
 - POST "/google-login" (GoogleLoginFilter)
-- POST "/user" (UserController)
 
 restricted:
-- GET + PUT + DELETE "/user" (UserController)
+- GET + DELETE "/user" (UserController)
 
 restricted (administrator):
 - GET "/admin/users" (UserAdminController)
