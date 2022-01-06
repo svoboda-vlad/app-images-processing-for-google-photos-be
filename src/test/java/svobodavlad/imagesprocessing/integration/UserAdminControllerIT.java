@@ -23,11 +23,32 @@ public class UserAdminControllerIT extends IntegTestTemplate {
 	void testGetAllUsersOk200() throws Exception {
 		String requestUrl = "/admin/users";
 		int expectedStatus = 200;
-		String expectedJson = "[{\"username\":\"user1\",\"givenName\":\"User 1\",\"familyName\":\"User 1\",\"lastLoginDateTime\":null,\"previousLoginDateTime\":null,\"userRoles\":[{\"role\":{\"name\":\"ROLE_USER\"}}]},"
-				+ "{\"username\":\"admin\",\"givenName\":\"Administrator\",\"familyName\":\"Administrator\",\"lastLoginDateTime\":null,\"previousLoginDateTime\":null,\"userRoles\":[{\"role\":{\"name\":\"ROLE_USER\"}},{\"role\":{\"name\":\"ROLE_ADMIN\"}}]}]";
-		
+		String expectedJson = "[{\"username\":\"user1\",\"givenName\":\"User 1\",\"familyName\":\"User 1\",\"email\":\"user1@gmail.com\",\"lastLoginDateTime\":null,\"previousLoginDateTime\":null,\"userRoles\":[{\"role\":{\"name\":\"ROLE_USER\"}}]},"
+				+ "{\"username\":\"admin\",\"givenName\":\"Administrator\",\"familyName\":\"Administrator\",\"email\":\"admin@gmail.com\",\"lastLoginDateTime\":null,\"previousLoginDateTime\":null,\"userRoles\":[{\"role\":{\"name\":\"ROLE_USER\"}},{\"role\":{\"name\":\"ROLE_ADMIN\"}}]}]";		
 		ResultActions mvcResult = this.mockMvcPerformGetAuthorizationAdminUser(requestUrl);
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
 	}
+	
+	@Test
+	void testUpdateUserOk200() throws Exception {
+		String requestUrl = "/admin/user";
+		String requestJson = "{\"username\":\"admin\", \"givenName\": \"admin new\",\"familyName\": \"admin new 2\",\"email\": \"adminnew@gmail.com\",\"lastLoginDateTime\":null,\"previousLoginDateTime\":null}";
+		int expectedStatus = 200;
+		String expectedJson = "{\"username\":\"admin\",\"givenName\":\"admin new\",\"familyName\":\"admin new 2\",\"email\": \"adminnew@gmail.com\",\"lastLoginDateTime\":null,\"previousLoginDateTime\":null,\"userRoles\":[{\"role\":{\"name\":\"ROLE_USER\"}},{\"role\":{\"name\":\"ROLE_ADMIN\"}}]}";
+
+		ResultActions mvcResult = this.mockMvcPerformPutAuthorizationAdminUser(requestUrl, requestJson);
+		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
+	}
+
+	@Test
+	void testUpdateUserUsernameDoesNotMatchBadRequest400() throws Exception {
+		String requestUrl = "/admin/user";
+		String requestJson = "{\"username\":\"adminx\",\"lastLoginDateTime\":null,\"previousLoginDateTime\":null, \"givenName\": \"User X\",\"familyName\": \"User Y\"}";
+		int expectedStatus = 400;
+		String expectedJson = "";
+
+		ResultActions mvcResult = this.mockMvcPerformPutAuthorizationAdminUser(requestUrl, requestJson);
+		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
+	}	
 
 }
