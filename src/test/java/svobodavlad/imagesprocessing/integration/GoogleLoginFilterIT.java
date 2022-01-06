@@ -52,6 +52,7 @@ class GoogleLoginFilterIT extends IntegTestTemplate {
 		payload.setSubject(defaultUser.getUsername());
 		payload.set("given_name", defaultUser.getGivenName());
 		payload.set("family_name", defaultUser.getFamilyName());
+		payload.setEmail(defaultUser.getEmail());
 		GoogleIdToken idToken = new GoogleIdToken(header, payload, new byte[0], new byte[0]);
 		this.given(googleIdTokenVerifier.verify("abcdef")).willReturn(idToken);
 		
@@ -95,6 +96,7 @@ class GoogleLoginFilterIT extends IntegTestTemplate {
 		payload.setSubject(newUserUsername);
 		payload.set("given_name", "User 322");
 		payload.set("family_name", "User 322");
+		payload.setEmail("user322@gmail.com");
 		GoogleIdToken idToken = new GoogleIdToken(header, payload, new byte[0], new byte[0]);
 		this.given(googleIdTokenVerifier.verify("abcdef")).willReturn(idToken);
 
@@ -109,7 +111,7 @@ class GoogleLoginFilterIT extends IntegTestTemplate {
 		Optional<User> optUser = userRepository.findByUsername(newUserUsername);
 		expectedJson = "{\"username\":\"user322\",\"givenName\":\"User 322\",\"familyName\":\"User 322\",\"userRoles\":[{\"role\":{\"name\":\"ROLE_USER\"}}],\"lastLoginDateTime\":\""
 				+ formatter.format(optUser.get().getLastLoginDateTime()) + "\",\"previousLoginDateTime\":\""
-				+ formatter.format(optUser.get().getLastLoginDateTime()) + "\"}";
+				+ formatter.format(optUser.get().getLastLoginDateTime()) + "\",\"email\":\"user322@gmail.com\"}";
 
 		mvcResult = this.mockMvcPerformGetAuthorizationForUsername(requestUrl, newUserUsername);
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);

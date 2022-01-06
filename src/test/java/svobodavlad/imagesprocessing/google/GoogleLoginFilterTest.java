@@ -63,6 +63,7 @@ class GoogleLoginFilterTest extends UnitTestTemplateWithSecurity {
 		payload.setSubject(mockedUser.getUsername());
 		payload.set("given_name", mockedUser.getGivenName());
 		payload.set("family_name", mockedUser.getFamilyName());
+		payload.setEmail(mockedUser.getEmail());
 		GoogleIdToken idToken = new GoogleIdToken(header, payload, new byte[0], new byte[0]);
 		this.given(googleIdTokenVerifier.verify("abcdef")).willReturn(idToken);
 		this.given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
@@ -91,6 +92,7 @@ class GoogleLoginFilterTest extends UnitTestTemplateWithSecurity {
 		payload.setSubject(mockedUser.getUsername());
 		payload.set("given_name", mockedUser.getGivenName());
 		payload.set("family_name", mockedUser.getFamilyName());
+		payload.setEmail(mockedUser.getEmail());
 		GoogleIdToken idToken = new GoogleIdToken(header, payload, new byte[0], new byte[0]);
 		this.given(googleIdTokenVerifier.verify("abcdef")).willReturn(idToken);
 		User mockedUserInternal = SecurityMockUtil.getMockedDefaultUserInternal();
@@ -120,6 +122,7 @@ class GoogleLoginFilterTest extends UnitTestTemplateWithSecurity {
 		payload.setSubject(mockedUser.getUsername());
 		payload.set("given_name", mockedUser.getGivenName());
 		payload.set("family_name", mockedUser.getFamilyName());
+		payload.setEmail(mockedUser.getEmail());
 		GoogleIdToken idToken = new GoogleIdToken(header, payload, new byte[0], new byte[0]);
 		this.given(googleIdTokenVerifier.verify("abcdef")).willReturn(idToken);
 		this.given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.empty());

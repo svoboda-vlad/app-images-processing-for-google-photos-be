@@ -5,8 +5,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.ResultActions;
 
-import svobodavlad.imagesprocessing.security.RoleRepository;
-import svobodavlad.imagesprocessing.security.UserRepository;
 import svobodavlad.imagesprocessing.testutil.IntegTestTemplate;
 import svobodavlad.imagesprocessing.testutil.SecurityTestUtil;
 
@@ -14,12 +12,6 @@ public class UserControllerIT extends IntegTestTemplate {
 
 	@Autowired
 	private SecurityTestUtil securityTestUtil;
-	
-	@Autowired
-	private UserRepository userRepository;	
-	
-	@Autowired
-	private RoleRepository roleRepository;
 	
 	@BeforeEach
 	void initData() {
@@ -31,7 +23,7 @@ public class UserControllerIT extends IntegTestTemplate {
 	void testGetCurrentUserOk200() throws Exception {
 		String requestUrl = "/user";
 		int expectedStatus = 200;
-		String expectedJson = "{\"username\":\"user1\",\"givenName\":\"User 1\",\"familyName\":\"User 1\",\"userRoles\":[{\"role\":{\"name\":\"ROLE_USER\"}}],\"lastLoginDateTime\":null,\"previousLoginDateTime\":null}";
+		String expectedJson = "{\"username\":\"user1\",\"givenName\":\"User 1\",\"familyName\":\"User 1\",\"email\":\"user1@gmail.com\",\"userRoles\":[{\"role\":{\"name\":\"ROLE_USER\"}}],\"lastLoginDateTime\":null,\"previousLoginDateTime\":null}";
 
 		ResultActions mvcResult = this.mockMvcPerformGetAuthorizationDefaultUser(requestUrl);
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);

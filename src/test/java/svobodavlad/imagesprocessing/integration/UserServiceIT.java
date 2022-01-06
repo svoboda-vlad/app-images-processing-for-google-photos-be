@@ -27,7 +27,7 @@ public class UserServiceIT extends IntegTestTemplate {
 		User mockedUser = SecurityMockUtil.getMockedAdminUser();
 		
 		UserRegister userRegister = new UserRegister(mockedUser.getUsername(), mockedUser.getPassword(),
-				mockedUser.getGivenName(), mockedUser.getFamilyName());
+				mockedUser.getGivenName(), mockedUser.getFamilyName(), mockedUser.getEmail());
 		User user = userRegister.toUserInternal(encoder);
 		
 		this.assertThat(userService.registerAdminUser(user)).isEqualTo(user);
@@ -38,7 +38,7 @@ public class UserServiceIT extends IntegTestTemplate {
 		User mockedUser = SecurityMockUtil.getMockedAdminUser();
 		
 		UserRegister userRegister = new UserRegister(mockedUser.getUsername(), mockedUser.getPassword(),
-				mockedUser.getGivenName(), mockedUser.getFamilyName());
+				mockedUser.getGivenName(), mockedUser.getFamilyName(), mockedUser.getEmail());
 		User user = userRegister.toUserInternal(encoder);
 		
 		roleRepository.delete(roleRepository.findByName("ROLE_ADMIN").get());

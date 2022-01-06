@@ -78,7 +78,8 @@ public class GoogleLoginFilter extends UsernamePasswordAuthenticationFilter {
 				if (optUser.isEmpty()) {
 					String familyName = (String) payload.get("family_name");
 					String givenName = (String) payload.get("given_name");
-					UserRegister userRegister = new UserRegister(username, username, givenName, familyName);
+					String email = payload.getEmail();
+					UserRegister userRegister = new UserRegister(username, username, givenName, familyName, email);
 					User user = userRegister.toUserGoogle(encoder);
 					userService.registerUser(user);
 				}
