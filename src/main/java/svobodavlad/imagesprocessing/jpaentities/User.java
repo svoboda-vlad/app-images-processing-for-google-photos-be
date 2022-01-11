@@ -65,6 +65,9 @@ public class User extends JpaEntityTemplate implements UserDetails {
 	@Size(min = 1, max = 255)
 	@NonNull
 	private String familyName;
+	
+	@Size(min = 1, max = 255)
+	private String email;	
 
 	private Instant lastLoginDateTime;
 	private Instant previousLoginDateTime;
@@ -134,7 +137,7 @@ public class User extends JpaEntityTemplate implements UserDetails {
 	}
 
 	public UserInfo toUserInfo() {
-		UserInfo userInfo = new UserInfo(this.getUsername(), this.getGivenName(), this.getFamilyName(),
+		UserInfo userInfo = new UserInfo(this.getUsername(), this.getGivenName(), this.getFamilyName(), this.getEmail(),
 				this.getLastLoginDateTime(), this.getPreviousLoginDateTime(), this.getRoles());
 		return userInfo;
 	}

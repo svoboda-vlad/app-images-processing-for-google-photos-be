@@ -17,6 +17,7 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.json.webtoken.JsonWebSignature.Header;
 
 import svobodavlad.imagesprocessing.jpaentities.User;
+import svobodavlad.imagesprocessing.jpaentities.UserRoles;
 import svobodavlad.imagesprocessing.security.UserRepository;
 import svobodavlad.imagesprocessing.testutil.IntegTestTemplate;
 import svobodavlad.imagesprocessing.testutil.SecurityTestUtil;
@@ -52,6 +53,7 @@ class GoogleLoginFilterIT extends IntegTestTemplate {
 		payload.setSubject(defaultUser.getUsername());
 		payload.set("given_name", defaultUser.getGivenName());
 		payload.set("family_name", defaultUser.getFamilyName());
+		payload.setEmail(defaultUser.getEmail());
 		GoogleIdToken idToken = new GoogleIdToken(header, payload, new byte[0], new byte[0]);
 		this.given(googleIdTokenVerifier.verify("abcdef")).willReturn(idToken);
 		
@@ -95,6 +97,7 @@ class GoogleLoginFilterIT extends IntegTestTemplate {
 		payload.setSubject(newUserUsername);
 		payload.set("given_name", "User 322");
 		payload.set("family_name", "User 322");
+		payload.setEmail("user322@gmail.com");
 		GoogleIdToken idToken = new GoogleIdToken(header, payload, new byte[0], new byte[0]);
 		this.given(googleIdTokenVerifier.verify("abcdef")).willReturn(idToken);
 
@@ -107,9 +110,15 @@ class GoogleLoginFilterIT extends IntegTestTemplate {
 		requestUrl = "/user";
 		expectedStatus = 200;
 		Optional<User> optUser = userRepository.findByUsername(newUserUsername);
-		expectedJson = "{\"username\":\"user322\",\"givenName\":\"User 322\",\"familyName\":\"User 322\",\"userRoles\":[{\"role\":{\"name\":\"ROLE_USER\"}}],\"lastLoginDateTime\":\""
+		String rolesJson = "";
+		for (UserRoles userRole : optUser.get().getRoles()) {
+			if (rolesJson.length() > 0) rolesJson += ",";
+			rolesJson += "{\"role\":{\"id\":" + userRole.getRole().getId() +",\"name\":\"" + userRole.getRole().getName() + "\"}}";
+		}
+		expectedJson = "{\"username\":\"user322\",\"givenName\":\"User 322\",\"familyName\":\"User 322\",\"userRoles\":[" 
+				+ rolesJson + "],\"lastLoginDateTime\":\""
 				+ formatter.format(optUser.get().getLastLoginDateTime()) + "\",\"previousLoginDateTime\":\""
-				+ formatter.format(optUser.get().getLastLoginDateTime()) + "\"}";
+				+ formatter.format(optUser.get().getLastLoginDateTime()) + "\",\"email\":\"user322@gmail.com\"}";
 
 		mvcResult = this.mockMvcPerformGetAuthorizationForUsername(requestUrl, newUserUsername);
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);

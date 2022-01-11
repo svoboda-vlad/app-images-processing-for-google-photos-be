@@ -42,7 +42,7 @@ public abstract class MockMvcUtil {
 		if (expectedJson.isEmpty()) {
 			return result.andExpect(status().is(expectedStatus)).andExpect(content().string(expectedJson));
 		}
-		return result.andExpect(status().is(expectedStatus)).andExpect(content().json(expectedJson));
+		return result.andExpect(status().is(expectedStatus)).andExpect(content().json(expectedJson, true));
 	}
 
 	public ResultActions mockMvcExpectHeaderExists(ResultActions result, String expectedHeader) throws Exception {
