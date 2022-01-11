@@ -26,7 +26,7 @@ class UserControllerTest extends UnitTestTemplate {
 	void testGetCurrentUserOk200() throws Exception {
 		String requestUrl = "/user";
 		int expectedStatus = 200;
-		String expectedJson = "{\"username\":\"user1\",\"givenName\":\"User 1\",\"familyName\":\"User 1\",\"userRoles\":[{\"role\":{\"id\":0,\"name\":\"ROLE_USER\"}}],\"lastLoginDateTime\":null,\"previousLoginDateTime\":null}";
+		String expectedJson = "{\"username\":\"user1\",\"givenName\":\"User 1\",\"familyName\":\"User 1\",\"email\":\"user1@gmail.com\",\"userRoles\":[{\"role\":{\"id\":0,\"name\":\"ROLE_USER\"}}],\"lastLoginDateTime\":null,\"previousLoginDateTime\":null}";
 
 		this.given(userService.getCurrentUser()).willReturn(Optional.of(SecurityMockUtil.getMockedDefaultUserInternal()));
 

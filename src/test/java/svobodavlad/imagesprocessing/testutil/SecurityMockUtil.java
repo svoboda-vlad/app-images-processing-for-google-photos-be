@@ -24,7 +24,9 @@ public class SecurityMockUtil {
 		User user = new User(ADMIN_USERNAME, ADMIN_PASSWORD, LoginProvider.INTERNAL, ADMIN_GIVEN_NAME, ADMIN_FAMILY_NAME);
 		user.setEmail(ADMIN_EMAIL);
 		user.addRole(new Role(ROLE_USER));
-		user.addRole(new Role(ROLE_ADMIN));
+		Role adminRole = new Role(ROLE_ADMIN);
+		adminRole.setId(1L);
+		user.addRole(adminRole);
 		return user;
 	}
 	

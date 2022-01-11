@@ -17,6 +17,7 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.json.webtoken.JsonWebSignature.Header;
 
 import svobodavlad.imagesprocessing.jpaentities.User;
+import svobodavlad.imagesprocessing.jpaentities.UserRoles;
 import svobodavlad.imagesprocessing.security.UserRepository;
 import svobodavlad.imagesprocessing.testutil.IntegTestTemplate;
 import svobodavlad.imagesprocessing.testutil.SecurityTestUtil;
@@ -109,7 +110,13 @@ class GoogleLoginFilterIT extends IntegTestTemplate {
 		requestUrl = "/user";
 		expectedStatus = 200;
 		Optional<User> optUser = userRepository.findByUsername(newUserUsername);
-		expectedJson = "{\"username\":\"user322\",\"givenName\":\"User 322\",\"familyName\":\"User 322\",\"userRoles\":[{\"role\":{\"name\":\"ROLE_USER\"}}],\"lastLoginDateTime\":\""
+		String rolesJson = "";
+		for (UserRoles userRole : optUser.get().getRoles()) {
+			if (rolesJson.length() > 0) rolesJson += ",";
+			rolesJson += "{\"role\":{\"id\":" + userRole.getRole().getId() +",\"name\":\"" + userRole.getRole().getName() + "\"}}";
+		}
+		expectedJson = "{\"username\":\"user322\",\"givenName\":\"User 322\",\"familyName\":\"User 322\",\"userRoles\":[" 
+				+ rolesJson + "],\"lastLoginDateTime\":\""
 				+ formatter.format(optUser.get().getLastLoginDateTime()) + "\",\"previousLoginDateTime\":\""
 				+ formatter.format(optUser.get().getLastLoginDateTime()) + "\",\"email\":\"user322@gmail.com\"}";
 
