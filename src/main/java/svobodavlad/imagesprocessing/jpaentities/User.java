@@ -3,6 +3,7 @@ package svobodavlad.imagesprocessing.jpaentities;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -20,6 +21,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -65,6 +67,9 @@ public class User extends JpaEntityTemplate implements UserDetails {
 	@Size(min = 1, max = 255)
 	@NonNull
 	private String familyName;
+	
+	@Size(min = 1, max = 255)
+	private String email;	
 
 	private Instant lastLoginDateTime;
 	private Instant previousLoginDateTime;
@@ -73,6 +78,7 @@ public class User extends JpaEntityTemplate implements UserDetails {
 	// using user entity
 	// fetch - changed to eager
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@JsonDeserialize(as = LinkedHashSet.class) // to keep order of elements fixed in JSON output
 	public Set<UserRoles> roles = new HashSet<UserRoles>();
 
 	public void addRole(Role role) {
@@ -134,7 +140,7 @@ public class User extends JpaEntityTemplate implements UserDetails {
 	}
 
 	public UserInfo toUserInfo() {
-		UserInfo userInfo = new UserInfo(this.getUsername(), this.getGivenName(), this.getFamilyName(),
+		UserInfo userInfo = new UserInfo(this.getUsername(), this.getGivenName(), this.getFamilyName(), this.getEmail(),
 				this.getLastLoginDateTime(), this.getPreviousLoginDateTime(), this.getRoles());
 		return userInfo;
 	}

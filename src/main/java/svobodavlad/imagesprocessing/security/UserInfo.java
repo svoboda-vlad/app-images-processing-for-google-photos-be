@@ -29,14 +29,19 @@ public class UserInfo {
 	@NotNull
 	@Size(min = 1, max = 255)
 	private String familyName;
+	
+	@Size(min = 1, max = 255)
+	private String email;
 
 	private Instant lastLoginDateTime;
 	private Instant previousLoginDateTime;
+	
 	private Set<UserRoles> userRoles = new HashSet<UserRoles>();
 
 	public User toUser(User user) {
 		user.setFamilyName(familyName);
 		user.setGivenName(givenName);
+		user.setEmail(email);
 		return user;
 	}
 

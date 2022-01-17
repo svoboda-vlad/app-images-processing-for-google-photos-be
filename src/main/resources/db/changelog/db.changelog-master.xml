@@ -115,4 +115,11 @@ http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibas
 			constraintName="fk_processing_parameters_user_user_id"
 			referencedColumnNames="id" referencedTableName="user"/>
 	</changeSet>
+	<changeSet id="20220105062100" author="svoboda-vlad">
+		<addColumn tableName="user">
+			<column name="email" type="varchar(255)">
+				<constraints nullable="true" />
+			</column>
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>

@@ -31,14 +31,19 @@ public class UserRegister {
 	@NotNull
 	@Size(min = 1, max = 255)
 	private String familyName;
+	
+	@Size(min = 1, max = 255)
+	private String email;
 
 	public User toUserInternal(PasswordEncoder passwordEncoder) {
 		User user = new User(username, passwordEncoder.encode(password), LoginProvider.INTERNAL, givenName, familyName);
+		user.setEmail(email);
 		return user;
 	}
 
 	public User toUserGoogle(PasswordEncoder passwordEncoder) {
 		User user = new User(username, passwordEncoder.encode(password), LoginProvider.GOOGLE, givenName, familyName);
+		user.setEmail(email);
 		return user;
 	}
 

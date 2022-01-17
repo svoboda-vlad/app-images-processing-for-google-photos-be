@@ -19,37 +19,11 @@ Swagger UI
 
 ## Front-end - Registration of a new user and log in
 
-- creating a new account and log in:
-
-Menu > User > User registration
-
 - using an existing Google account and log in:
 
 Menu > User > Log in > "Log In With Google" button
 
 ## Back-end - Registration of a new user and log in
-
-using cURL command line tool
-
-- creating a new account:
-
-Step 1 - registration of a new user
-
-```
-curl -i https://images-proc-for-google-photos.herokuapp.com/user -d "{\"username\": \"test1\",\"password\": \"pass123\", \"givenName\": \"Test 1\", \"familyName\": \"Test 1\"}" -H "Content-Type: application/json"
-```
-
-Step 2 - log in and obtaining a JWT token
-
-```
-curl -i https://images-proc-for-google-photos.herokuapp.com/login -d "{\"username\": \"test1\", \"password\": \"pass123\"}"
-```
-
-JWT token in HTTP response header:
-
-```
-Authorization: Bearer abcdef
-```
 
 - using an existing Google account:
 
@@ -121,7 +95,6 @@ DATABASE_URL=...
 ADMIN_USERNAME=...
 
 ADMIN_PASSWORD=...
-
 
 ## Development
 
@@ -219,13 +192,13 @@ restricted:
 unrestricted:
 - POST "/login" (LoginFilter)
 - POST "/google-login" (GoogleLoginFilter)
-- POST "/user" (UserController)
 
 restricted:
-- GET + PUT + DELETE "/user" (UserController)
+- GET + DELETE "/user" (UserController)
 
 restricted (administrator):
 - GET "/admin/users" (UserAdminController)
+- PUT "/admin/user" (UserAdminController)
 - GET + PUT "/admin/parameters-default" (ProcessingParametersDefaultController)
 
 ## Models
@@ -246,17 +219,17 @@ ProcessingParametersUserTemplate - timeDiffGroup (int, min = 60, max = 86400), r
 
 **Security**
 
-User - id (long), username (String, min = 1, max = 255), password (String, min = 60, max = 60), lastLoginDateTime (Instant), previousLoginDateTime (Instant), loginProvider (LoginProvider - enum - INTERNAL, GOOGLE), givenName (String, min = 1, max = 255), familyName (String, min = 1, max = 255)
+User - id (long), username (String, min = 1, max = 255), password (String, min = 60, max = 60), lastLoginDateTime (Instant), previousLoginDateTime (Instant), loginProvider (LoginProvider - enum - INTERNAL, GOOGLE), givenName (String, min = 1, max = 255), familyName (String, min = 1, max = 255), email (String, min = 1, max = 255)
 - no endpoint
 - parsed from endpoint POST "/login"
 
-UserInfo - username (String, min = 1, max = 255), lastLoginDateTime (Instant), previousLoginDateTime (Instant), givenName (String, min = 1, max = 255), familyName (String, min = 1, max = 255)
-- GET "/current-user": {"username": "user1","givenName": "User 1","familyName": "User 1","lastLoginDateTime": "2021-05-05T12:50:12.354751","previousLoginDateTime": "2021-05-05T12:50:12.354751","userRoles":[{"role":{"id":1,"name":"ROLE_USER"}}]}
-- GET "/admin/users": [{"username":"user2","givenName":"User 2","familyName":"User 2","lastLoginDateTime": "2021-07-27T08:08:50.759683","previousLoginDateTime": "2021-07-27T08:08:50.759683","userRoles":[{"role":{"id":1,"name":"ROLE_USER"}}]},{"username":"user1","givenName":"User 1","familyName":"User 1","lastLoginDateTime": "2021-07-27T08:08:50.759683","previousLoginDateTime": "2021-07-27T08:08:50.759683","userRoles":[{"role":{"id":1,"name":"ROLE_USER"}},{"role":{"id":2,"name":"ROLE_ADMIN"}}]}]
-- POST "/update-user": {"username": "user1","givenName": "User 1","familyName": "User 1"}
+UserInfo - username (String, min = 1, max = 255), lastLoginDateTime (Instant), previousLoginDateTime (Instant), givenName (String, min = 1, max = 255), familyName (String, min = 1, max = 255), email (String, min = 1, max = 255)
+- GET "/current-user": {"username": "user1","givenName": "User 1","familyName": "User 1","lastLoginDateTime": "2021-05-05T12:50:12.354751","previousLoginDateTime": "2021-05-05T12:50:12.354751","email": "user1@gmail.com","userRoles":[{"role":{"id":1,"name":"ROLE_USER"}}]}
+- GET "/admin/users": [{"username":"user2","givenName":"User 2","familyName":"User 2","lastLoginDateTime": "2021-07-27T08:08:50.759683","previousLoginDateTime": "2021-07-27T08:08:50.759683","email": "user2@gmail.com","userRoles":[{"role":{"id":1,"name":"ROLE_USER"}}]},{"username":"user1","givenName":"User 1","familyName":"User 1","lastLoginDateTime": "2021-07-27T08:08:50.759683","previousLoginDateTime": "2021-07-27T08:08:50.759683","email": "user1@gmail.com","userRoles":[{"role":{"id":1,"name":"ROLE_USER"}},{"role":{"id":2,"name":"ROLE_ADMIN"}}]}]
+- POST "/update-user": {"username": "user1","givenName": "User 1","familyName": "User 1","email": "user1@gmail.com"}
 
-UserRegister - username (String, min = 1, max = 255), password (String, min = 4, max = 100)
-- POST "/register": {"username": "test","password": "test123", "givenName": "Test", "familyName": "Test"}
+UserRegister - username (String, min = 1, max = 255), password (String, min = 4, max = 100), givenName (String, min = 1, max = 255), familyName (String, min = 1, max = 255), email (String, min = 1, max = 255)
+- no endpoint
 
 GoogleIdTokenTemplate - idToken (String, min = 1, max = 2048)
 - no endpoint
@@ -279,7 +252,7 @@ Database tables - domain:
 - processing_parameters_user - id (int PRIMARY KEY), time_diff_group (int NOT NULL), resize_width (int NOT NULL), resize_height (int NOT NULL), user_id (int NOT NULL)
 
 Database tables - security:
-- user - id (int PRIMARY KEY), username (VARCHAR(255) NOT NULL UNIQUE), password (VARCHAR(255) NOT NULL), last_login_date_time (TIMESTAMP), previous_login_date_time (TIMESTAMP), login_provider(VARCHAR(255), given_name(VARCHAR(255), family_name(VARCHAR(255))
+- user - id (int PRIMARY KEY), username (VARCHAR(255) NOT NULL UNIQUE), password (VARCHAR(255) NOT NULL), last_login_date_time (TIMESTAMP), previous_login_date_time (TIMESTAMP), login_provider (VARCHAR(255), given_name (VARCHAR(255), family_name (VARCHAR(255)), email (VARCHAR(255))
 - user_roles - user_id (int NOT NULL), role_id (int NOT NULL), user_id + role_id - PRIMARY KEY
 - role - id (int PRIMARY KEY), name (VARCHAR(255) NOT NULL UNIQUE) - default values: "ROLE_USER", "ROLE_ADMIN"
 

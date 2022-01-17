@@ -45,7 +45,7 @@ public class StartupCommandLineRunner implements CommandLineRunner {
 	void saveAdminUser() {
 		if (adminUser.getUsername() != null && adminUser.getPassword() != null) {
 			UserRegister userRegister = new UserRegister(adminUser.getUsername(), adminUser.getPassword(),
-					"Administrator", "Administrator");
+					"Administrator", "Administrator", null);
 			User user = userRegister.toUserInternal(encoder);
 			try {
 				userService.registerAdminUser(user);
