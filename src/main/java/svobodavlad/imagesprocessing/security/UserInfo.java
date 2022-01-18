@@ -1,8 +1,8 @@
 package svobodavlad.imagesprocessing.security;
 
 import java.time.Instant;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -36,7 +36,7 @@ public class UserInfo {
 	private Instant lastLoginDateTime;
 	private Instant previousLoginDateTime;
 	
-	private Set<UserRoles> userRoles = new HashSet<UserRoles>();
+	private List<UserRoles> userRoles = new ArrayList<UserRoles>();
 
 	public User toUser(User user) {
 		user.setFamilyName(familyName);

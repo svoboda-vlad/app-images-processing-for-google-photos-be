@@ -4,14 +4,11 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
 
-import javax.servlet.http.HttpServletResponse;
-
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -30,19 +27,16 @@ class AuthenticationServiceTest extends UnitTestTemplate {
 	private AuthenticationService authenticationService;
 
 	@Test
-	@Disabled
 	void testAddToken() {
 		String username = "user1";
-		Date expirationDateTime = Date.from(LocalDateTime.now().plusMinutes(AuthenticationService.EXPIRY_MINS)
-				.atZone(ZoneId.systemDefault()).toInstant());
-		String jwtToken = Jwts.builder().setSubject(username).setExpiration(expirationDateTime)
-				.signWith(AuthenticationService.SIGNINGKEY).compact();
-		String expectedHeaderValue = AuthenticationService.PREFIX + " " + jwtToken;
+		String expectedHeaderName = AuthenticationService.AUTHORIZATION;		
+		String expectedHeaderValuePrefix = AuthenticationService.PREFIX;
+		int expectedHeaderValuePrefixLength = expectedHeaderValuePrefix.length();
 
-		HttpServletResponse mockResponse = Mockito.mock(HttpServletResponse.class);
+		MockHttpServletResponse mockResponse = new MockHttpServletResponse();
 		AuthenticationService.addToken(mockResponse, username);
-
-		this.verify(mockResponse, this.times(1)).addHeader(AuthenticationService.AUTHORIZATION, expectedHeaderValue);
+		
+		this.assertThat(mockResponse.getHeader(expectedHeaderName).substring(0, expectedHeaderValuePrefixLength)).isEqualTo(expectedHeaderValuePrefix);
 	}
 
 	@Test
