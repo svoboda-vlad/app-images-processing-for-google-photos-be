@@ -26,7 +26,7 @@ class UserAdminControllerTest extends UnitTestTemplate {
 		String requestUrl = "/admin/users";
 		int expectedStatus = 200;
 		String expectedJson = "[{\"username\":\"user1\",\"givenName\":\"User 1\",\"familyName\":\"User 1\",\"email\":\"user1@gmail.com\",\"lastLoginDateTime\":null,\"previousLoginDateTime\":null,\"userRoles\":[{\"role\":{\"id\":0,\"name\":\"ROLE_USER\"}}]},"
-				+ "{\"username\":\"admin\",\"givenName\":\"Administrator\",\"familyName\":\"Administrator\",\"email\":\"admin@gmail.com\",\"lastLoginDateTime\":null,\"previousLoginDateTime\":null,\"userRoles\":[{\"role\":{\"id\":1,\"name\":\"ROLE_ADMIN\"}},{\"role\":{\"id\":0,\"name\":\"ROLE_USER\"}}]}]";
+				+ "{\"username\":\"admin\",\"givenName\":\"Administrator\",\"familyName\":\"Administrator\",\"email\":\"admin@gmail.com\",\"lastLoginDateTime\":null,\"previousLoginDateTime\":null,\"userRoles\":[{\"role\":{\"id\":0,\"name\":\"ROLE_USER\"}},{\"role\":{\"id\":1,\"name\":\"ROLE_ADMIN\"}}]}]";
 
 		this.given(userRepository.findAll()).willReturn(new ArrayList<User>(List.of(
 				SecurityMockUtil.getMockedDefaultUserInternal(), 

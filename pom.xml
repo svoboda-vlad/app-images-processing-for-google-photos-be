@@ -187,7 +187,6 @@
 							<goal>check</goal>
 						</goals>
 						<configuration>
-
 							<rules>
 								<rule>
 									<element>BUNDLE</element>
@@ -205,7 +204,6 @@
 									</limits>
 								</rule>
 							</rules>
-
 						</configuration>
 					</execution>
 				</executions>
