@@ -1,9 +1,10 @@
 package svobodavlad.imagesprocessing.jpaentities;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -12,6 +13,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -21,7 +23,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -78,8 +79,8 @@ public class User extends JpaEntityTemplate implements UserDetails {
 	// using user entity
 	// fetch - changed to eager
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	@JsonDeserialize(as = LinkedHashSet.class) // to keep order of elements fixed in JSON output
-	public Set<UserRoles> roles = new HashSet<UserRoles>();
+	@OrderBy("role") // to keep order of elements fixed in JSON output
+	public List<UserRoles> roles = new ArrayList<UserRoles>();
 
 	public void addRole(Role role) {
 		UserRoles userRoles = new UserRoles(this, role);

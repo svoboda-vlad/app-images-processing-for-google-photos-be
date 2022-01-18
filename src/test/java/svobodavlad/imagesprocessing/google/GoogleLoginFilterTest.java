@@ -1,7 +1,7 @@
 package svobodavlad.imagesprocessing.google;
 
 import java.security.GeneralSecurityException;
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -73,7 +73,7 @@ class GoogleLoginFilterTest extends UnitTestTemplateWithSecurity {
 		this.mockMvcExpectHeaderExists(mvcResult, expectedHeader);
 		
 		User mockedUserWithoutRoles = SecurityMockUtil.getMockedDefaultUserGoogle();
-		mockedUserWithoutRoles.setRoles(new HashSet<UserRoles>());
+		mockedUserWithoutRoles.setRoles(new ArrayList<UserRoles>());
 		
 		this.verify(userService, this.never()).registerUser(mockedUserWithoutRoles);
 		this.verify(userService, this.times(1)).updateLastLoginDateTime(mockedUser.getUsername());
@@ -103,7 +103,7 @@ class GoogleLoginFilterTest extends UnitTestTemplateWithSecurity {
 		this.mockMvcExpectHeaderDoesNotExist(mvcResult, unexpectedHeader);
 		
 		User mockedUserWithoutRoles = SecurityMockUtil.getMockedDefaultUserGoogle();
-		mockedUserWithoutRoles.setRoles(new HashSet<UserRoles>());
+		mockedUserWithoutRoles.setRoles(new ArrayList<UserRoles>());
 		
 		this.verify(userService, this.never()).registerUser(mockedUserWithoutRoles);
 		this.verify(userService, this.never()).updateLastLoginDateTime(mockedUser.getUsername());
@@ -132,7 +132,7 @@ class GoogleLoginFilterTest extends UnitTestTemplateWithSecurity {
 		this.mockMvcExpectHeaderExists(mvcResult, expectedHeader);
 		
 		User mockedUserWithoutRoles = SecurityMockUtil.getMockedDefaultUserGoogle();
-		mockedUserWithoutRoles.setRoles(new HashSet<UserRoles>());
+		mockedUserWithoutRoles.setRoles(new ArrayList<UserRoles>());
 		
 		this.verify(userService, this.times(1)).registerUser(mockedUserWithoutRoles);
 		this.verify(userService, this.times(1)).updateLastLoginDateTime(mockedUser.getUsername());
@@ -153,7 +153,7 @@ class GoogleLoginFilterTest extends UnitTestTemplateWithSecurity {
 		this.mockMvcExpectHeaderDoesNotExist(mvcResult, unexpectedHeader);
 		
 		User mockedUserWithoutRoles = SecurityMockUtil.getMockedDefaultUserGoogle();
-		mockedUserWithoutRoles.setRoles(new HashSet<UserRoles>());
+		mockedUserWithoutRoles.setRoles(new ArrayList<UserRoles>());
 		
 		this.verify(userService, this.never()).registerUser(mockedUserWithoutRoles);
 		this.verify(userService, this.never()).updateLastLoginDateTime(mockedUser.getUsername());
@@ -174,7 +174,7 @@ class GoogleLoginFilterTest extends UnitTestTemplateWithSecurity {
 		this.verify(googleIdTokenVerifier, this.never()).verify("abcdef");
 		
 		User mockedUserWithoutRoles = SecurityMockUtil.getMockedDefaultUserGoogle();
-		mockedUserWithoutRoles.setRoles(new HashSet<UserRoles>());
+		mockedUserWithoutRoles.setRoles(new ArrayList<UserRoles>());
 		
 		this.verify(userService, this.never()).registerUser(mockedUserWithoutRoles);
 		this.verify(userService, this.never()).updateLastLoginDateTime(mockedUser.getUsername());
@@ -195,7 +195,7 @@ class GoogleLoginFilterTest extends UnitTestTemplateWithSecurity {
 		this.mockMvcExpectHeaderDoesNotExist(mvcResult, unexpectedHeader);
 		
 		User mockedUserWithoutRoles = SecurityMockUtil.getMockedDefaultUserGoogle();
-		mockedUserWithoutRoles.setRoles(new HashSet<UserRoles>());
+		mockedUserWithoutRoles.setRoles(new ArrayList<UserRoles>());
 		
 		this.verify(userService, this.never()).registerUser(mockedUserWithoutRoles);
 		this.verify(userService, this.never()).updateLastLoginDateTime(mockedUser.getUsername());		

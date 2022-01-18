@@ -1,7 +1,6 @@
 package svobodavlad.imagesprocessing.security;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -43,7 +42,7 @@ class UserAdminControllerTest extends UnitTestTemplate {
 		int expectedStatus = 200;
 		String expectedJson = "{\"username\":\"user1\",\"givenName\":\"User X\",\"familyName\":\"User Y\",\"email\": \"userx@gmail.com\",\"userRoles\":[{\"role\":{\"id\":0,\"name\":\"ROLE_USER\"}}],\"lastLoginDateTime\":null,\"previousLoginDateTime\":null}";
 
-		UserInfo userInfo = new UserInfo(SecurityMockUtil.getMockedDefaultUserInternal().getUsername(), "User X", "User Y", "userx@gmail.com", null, null, new HashSet<UserRoles>());
+		UserInfo userInfo = new UserInfo(SecurityMockUtil.getMockedDefaultUserInternal().getUsername(), "User X", "User Y", "userx@gmail.com", null, null, new ArrayList<UserRoles>());
 
 		this.given(userService.updateCurrentUser(userInfo)).willReturn(userInfo.toUser(SecurityMockUtil.getMockedDefaultUserInternal()));
 		
