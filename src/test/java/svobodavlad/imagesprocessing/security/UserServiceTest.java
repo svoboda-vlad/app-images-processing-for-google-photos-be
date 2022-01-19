@@ -85,7 +85,7 @@ public class UserServiceTest extends UnitTestTemplate {
 
 		Instant minTime = Instant.now();
 		
-		this.assertThat(userService.updateLastLoginDateTime(mockedUser.getUsername())).isEqualTo(mockedUser);
+		this.assertThat(userService.updateLastLoginDateTime(mockedUser.getUsername())).isEqualTo(Optional.of(mockedUser));
 		this.assertThat(mockedUser.getLastLoginDateTime()).isBetween(minTime, Instant.now());
 		this.assertThat(mockedUser.getPreviousLoginDateTime()).isBetween(minTime, Instant.now());
 	}
@@ -102,7 +102,7 @@ public class UserServiceTest extends UnitTestTemplate {
 
 		Instant minTime = Instant.now();
 		
-		this.assertThat(userService.updateLastLoginDateTime(mockedUser.getUsername())).isEqualTo(mockedUser);
+		this.assertThat(userService.updateLastLoginDateTime(mockedUser.getUsername())).isEqualTo(Optional.of(mockedUser));
 		this.assertThat(mockedUser.getLastLoginDateTime()).isBetween(minTime, Instant.now());
 		this.assertThat(mockedUser.getPreviousLoginDateTime()).isEqualTo(lastLoginDateTime);
 	}
@@ -112,7 +112,7 @@ public class UserServiceTest extends UnitTestTemplate {
 		String username = "userx";
 		this.given(userRepository.findByUsername(username)).willReturn(Optional.empty());
 		
-		this.assertThat(userService.updateLastLoginDateTime(username)).isNull();
+		this.assertThat(userService.updateLastLoginDateTime(username)).isEqualTo(Optional.empty());
 	}
 
 	@Test

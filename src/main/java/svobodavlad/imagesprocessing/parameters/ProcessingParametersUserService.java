@@ -52,13 +52,13 @@ public class ProcessingParametersUserService {
 	public void deleteForCurrentUser() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		Optional<User> optUser = userRepository.findByUsername(authentication.getName());
-		if (optUser.isPresent()) {
-			Optional<ProcessingParametersUser> optParameters = parametersRepository.findByUser(optUser.get());
-			if (optParameters.isPresent()) {
-				parametersRepository.delete(optParameters.get());
+		optUser.ifPresent(user -> {
+			Optional<ProcessingParametersUser> optParameters = parametersRepository.findByUser(user);
+			optParameters.ifPresent(parameters -> {
+				parametersRepository.delete(parameters);
 				parametersRepository.flush();
-			}
-		}
+			});
+		});
 	}
 	
 	public Optional<ProcessingParametersUser> getForCurrentUser() {
@@ -78,6 +78,6 @@ public class ProcessingParametersUserService {
 		if (optParameters.isEmpty()) return null;
 		ProcessingParametersUser parameters = optParameters.get().updateFromTemplate(parametersTemplate);
 		return parametersRepository.save(parameters);
-	}	
+	}
 
 }

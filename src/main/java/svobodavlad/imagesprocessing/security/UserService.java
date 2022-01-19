@@ -65,14 +65,12 @@ public class UserService {
 		}
 	}
 
-	public User updateLastLoginDateTime(String username) {
+	public Optional<User> updateLastLoginDateTime(String username) {
 		Optional<User> optUser = userRepository.findByUsername(username);
-		if (optUser.isPresent()) {
-			User user = optUser.get();
-			user.updateLastLoginDateTime();
-			return userRepository.save(user);
-		}
-		return null;
+		if (optUser.isEmpty()) return Optional.empty();
+		User user = optUser.get();
+		user.updateLastLoginDateTime();
+		return Optional.of(userRepository.save(user));
 	}
 	
 	public User updateCurrentUser(UserInfo userInfo) {
@@ -87,11 +85,11 @@ public class UserService {
 	public void deleteCurrentUser() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		Optional<User> optUser = userRepository.findByUsername(authentication.getName());
-		if (optUser.isPresent()) {
+		optUser.ifPresent(user -> {
 			parametersService.deleteForCurrentUser();
-			userRepository.delete(optUser.get());
-			userRepository.flush();
-		}
+			userRepository.delete(user);
+			userRepository.flush();		
+		});
 	}
 	
 	public Optional<User> getCurrentUser() {
