@@ -81,6 +81,7 @@ public class AuthenticationService {
 
 	private Optional<String> getUsername(Optional<Jws<Claims>> optClaims) {
 		if (optClaims.isEmpty()) return Optional.empty();
+		if (optClaims.get().getBody().getSubject() == null) return Optional.empty();
 		return Optional.of(optClaims.get().getBody().getSubject());
 	}
 
