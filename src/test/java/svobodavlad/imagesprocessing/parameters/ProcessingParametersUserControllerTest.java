@@ -71,7 +71,7 @@ public class ProcessingParametersUserControllerTest extends UnitTestTemplate {
 
 		ProcessingParametersUserTemplate template = parameters.toProcessingParametersUserTemplate();
 		
-		this.given(parametersService.updateForCurrentUser(template)).willReturn(parameters);
+		this.given(parametersService.updateForCurrentUser(template)).willReturn(Optional.of(parameters));
 		
 		ResultActions mvcResult = this.mockMvcPerformPutNoAuthorization(requestUrl, requestJson);
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
@@ -90,16 +90,16 @@ public class ProcessingParametersUserControllerTest extends UnitTestTemplate {
 		
 		ProcessingParametersUserTemplate template = parameters.toProcessingParametersUserTemplate();
 		
-		this.given(parametersService.updateForCurrentUser(template)).willReturn(null);
+		this.given(parametersService.updateForCurrentUser(template)).willReturn(Optional.empty());
 				
 		ResultActions mvcResult = this.mockMvcPerformPutNoAuthorization(requestUrl, requestJson);
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
 	}
 	
 	@Test
-	void testGetResetToDefaultOk200() throws Exception {
+	void testGetResetToDefaultOk204() throws Exception {
 		String requestUrl = "/parameters-reset-to-default";
-		int expectedStatus = 200;
+		int expectedStatus = 204;
 		String expectedJson = "";
 		
 		ProcessingParametersDefault parameters = new ProcessingParametersDefault(3600, 1000, 1000);

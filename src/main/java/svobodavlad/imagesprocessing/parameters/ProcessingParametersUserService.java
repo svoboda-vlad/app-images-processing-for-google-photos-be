@@ -37,28 +37,28 @@ public class ProcessingParametersUserService {
 		return parametersRepository.save(parameters);
 	}
 	
-	public ProcessingParametersUser setInitialParameters(String username) {
+	public Optional<ProcessingParametersUser> setInitialParameters(String username) {
 		Optional<User> optUser = userRepository.findByUsername(username);
 		Optional<ProcessingParametersUser> optParameters = parametersRepository.findByUser(optUser.get());
 		if (optParameters.isEmpty()) {
 			List<ProcessingParametersDefault> parametersDefaultList = parametersDefaultRepository.findAll();
 			if (parametersDefaultList.isEmpty()) throw new RuntimeException("Default parameters not found.");
 			ProcessingParametersUser parameters = parametersDefaultList.get(0).toProcessingParametersUser(optUser.get());
-			return parametersRepository.save(parameters);
+			return Optional.of(parametersRepository.save(parameters));
 		}
-		return null;
+		return Optional.empty();
 	}
 	
 	public void deleteForCurrentUser() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		Optional<User> optUser = userRepository.findByUsername(authentication.getName());
-		if (optUser.isPresent()) {
-			Optional<ProcessingParametersUser> optParameters = parametersRepository.findByUser(optUser.get());
-			if (optParameters.isPresent()) {
-				parametersRepository.delete(optParameters.get());
+		optUser.ifPresent(user -> {
+			Optional<ProcessingParametersUser> optParameters = parametersRepository.findByUser(user);
+			optParameters.ifPresent(parameters -> {
+				parametersRepository.delete(parameters);
 				parametersRepository.flush();
-			}
-		}
+			});
+		});
 	}
 	
 	public Optional<ProcessingParametersUser> getForCurrentUser() {
@@ -70,14 +70,14 @@ public class ProcessingParametersUserService {
 		return optParameters;
 	}
 	
-	public ProcessingParametersUser updateForCurrentUser(ProcessingParametersUserTemplate parametersTemplate) {		
+	public Optional<ProcessingParametersUser> updateForCurrentUser(ProcessingParametersUserTemplate parametersTemplate) {		
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		Optional<User> optUser = userRepository.findByUsername(authentication.getName());
-		if (optUser.isEmpty()) return null;
+		if (optUser.isEmpty()) return Optional.empty();
 		Optional<ProcessingParametersUser> optParameters = parametersRepository.findByUser(optUser.get());
-		if (optParameters.isEmpty()) return null;
+		if (optParameters.isEmpty()) return Optional.empty();
 		ProcessingParametersUser parameters = optParameters.get().updateFromTemplate(parametersTemplate);
-		return parametersRepository.save(parameters);
-	}	
+		return Optional.of(parametersRepository.save(parameters));
+	}
 
 }

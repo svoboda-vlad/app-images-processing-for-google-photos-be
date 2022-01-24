@@ -2,6 +2,7 @@ package svobodavlad.imagesprocessing.security;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -44,7 +45,7 @@ class UserAdminControllerTest extends UnitTestTemplate {
 
 		UserInfo userInfo = new UserInfo(SecurityMockUtil.getMockedDefaultUserInternal().getUsername(), "User X", "User Y", "userx@gmail.com", null, null, new ArrayList<UserRoles>());
 
-		this.given(userService.updateCurrentUser(userInfo)).willReturn(userInfo.toUser(SecurityMockUtil.getMockedDefaultUserInternal()));
+		this.given(userService.updateCurrentUser(userInfo)).willReturn(Optional.of(userInfo.toUser(SecurityMockUtil.getMockedDefaultUserInternal())));
 		
 		ResultActions mvcResult = this.mockMvcPerformPutNoAuthorization(requestUrl, requestJson);
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);

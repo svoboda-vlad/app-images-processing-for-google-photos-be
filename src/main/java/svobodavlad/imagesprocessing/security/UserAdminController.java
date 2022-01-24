@@ -2,6 +2,7 @@ package svobodavlad.imagesprocessing.security;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.validation.Valid;
 
@@ -41,9 +42,9 @@ public class UserAdminController {
 	@Operation(security = { @SecurityRequirement(name = "bearer-key") })
 	@PutMapping(ADMIN_USER_URL)
 	public ResponseEntity<UserInfo> updateUser(@Valid @RequestBody UserInfo userInfo) {
-		User updatedUser = userService.updateCurrentUser(userInfo);
-		if (updatedUser == null) return ResponseEntity.badRequest().build();
-		return ResponseEntity.ok(updatedUser.toUserInfo());
+		Optional<User> optUpdatedUser = userService.updateCurrentUser(userInfo);
+		if (optUpdatedUser.isEmpty()) return ResponseEntity.badRequest().build();
+		return ResponseEntity.ok(optUpdatedUser.get().toUserInfo());
 	}
 	
 }

@@ -37,9 +37,9 @@ public class ProcessingParametersUserController {
 	@Operation(security = { @SecurityRequirement(name = "bearer-key") })
 	@PutMapping(PARAMETERS_USER_URL)
 	public ResponseEntity<ProcessingParametersUserTemplate> updateProcessingParametersUserTemplate(@Valid @RequestBody ProcessingParametersUserTemplate parametersTemplate) {		
-		ProcessingParametersUser parameters = parametersService.updateForCurrentUser(parametersTemplate);
-		if (parameters == null) return ResponseEntity.notFound().build();
-		return ResponseEntity.ok(parameters.toProcessingParametersUserTemplate());
+		Optional<ProcessingParametersUser> optParameters = parametersService.updateForCurrentUser(parametersTemplate);
+		if (optParameters.isEmpty()) return ResponseEntity.notFound().build();
+		return ResponseEntity.ok(optParameters.get().toProcessingParametersUserTemplate());
 	}
 
 	@Operation(security = { @SecurityRequirement(name = "bearer-key") })
@@ -47,7 +47,7 @@ public class ProcessingParametersUserController {
 	public ResponseEntity<String> getResetToDefault() {
 		if (parametersDefaultRepository.findAll().isEmpty()) return ResponseEntity.notFound().build();
 		parametersService.resetToDefault();
-		return ResponseEntity.ok(null);
+		return ResponseEntity.noContent().build();
 	}
 	
 }

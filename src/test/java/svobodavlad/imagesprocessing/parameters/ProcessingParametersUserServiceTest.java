@@ -94,7 +94,7 @@ class ProcessingParametersUserServiceTest extends UnitTestTemplate {
 		ProcessingParametersUser initialParameters = new ProcessingParametersUser(parametersDefault.getTimeDiffGroup(), parametersDefault.getResizeWidth(), parametersDefault.getResizeHeight(), mockedUser);
 		this.given(parametersRepository.save(initialParameters)).willReturn(initialParameters);
 		
-		this.assertThat(parametersService.setInitialParameters(mockedUser.getUsername())).isEqualTo(initialParameters);
+		this.assertThat(parametersService.setInitialParameters(mockedUser.getUsername())).isEqualTo(Optional.of(initialParameters));
 	}
 	
 	@Test
@@ -121,7 +121,7 @@ class ProcessingParametersUserServiceTest extends UnitTestTemplate {
 		ProcessingParametersUser parameters = new ProcessingParametersUser(parametersDefault.getTimeDiffGroup(), parametersDefault.getResizeWidth(), parametersDefault.getResizeHeight(), mockedUser);
 		this.given(parametersRepository.findByUser(mockedUser)).willReturn(Optional.of(parameters));
 		
-		this.assertThat(parametersService.setInitialParameters(mockedUser.getUsername())).isNull();	
+		this.assertThat(parametersService.setInitialParameters(mockedUser.getUsername())).isEqualTo(Optional.empty());	
 	}
 	
 	@Test
@@ -161,6 +161,6 @@ class ProcessingParametersUserServiceTest extends UnitTestTemplate {
 		this.given(parametersRepository.findByUser(mockedUser)).willReturn(Optional.of(parameters));
 		this.given(parametersRepository.save(parametersUpdated)).willReturn(parametersUpdated);
 		
-		this.assertThat(parametersService.updateForCurrentUser(parametersTemplate)).isEqualTo(parametersUpdated);
+		this.assertThat(parametersService.updateForCurrentUser(parametersTemplate)).isEqualTo(Optional.of(parametersUpdated));
 	}
 }

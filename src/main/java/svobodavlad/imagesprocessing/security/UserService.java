@@ -65,33 +65,31 @@ public class UserService {
 		}
 	}
 
-	public User updateLastLoginDateTime(String username) {
+	public Optional<User> updateLastLoginDateTime(String username) {
 		Optional<User> optUser = userRepository.findByUsername(username);
-		if (optUser.isPresent()) {
-			User user = optUser.get();
-			user.updateLastLoginDateTime();
-			return userRepository.save(user);
-		}
-		return null;
+		if (optUser.isEmpty()) return Optional.empty();
+		User user = optUser.get();
+		user.updateLastLoginDateTime();
+		return Optional.of(userRepository.save(user));
 	}
 	
-	public User updateCurrentUser(UserInfo userInfo) {
+	public Optional<User> updateCurrentUser(UserInfo userInfo) {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		if (!authentication.getName().equals(userInfo.getUsername())) return null;
+		if (!authentication.getName().equals(userInfo.getUsername())) return Optional.empty();
 		Optional<User> optUser = userRepository.findByUsername(userInfo.getUsername());
-		if (optUser.isEmpty()) return null;
+		if (optUser.isEmpty()) return Optional.empty();
 		User user = optUser.get();
-		return userRepository.save(userInfo.toUser(user));
+		return Optional.of(userRepository.save(userInfo.toUser(user)));
 	}	
 	
 	public void deleteCurrentUser() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		Optional<User> optUser = userRepository.findByUsername(authentication.getName());
-		if (optUser.isPresent()) {
+		optUser.ifPresent(user -> {
 			parametersService.deleteForCurrentUser();
-			userRepository.delete(optUser.get());
-			userRepository.flush();
-		}
+			userRepository.delete(user);
+			userRepository.flush();		
+		});
 	}
 	
 	public Optional<User> getCurrentUser() {
