@@ -71,7 +71,7 @@ public class ProcessingParametersUserControllerTest extends UnitTestTemplate {
 
 		ProcessingParametersUserTemplate template = parameters.toProcessingParametersUserTemplate();
 		
-		this.given(parametersService.updateForCurrentUser(template)).willReturn(parameters);
+		this.given(parametersService.updateForCurrentUser(template)).willReturn(Optional.of(parameters));
 		
 		ResultActions mvcResult = this.mockMvcPerformPutNoAuthorization(requestUrl, requestJson);
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
@@ -90,7 +90,7 @@ public class ProcessingParametersUserControllerTest extends UnitTestTemplate {
 		
 		ProcessingParametersUserTemplate template = parameters.toProcessingParametersUserTemplate();
 		
-		this.given(parametersService.updateForCurrentUser(template)).willReturn(null);
+		this.given(parametersService.updateForCurrentUser(template)).willReturn(Optional.empty());
 				
 		ResultActions mvcResult = this.mockMvcPerformPutNoAuthorization(requestUrl, requestJson);
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);

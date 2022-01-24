@@ -40,16 +40,15 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 	@Override
 	public Authentication attemptAuthentication(HttpServletRequest req, HttpServletResponse res)
 			throws AuthenticationException {
-		LoginUser loginUser = resolveUser(req);
+		Optional<LoginUser> optLoginUser = resolveUser(req);
 
-		if (loginUser == null)
-			throw new BadCredentialsException("");
+		if (optLoginUser.isEmpty())	throw new BadCredentialsException("");
 
-		Optional<User> optUser = userRepository.findByUsername(loginUser.getUsername());
+		Optional<User> optUser = userRepository.findByUsername(optLoginUser.get().getUsername());
 		if (optUser.isPresent() && optUser.get().getLoginProvider() != LoginProvider.INTERNAL) throw new BadCredentialsException("");
 		
 		return getAuthenticationManager().authenticate(
-				new UsernamePasswordAuthenticationToken(loginUser.getUsername(), loginUser.getPassword()));
+				new UsernamePasswordAuthenticationToken(optLoginUser.get().getUsername(), optLoginUser.get().getPassword()));
 	}
 
 	@Override
@@ -59,12 +58,12 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 		userService.updateLastLoginDateTime(auth.getName());
 	}
 
-	private LoginUser resolveUser(HttpServletRequest request) {
+	private Optional<LoginUser> resolveUser(HttpServletRequest request) {
 		try {
-			return new ObjectMapper().readValue(request.getInputStream(), LoginUser.class);
+			return Optional.of(new ObjectMapper().readValue(request.getInputStream(), LoginUser.class));
 		} catch (Exception e) {
 			log.info("Username and password parsing from request body failed: {}.", e.getMessage());
+			return Optional.empty();
 		}
-		return null;
 	}
 }

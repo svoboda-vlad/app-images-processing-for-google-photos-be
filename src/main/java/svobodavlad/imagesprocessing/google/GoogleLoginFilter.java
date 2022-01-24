@@ -61,13 +61,12 @@ public class GoogleLoginFilter extends UsernamePasswordAuthenticationFilter {
 	public Authentication attemptAuthentication(HttpServletRequest req, HttpServletResponse res)
 			throws AuthenticationException {
 
-		GoogleIdTokenTemplate tokenEntity = resolveGoogleIdTokenTemplate(req);
-		if (tokenEntity == null)
-			throw new BadCredentialsException("");
+		Optional<GoogleIdTokenTemplate> optTokenEntity = resolveGoogleIdTokenTemplate(req);
+		if (optTokenEntity.isEmpty()) throw new BadCredentialsException("");
 		String username = "";
 
 		try {
-			GoogleIdToken idToken = googleIdTokenVerifier.verify(tokenEntity.getIdToken());
+			GoogleIdToken idToken = googleIdTokenVerifier.verify(optTokenEntity.get().getIdToken());
 			if (idToken != null) {
 				Payload payload = idToken.getPayload();
 				username = payload.getSubject();
@@ -98,13 +97,13 @@ public class GoogleLoginFilter extends UsernamePasswordAuthenticationFilter {
 		userService.updateLastLoginDateTime(auth.getName());
 	}
 
-	private GoogleIdTokenTemplate resolveGoogleIdTokenTemplate(HttpServletRequest request) {
+	private Optional<GoogleIdTokenTemplate> resolveGoogleIdTokenTemplate(HttpServletRequest request) {
 		try {
-			return new ObjectMapper().readValue(request.getInputStream(), GoogleIdTokenTemplate.class);
+			return Optional.of(new ObjectMapper().readValue(request.getInputStream(), GoogleIdTokenTemplate.class));
 		} catch (Exception e) {
 			log.info("ID token parsing from request body failed: {}.", e.getMessage());
+			return Optional.empty();
 		}
-		return null;
 	}
 
 }

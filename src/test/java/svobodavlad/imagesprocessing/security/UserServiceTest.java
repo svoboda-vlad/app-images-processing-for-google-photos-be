@@ -122,7 +122,7 @@ public class UserServiceTest extends UnitTestTemplate {
 
 		this.given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
 		this.given(userRepository.save(mockedUserInfo.toUser(mockedUser))).willReturn(mockedUser);
-		this.assertThat(userService.updateCurrentUser(mockedUserInfo)).isEqualTo(mockedUser);
+		this.assertThat(userService.updateCurrentUser(mockedUserInfo)).isEqualTo(Optional.of(mockedUser));
 	}
 
 	@Test

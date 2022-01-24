@@ -4,6 +4,7 @@ import java.security.Key;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -45,45 +46,42 @@ public class AuthenticationService {
 	}
 
 	public Authentication getAuthentication(HttpServletRequest request) {
-		String token = resolveToken(request);
-		if (token == null) {
+		Optional<String> optToken = resolveToken(request);
+		if (optToken.isEmpty()) {
 			log.info("JWT token not found.");
-			return null;			
-		}
-		String username = getUsername(validateToken(token));
-		if (username == null)
 			return null;
+		}
+		Optional<String> optUsername = getUsername(validateToken(optToken.get()));
+		if (optUsername.isEmpty()) return null;
 
 		try {
-			UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-			return new UsernamePasswordAuthenticationToken(username, null, userDetails.getAuthorities());
+			UserDetails userDetails = userDetailsService.loadUserByUsername(optUsername.get());
+			return new UsernamePasswordAuthenticationToken(optUsername.get(), null, userDetails.getAuthorities());
 		} catch (UsernameNotFoundException e) {
 			return null;
 		}
 	}
 
-	private String resolveToken(HttpServletRequest request) {
+	private Optional<String> resolveToken(HttpServletRequest request) {
 		String bearerToken = request.getHeader(AUTHORIZATION);
-		if (bearerToken != null && bearerToken.startsWith(PREFIX)) {
-			return bearerToken.replace(PREFIX, "").trim();
-		}
-		return null;
+		if (bearerToken == null) return Optional.empty();
+		if (!bearerToken.startsWith(PREFIX)) return Optional.empty();
+		return Optional.of(bearerToken.replace(PREFIX, "").trim());
 	}
 
-	private Jws<Claims> validateToken(String token) {
+	private Optional<Jws<Claims>> validateToken(String token) {
 		try {
 			Jws<Claims> claims = Jwts.parserBuilder().setSigningKey(SIGNINGKEY).build().parseClaimsJws(token);
-			return claims;
+			return Optional.of(claims);
 		} catch (RuntimeException e) {
 			log.info("JWT token validation failed: {}.", e.getMessage());
 		}
-		return null;
+		return Optional.empty();
 	}
 
-	private String getUsername(Jws<Claims> claims) {
-		if (claims != null)
-			return claims.getBody().getSubject();
-		return null;
+	private Optional<String> getUsername(Optional<Jws<Claims>> optClaims) {
+		if (optClaims.isEmpty()) return Optional.empty();
+		return Optional.of(optClaims.get().getBody().getSubject());
 	}
 
 	private static String generateToken(String username) {
