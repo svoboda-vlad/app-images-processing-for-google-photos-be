@@ -47,7 +47,7 @@ public class ProcessingParametersUserController {
 	public ResponseEntity<String> getResetToDefault() {
 		if (parametersDefaultRepository.findAll().isEmpty()) return ResponseEntity.notFound().build();
 		parametersService.resetToDefault();
-		return ResponseEntity.ok(null);
+		return ResponseEntity.noContent().build();
 	}
 	
 }

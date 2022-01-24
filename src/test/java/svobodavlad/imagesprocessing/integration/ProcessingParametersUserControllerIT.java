@@ -73,9 +73,9 @@ public class ProcessingParametersUserControllerIT extends IntegTestTemplate {
 	}
 	
 	@Test
-	void testGetResetToDefaultOk200() throws Exception {
+	void testGetResetToDefaultOk204() throws Exception {
 		String requestUrl = "/parameters-reset-to-default";
-		int expectedStatus = 200;
+		int expectedStatus = 204;
 		String expectedJson = "";
 				
 		ResultActions mvcResult = this.mockMvcPerformGetAuthorizationDefaultUser(requestUrl);
@@ -90,9 +90,9 @@ public class ProcessingParametersUserControllerIT extends IntegTestTemplate {
 	}
 		
 	@Test
-	void testGetResetToDefaultNoUserParametersOk200() throws Exception {
+	void testGetResetToDefaultNoUserParametersOk204() throws Exception {
 		String requestUrl = "/parameters-reset-to-default";
-		int expectedStatus = 200;
+		int expectedStatus = 204;
 		String expectedJson = "";
 		
 		parametersRepository.deleteAll();

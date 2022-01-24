@@ -97,9 +97,9 @@ public class ProcessingParametersUserControllerTest extends UnitTestTemplate {
 	}
 	
 	@Test
-	void testGetResetToDefaultOk200() throws Exception {
+	void testGetResetToDefaultOk204() throws Exception {
 		String requestUrl = "/parameters-reset-to-default";
-		int expectedStatus = 200;
+		int expectedStatus = 204;
 		String expectedJson = "";
 		
 		ProcessingParametersDefault parameters = new ProcessingParametersDefault(3600, 1000, 1000);
