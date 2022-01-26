@@ -16,6 +16,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -54,8 +55,9 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 	@Override
 	protected void successfulAuthentication(HttpServletRequest req, HttpServletResponse res, FilterChain chain,
 			Authentication auth) throws IOException, ServletException {
+		SecurityContextHolder.getContext().setAuthentication(auth);
 		AuthenticationService.addToken(res, auth.getName());
-		userService.updateLastLoginDateTime(auth.getName());
+		userService.updateCurrentUserLastLoginDateTime();
 	}
 
 	private Optional<LoginUser> resolveUser(HttpServletRequest request) {

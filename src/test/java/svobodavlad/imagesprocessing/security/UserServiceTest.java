@@ -77,7 +77,7 @@ public class UserServiceTest extends UnitTestTemplate {
 	}
 
 	@Test
-	void testUpdateLastLoginDateTimeFirstLogin() {
+	void testUpdateCurrentUserLastLoginDateTimeFirstLogin() {
 		User mockedUser = SecurityMockUtil.getMockedDefaultUserInternal();
 
 		this.given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
@@ -85,13 +85,13 @@ public class UserServiceTest extends UnitTestTemplate {
 
 		Instant minTime = Instant.now();
 		
-		this.assertThat(userService.updateLastLoginDateTime(mockedUser.getUsername())).isEqualTo(Optional.of(mockedUser));
+		this.assertThat(userService.updateCurrentUserLastLoginDateTime()).isEqualTo(Optional.of(mockedUser));
 		this.assertThat(mockedUser.getLastLoginDateTime()).isBetween(minTime, Instant.now());
 		this.assertThat(mockedUser.getPreviousLoginDateTime()).isBetween(minTime, Instant.now());
 	}
 	
 	@Test
-	void testUpdateLastLoginDateTimeSecondLogin() {
+	void testUpdateCurrentUserLastLoginDateTimeSecondLogin() {
 		User mockedUser = SecurityMockUtil.getMockedDefaultUserInternal();
 		Instant lastLoginDateTime = LocalDateTime.of(LocalDate.of(2021, 9, 26), LocalTime.of(12, 53)).toInstant(ZoneOffset.UTC);;
 		mockedUser.setLastLoginDateTime(lastLoginDateTime);
@@ -102,21 +102,21 @@ public class UserServiceTest extends UnitTestTemplate {
 
 		Instant minTime = Instant.now();
 		
-		this.assertThat(userService.updateLastLoginDateTime(mockedUser.getUsername())).isEqualTo(Optional.of(mockedUser));
+		this.assertThat(userService.updateCurrentUserLastLoginDateTime()).isEqualTo(Optional.of(mockedUser));
 		this.assertThat(mockedUser.getLastLoginDateTime()).isBetween(minTime, Instant.now());
 		this.assertThat(mockedUser.getPreviousLoginDateTime()).isEqualTo(lastLoginDateTime);
 	}
 	
 	@Test
-	void testUpdateLastLoginDateTimeUserDoesNotExist() {
+	void testUpdateCurrentUserLastLoginDateTimeUserDoesNotExist() {
 		String username = "userx";
 		this.given(userRepository.findByUsername(username)).willReturn(Optional.empty());
 		
-		this.assertThat(userService.updateLastLoginDateTime(username)).isEqualTo(Optional.empty());
+		this.assertThat(userService.updateCurrentUserLastLoginDateTime()).isEqualTo(Optional.empty());
 	}
 
 	@Test
-	void testUpdateUserOkUserExists() {
+	void testUpdateCurrentUserOkUserExists() {
 		User mockedUser = SecurityMockUtil.getMockedDefaultUserInternal();
 		UserInfo mockedUserInfo = mockedUser.toUserInfo();
 

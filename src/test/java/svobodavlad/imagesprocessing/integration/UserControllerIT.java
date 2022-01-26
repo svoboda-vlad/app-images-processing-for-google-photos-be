@@ -33,7 +33,7 @@ public class UserControllerIT extends IntegTestTemplate {
 		}		
 		String expectedJson = "{\"username\":\"user1\",\"givenName\":\"User 1\",\"familyName\":\"User 1\",\"email\":\"user1@gmail.com\",\"userRoles\":[" + rolesJson + "],\"lastLoginDateTime\":null,\"previousLoginDateTime\":null}";
 
-		ResultActions mvcResult = this.mockMvcPerformGetAuthorizationDefaultUser(requestUrl);
+		ResultActions mvcResult = this.mockMvcPerformGetAuthorizationDefaultUserInternal(requestUrl);
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
 	}
 
@@ -75,7 +75,7 @@ public class UserControllerIT extends IntegTestTemplate {
 		int expectedStatus = 204;
 		String expectedJson = "";
 
-		ResultActions mvcResult = this.mockMvcPerformDeleteAuthorizationDefaultUser(requestUrl);	
+		ResultActions mvcResult = this.mockMvcPerformDeleteAuthorizationDefaultUserInternal(requestUrl);	
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
 	}
 

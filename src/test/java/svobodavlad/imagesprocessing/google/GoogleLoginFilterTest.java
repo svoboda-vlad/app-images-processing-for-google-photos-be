@@ -18,6 +18,7 @@ import com.google.api.client.json.webtoken.JsonWebSignature.Header;
 
 import svobodavlad.imagesprocessing.jpaentities.User;
 import svobodavlad.imagesprocessing.jpaentities.UserRoles;
+import svobodavlad.imagesprocessing.security.UserInfo;
 import svobodavlad.imagesprocessing.security.UserRepository;
 import svobodavlad.imagesprocessing.security.UserService;
 import svobodavlad.imagesprocessing.testutil.SecurityMockUtil;
@@ -76,7 +77,13 @@ class GoogleLoginFilterTest extends UnitTestTemplateWithSecurity {
 		mockedUserWithoutRoles.setRoles(new ArrayList<UserRoles>());
 		
 		this.verify(userService, this.never()).registerUser(mockedUserWithoutRoles);
-		this.verify(userService, this.times(1)).updateLastLoginDateTime(mockedUser.getUsername());
+		this.verify(userService, this.times(1)).updateCurrentUserLastLoginDateTime();
+		UserInfo userInfo = new UserInfo(payload.getSubject(),
+				(String) payload.get("given_name"), 
+				(String) payload.get("family_name"),
+				(String) payload.getEmail(),
+				null, null, new ArrayList<UserRoles>());
+		this.verify(userService,this.times(1)).updateCurrentUser(userInfo);
 	}
 	
 	@Test
@@ -106,7 +113,7 @@ class GoogleLoginFilterTest extends UnitTestTemplateWithSecurity {
 		mockedUserWithoutRoles.setRoles(new ArrayList<UserRoles>());
 		
 		this.verify(userService, this.never()).registerUser(mockedUserWithoutRoles);
-		this.verify(userService, this.never()).updateLastLoginDateTime(mockedUser.getUsername());
+		this.verify(userService, this.never()).updateCurrentUserLastLoginDateTime();
 	}
 
 	@Test
@@ -135,7 +142,7 @@ class GoogleLoginFilterTest extends UnitTestTemplateWithSecurity {
 		mockedUserWithoutRoles.setRoles(new ArrayList<UserRoles>());
 		
 		this.verify(userService, this.times(1)).registerUser(mockedUserWithoutRoles);
-		this.verify(userService, this.times(1)).updateLastLoginDateTime(mockedUser.getUsername());
+		this.verify(userService, this.times(1)).updateCurrentUserLastLoginDateTime();
 	}
 	
 	@Test
@@ -156,7 +163,7 @@ class GoogleLoginFilterTest extends UnitTestTemplateWithSecurity {
 		mockedUserWithoutRoles.setRoles(new ArrayList<UserRoles>());
 		
 		this.verify(userService, this.never()).registerUser(mockedUserWithoutRoles);
-		this.verify(userService, this.never()).updateLastLoginDateTime(mockedUser.getUsername());
+		this.verify(userService, this.never()).updateCurrentUserLastLoginDateTime();
 	}
 
 	@Test
@@ -177,7 +184,7 @@ class GoogleLoginFilterTest extends UnitTestTemplateWithSecurity {
 		mockedUserWithoutRoles.setRoles(new ArrayList<UserRoles>());
 		
 		this.verify(userService, this.never()).registerUser(mockedUserWithoutRoles);
-		this.verify(userService, this.never()).updateLastLoginDateTime(mockedUser.getUsername());
+		this.verify(userService, this.never()).updateCurrentUserLastLoginDateTime();
 	}
 
 	@Test
@@ -198,7 +205,7 @@ class GoogleLoginFilterTest extends UnitTestTemplateWithSecurity {
 		mockedUserWithoutRoles.setRoles(new ArrayList<UserRoles>());
 		
 		this.verify(userService, this.never()).registerUser(mockedUserWithoutRoles);
-		this.verify(userService, this.never()).updateLastLoginDateTime(mockedUser.getUsername());		
+		this.verify(userService, this.never()).updateCurrentUserLastLoginDateTime();		
 	}
 
 }

@@ -55,9 +55,13 @@ public class SecurityTestUtil {
 		return AuthenticationService.createBearerToken(ADMIN_USERNAME);
 	}
 	
-	public static String createBearerTokenDefaultUser() {
+	public static String createBearerTokenDefaultUserInternal() {
 		return AuthenticationService.createBearerToken(DEFAULT_USERNAME);
 	}
+	
+	public static String createBearerTokenDefaultUserGoogle() {
+		return AuthenticationService.createBearerToken(DEFAULT_USERNAME_GOOGLE);
+	}	
 
 	public static String createBearerTokenForUsername(String username) {
 		return AuthenticationService.createBearerToken(username);

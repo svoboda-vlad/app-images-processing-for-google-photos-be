@@ -65,8 +65,9 @@ public class UserService {
 		}
 	}
 
-	public Optional<User> updateLastLoginDateTime(String username) {
-		Optional<User> optUser = userRepository.findByUsername(username);
+	public Optional<User> updateCurrentUserLastLoginDateTime() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		Optional<User> optUser = userRepository.findByUsername(authentication.getName());
 		if (optUser.isEmpty()) return Optional.empty();
 		User user = optUser.get();
 		user.updateLastLoginDateTime();

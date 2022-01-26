@@ -33,11 +33,17 @@ public abstract class MockMvcUtilWithSecurity extends MockMvcUtil {
 						.accept(MediaType.APPLICATION_JSON));
 	}
 
-	public ResultActions mockMvcPerformGetAuthorizationDefaultUser(String requestUrl) throws Exception {
+	public ResultActions mockMvcPerformGetAuthorizationDefaultUserInternal(String requestUrl) throws Exception {
 		return this.mockMvc
-				.perform(get(requestUrl).header("Authorization", SecurityTestUtil.createBearerTokenDefaultUser())
+				.perform(get(requestUrl).header("Authorization", SecurityTestUtil.createBearerTokenDefaultUserInternal())
 						.accept(MediaType.APPLICATION_JSON));
 	}
+	
+	public ResultActions mockMvcPerformGetAuthorizationDefaultUserGoogle(String requestUrl) throws Exception {
+		return this.mockMvc
+				.perform(get(requestUrl).header("Authorization", SecurityTestUtil.createBearerTokenDefaultUserGoogle())
+						.accept(MediaType.APPLICATION_JSON));
+	}	
 
 	public ResultActions mockMvcPerformGetAuthorizationForUsername(String requestUrl, String username)
 			throws Exception {
@@ -62,16 +68,16 @@ public abstract class MockMvcUtilWithSecurity extends MockMvcUtil {
 				.contentType(MediaType.APPLICATION_JSON));
 	}
 
-	public ResultActions mockMvcPerformPutAuthorizationDefaultUser(String requestUrl, String requestJson)
+	public ResultActions mockMvcPerformPutAuthorizationDefaultUserInternal(String requestUrl, String requestJson)
 			throws Exception {
 		return this.mockMvc.perform(put(requestUrl).content(requestJson)
-				.header("Authorization", SecurityTestUtil.createBearerTokenDefaultUser())
+				.header("Authorization", SecurityTestUtil.createBearerTokenDefaultUserInternal())
 				.contentType(MediaType.APPLICATION_JSON));
 	}
 
-	public ResultActions mockMvcPerformDeleteAuthorizationDefaultUser(String requestUrl) throws Exception {
+	public ResultActions mockMvcPerformDeleteAuthorizationDefaultUserInternal(String requestUrl) throws Exception {
 		return this.mockMvc
-				.perform(delete(requestUrl).header("Authorization", SecurityTestUtil.createBearerTokenDefaultUser()));
+				.perform(delete(requestUrl).header("Authorization", SecurityTestUtil.createBearerTokenDefaultUserInternal()));
 	}
 	
 	public ResultActions mockMvcPerformDeleteNoAuthorization(String requestUrl) throws Exception {
