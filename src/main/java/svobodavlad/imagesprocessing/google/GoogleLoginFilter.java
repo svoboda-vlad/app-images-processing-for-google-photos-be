@@ -2,6 +2,7 @@ package svobodavlad.imagesprocessing.google;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.util.ArrayList;
 import java.util.Optional;
 
 import javax.servlet.FilterChain;
@@ -17,6 +18,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
@@ -28,7 +30,9 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 
 import svobodavlad.imagesprocessing.jpaentities.User;
 import svobodavlad.imagesprocessing.jpaentities.User.LoginProvider;
+import svobodavlad.imagesprocessing.jpaentities.UserRoles;
 import svobodavlad.imagesprocessing.security.AuthenticationService;
+import svobodavlad.imagesprocessing.security.UserInfo;
 import svobodavlad.imagesprocessing.security.UserRegister;
 import svobodavlad.imagesprocessing.security.UserRepository;
 import svobodavlad.imagesprocessing.security.UserService;
@@ -52,6 +56,8 @@ public class GoogleLoginFilter extends UsernamePasswordAuthenticationFilter {
 	@Autowired
 	private UserRepository userRepository;
 	
+	private Optional<GoogleIdToken> optIdToken;
+	
 	public GoogleLoginFilter(AuthenticationManager authManager) {
 		super(authManager);
 		this.setRequiresAuthenticationRequestMatcher(GOOGLE_ANT_PATH_REQUEST_MATCHER);
@@ -68,19 +74,19 @@ public class GoogleLoginFilter extends UsernamePasswordAuthenticationFilter {
 		try {
 			GoogleIdToken idToken = googleIdTokenVerifier.verify(optTokenEntity.get().getIdToken());
 			if (idToken != null) {
-				Payload payload = idToken.getPayload();
-				username = payload.getSubject();
-
+				this.optIdToken = Optional.of(idToken);
+				username = idToken.getPayload().getSubject();
 				Optional<User> optUser = userRepository.findByUsername(username);
-				if (optUser.isPresent() && optUser.get().getLoginProvider() != LoginProvider.GOOGLE)
-					throw new BadCredentialsException("");
-				if (optUser.isEmpty()) {
-					String familyName = (String) payload.get("family_name");
-					String givenName = (String) payload.get("given_name");
-					String email = payload.getEmail();
-					UserRegister userRegister = new UserRegister(username, username, givenName, familyName, email);
-					User user = userRegister.toUserGoogle(encoder);
-					userService.registerUser(user);
+				
+				if (optUser.isPresent()) {
+					if (optUser.get().getLoginProvider() != LoginProvider.GOOGLE) 
+						throw new BadCredentialsException("");
+				} else {
+					extractPayloadFromIdToken().ifPresent(userInfo -> {
+						UserRegister userRegister = new UserRegister(userInfo.getUsername(), userInfo.getUsername(), userInfo.getGivenName(), userInfo.getFamilyName(), userInfo.getEmail());
+						User user = userRegister.toUserGoogle(encoder);
+						userService.registerUser(user);						
+					});
 				}
 			}
 		} catch (GeneralSecurityException | IOException e) {
@@ -93,8 +99,10 @@ public class GoogleLoginFilter extends UsernamePasswordAuthenticationFilter {
 	@Override
 	protected void successfulAuthentication(HttpServletRequest req, HttpServletResponse res, FilterChain chain,
 			Authentication auth) throws IOException, ServletException {
+		SecurityContextHolder.getContext().setAuthentication(auth);
 		AuthenticationService.addToken(res, auth.getName());
-		userService.updateLastLoginDateTime(auth.getName());
+		extractPayloadFromIdToken().ifPresent(userInfo -> userService.updateCurrentUser(userInfo));
+		userService.updateCurrentUserLastLoginDateTime();
 	}
 
 	private Optional<GoogleIdTokenTemplate> resolveGoogleIdTokenTemplate(HttpServletRequest request) {
@@ -105,5 +113,15 @@ public class GoogleLoginFilter extends UsernamePasswordAuthenticationFilter {
 			return Optional.empty();
 		}
 	}
+	
+	private Optional<UserInfo> extractPayloadFromIdToken() {
+		if (this.optIdToken.isEmpty()) return Optional.empty();
+		Payload payload = this.optIdToken.get().getPayload();
+		return Optional.of(new UserInfo(payload.getSubject(),
+			(String) payload.get("given_name"), 
+			(String) payload.get("family_name"),
+			(String) payload.getEmail(),			
+			null, null, new ArrayList<UserRoles>()));
+	}	
 
 }

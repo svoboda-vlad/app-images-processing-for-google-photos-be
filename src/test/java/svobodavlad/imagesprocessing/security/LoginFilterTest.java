@@ -51,7 +51,7 @@ class LoginFilterTest extends UnitTestTemplateWithSecurity {
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
 		this.mockMvcExpectHeaderExists(mvcResult, expectedHeader);
 				
-		this.verify(userService, this.times(1)).updateLastLoginDateTime(mockedUser.getUsername());
+		this.verify(userService, this.times(1)).updateCurrentUserLastLoginDateTime();
 	}
 
 	@Test
@@ -66,7 +66,7 @@ class LoginFilterTest extends UnitTestTemplateWithSecurity {
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
 		this.mockMvcExpectHeaderDoesNotExist(mvcResult, unexpectedHeader);
 		
-		this.verify(userService, this.never()).updateLastLoginDateTime(mockedUser.getUsername());
+		this.verify(userService, this.never()).updateCurrentUserLastLoginDateTime();
 	}
 
 	@Test
@@ -83,7 +83,7 @@ class LoginFilterTest extends UnitTestTemplateWithSecurity {
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
 		this.mockMvcExpectHeaderDoesNotExist(mvcResult, unexpectedHeader);
 				
-		this.verify(userService, this.never()).updateLastLoginDateTime(mockedUser.getUsername());
+		this.verify(userService, this.never()).updateCurrentUserLastLoginDateTime();
 	}
 	
 	@Test
@@ -98,7 +98,7 @@ class LoginFilterTest extends UnitTestTemplateWithSecurity {
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
 		this.mockMvcExpectHeaderDoesNotExist(mvcResult, unexpectedHeader);
 		
-		this.verify(userService, this.never()).updateLastLoginDateTime(mockedUser.getUsername());		
+		this.verify(userService, this.never()).updateCurrentUserLastLoginDateTime();		
 	}
 
 	@Test
@@ -113,6 +113,6 @@ class LoginFilterTest extends UnitTestTemplateWithSecurity {
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
 		this.mockMvcExpectHeaderDoesNotExist(mvcResult, unexpectedHeader);
 		
-		this.verify(userService, this.never()).updateLastLoginDateTime("user1x");
+		this.verify(userService, this.never()).updateCurrentUserLastLoginDateTime();
 	}
 }

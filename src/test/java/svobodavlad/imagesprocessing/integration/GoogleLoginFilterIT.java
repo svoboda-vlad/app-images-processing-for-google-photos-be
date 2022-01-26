@@ -166,5 +166,44 @@ class GoogleLoginFilterIT extends IntegTestTemplate {
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
 		this.mockMvcExpectHeaderDoesNotExist(mvcResult, unexpectedHeader);
 	}
+	
+	@Test
+	void testGoogleLoginOk200UserInfoUpdated() throws Exception {
+		String requestUrl = "/google-login";
+		String requestJson = "{\"idToken\":\"abcdef\"}";
+		int expectedStatus = 200;
+		String expectedJson = "";
+		String expectedHeader = "Authorization";
+
+		Header header = new Header();
+		Payload payload = new Payload();
+		payload.setSubject(defaultUser.getUsername());
+		payload.set("given_name", defaultUser.getGivenName() + "x");
+		payload.set("family_name", defaultUser.getFamilyName() + "x");
+		payload.setEmail(defaultUser.getEmail() + "x");
+		GoogleIdToken idToken = new GoogleIdToken(header, payload, new byte[0], new byte[0]);
+		this.given(googleIdTokenVerifier.verify("abcdef")).willReturn(idToken);
+		
+		ResultActions mvcResult = this.mockMvcPerformPostNoAuthorization(requestUrl, requestJson);
+		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
+		this.mockMvcExpectHeaderExists(mvcResult, expectedHeader);
+		
+		DateTimeFormatter formatter = DateTimeFormatter.ISO_INSTANT.withZone(ZoneId.systemDefault());
+		
+		requestUrl = "/user";
+		expectedStatus = 200;
+		String rolesJson = "";
+		for (UserRoles userRole : defaultUser.getRoles()) {
+			if (rolesJson.length() > 0) rolesJson += ",";
+			rolesJson += "{\"role\":{\"id\":" + userRole.getRole().getId() +",\"name\":\"" + userRole.getRole().getName() + "\"}}";
+		}
+		expectedJson = "{\"username\":\"usergoogle1\",\"givenName\":\"User 1x\",\"familyName\":\"User 1x\",\"email\":\"user1@gmail.comx\",\"userRoles\":[" + rolesJson + "],\"lastLoginDateTime\":\""
+				+ formatter.format(defaultUser.getLastLoginDateTime()) + "\",\"previousLoginDateTime\":\""
+				+ formatter.format(defaultUser.getLastLoginDateTime()) + "\"}";
+
+		mvcResult = this.mockMvcPerformGetAuthorizationDefaultUserGoogle(requestUrl);
+		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
+		
+	}	
 
 }
