@@ -122,4 +122,19 @@ http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibas
 			</column>
 		</addColumn>
 	</changeSet>
+	<changeSet id="20220128054800" author="svoboda-vlad">
+		<createTable tableName="last_upload_info">
+			<column name="id" type="int" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="last_updload_date_time" type="timestamp" />
+			<column name="user_id" type="int">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+		<addForeignKeyConstraint
+			baseColumnNames="user_id" baseTableName="last_upload_info"
+			constraintName="fk_last_upload_info_user_id"
+			referencedColumnNames="id" referencedTableName="user" />
+	</changeSet>
 </databaseChangeLog>
