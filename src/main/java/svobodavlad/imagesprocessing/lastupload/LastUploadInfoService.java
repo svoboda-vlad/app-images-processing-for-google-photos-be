@@ -1,4 +1,4 @@
-package svobodavlad.imagesprocessing.parameters;
+package svobodavlad.imagesprocessing.lastupload;
 
 import java.util.Optional;
 

@@ -127,7 +127,7 @@ http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibas
 			<column name="id" type="int" autoIncrement="true">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
-			<column name="last_updload_date_time" type="timestamp" />
+			<column name="last_upload_date_time" type="timestamp" />
 			<column name="user_id" type="int">
 				<constraints nullable="false" />
 			</column>
