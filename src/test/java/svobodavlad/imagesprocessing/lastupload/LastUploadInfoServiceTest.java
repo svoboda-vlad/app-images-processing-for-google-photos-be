@@ -38,7 +38,7 @@ class LastUploadInfoServiceTest extends UnitTestTemplate {
 	}
 
 	@Test
-	void testUpdateForCurrentUser() {
+	void testUpdateForCurrentUserWhenInfoExists() {
 		User mockedUser = SecurityMockUtil.getMockedDefaultUserInternal();
 		LastUploadInfo lastUploadInfo = new LastUploadInfo(Instant.now(), mockedUser);
 		
@@ -47,10 +47,21 @@ class LastUploadInfoServiceTest extends UnitTestTemplate {
 		this.given(lastUploadInfoRepository.save(lastUploadInfo)).willReturn(lastUploadInfo);
 		
 		Instant minTime = Instant.now();
-		this.assertThat(lastUploadInfoService.updateForCurrentUser()).isEqualTo(Optional.of(lastUploadInfo));
-		
-		Optional<LastUploadInfo> optLastUploadInfoUpdated = lastUploadInfoService.getForCurrentUser();
-		this.assertThat(optLastUploadInfoUpdated.get().getLastUploadDateTime()).isBetween(minTime, Instant.now());
-		
+		Optional<LastUploadInfo> optLastUploadInfoUpdated = lastUploadInfoService.updateForCurrentUser();
+		this.assertThat(optLastUploadInfoUpdated).isEqualTo(Optional.of(lastUploadInfo));
+		this.assertThat(optLastUploadInfoUpdated.get().getLastUploadDateTime()).isBetween(minTime, Instant.now());	
 	}
+	
+	@Test
+	void testUpdateForCurrentUserWhenInfoDoesNotExist() {
+		User mockedUser = SecurityMockUtil.getMockedDefaultUserInternal();
+		LastUploadInfo lastUploadInfo = new LastUploadInfo(Instant.now(), mockedUser);
+		
+		this.given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
+		this.given(lastUploadInfoRepository.findByUser(mockedUser)).willReturn(Optional.empty());		
+		this.given(lastUploadInfoRepository.save(this.any(LastUploadInfo.class))).willReturn(lastUploadInfo);
+				
+		this.assertThat(lastUploadInfoService.updateForCurrentUser()).isEqualTo(Optional.of(lastUploadInfo));
+	}	
+	
 }

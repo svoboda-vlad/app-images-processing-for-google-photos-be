@@ -24,10 +24,11 @@ public class LastUploadInfoControllerIT extends IntegTestTemplate {
 	private LastUploadInfoRepository lastUploadInfoRepository;
 	
 	LastUploadInfo lastUploadInfo;
+	User user;
 			
 	@BeforeEach
 	void initData() {
-		User user = securityTestUtil.saveDefaultUserInternal();
+		user = securityTestUtil.saveDefaultUserInternal();
 		lastUploadInfo = lastUploadInfoRepository.save(new LastUploadInfo(Instant.now(), user));
 	}
 
@@ -56,10 +57,9 @@ public class LastUploadInfoControllerIT extends IntegTestTemplate {
 	}	
 
 	@Test
-	void testUpdateLastUploadInfoOk200AndDateUpdated() throws Exception {
+	void testUpdateLastUploadInfoOk200AndDateUpdatedWhenInfoExists() throws Exception {
 		String requestUrl = "/last-upload-info-update";
 		int expectedStatus = 200;
-		DateTimeFormatter formatter = DateTimeFormatter.ISO_INSTANT.withZone(ZoneId.systemDefault());
 
 		Instant minTime = Instant.now();
 		ResultActions mvcResult = this.mockMvcPerformGetAuthorizationDefaultUserInternal(requestUrl);
@@ -67,11 +67,31 @@ public class LastUploadInfoControllerIT extends IntegTestTemplate {
 		lastUploadInfo = lastUploadInfoRepository.findById(lastUploadInfo.getId()).get();
 		this.assertThat(lastUploadInfo.getLastUploadDateTime()).isBetween(minTime, Instant.now());
 		
+		DateTimeFormatter formatter = DateTimeFormatter.ISO_INSTANT.withZone(ZoneId.systemDefault());
 		String expectedJson = "{\"id\":" + lastUploadInfo.getId() 
 		+ ",\"lastUploadDateTime\":\"" + formatter.format(lastUploadInfo.getLastUploadDateTime()) + "\"}";		
 		
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
 	}
+	
+	@Test
+	void testUpdateLastUploadInfoOk200AndDateUpdatedWhenInfoDoesNotExists() throws Exception {
+		String requestUrl = "/last-upload-info-update";
+		int expectedStatus = 200;
+		
+		lastUploadInfoRepository.deleteAll();
+		Instant minTime = Instant.now();
+		ResultActions mvcResult = this.mockMvcPerformGetAuthorizationDefaultUserInternal(requestUrl);
+		
+		lastUploadInfo = lastUploadInfoRepository.findByUser(user).get();
+		this.assertThat(lastUploadInfo.getLastUploadDateTime()).isBetween(minTime, Instant.now());
+		
+		DateTimeFormatter formatter = DateTimeFormatter.ISO_INSTANT.withZone(ZoneId.systemDefault());
+		String expectedJson = "{\"id\":" + lastUploadInfo.getId() 
+		+ ",\"lastUploadDateTime\":\"" + formatter.format(lastUploadInfo.getLastUploadDateTime()) + "\"}";		
+		
+		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
+	}	
 	
 	@Test
 	void testUpdateLastUploadInfoNotFound404() throws Exception {

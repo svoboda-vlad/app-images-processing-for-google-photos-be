@@ -8,6 +8,7 @@ import org.assertj.core.api.AbstractLocalDateTimeAssert;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.ObjectAssert;
 import org.assertj.core.api.ThrowableTypeAssert;
+import org.mockito.ArgumentMatchers;
 import org.mockito.BDDMockito;
 import org.mockito.Mockito;
 import org.mockito.verification.VerificationMode;
@@ -48,6 +49,10 @@ public class UnitTestTemplate extends MockMvcUtil {
 	
 	public <T extends Throwable> ThrowableTypeAssert<T> assertThatExceptionOfType(final Class<? extends T> exceptionType) {
 		return Assertions.assertThatExceptionOfType(exceptionType);
+	}
+	
+	public <T> T any(Class<T> type) {
+		return ArgumentMatchers.any(type);
 	}
 
 }

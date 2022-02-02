@@ -34,8 +34,9 @@ public class LastUploadInfoService {
 		Optional<User> optUser = userRepository.findByUsername(authentication.getName());
 		if (optUser.isEmpty()) return Optional.empty();
 		Optional<LastUploadInfo> optLastUploadInfo = lastUploadInfoRepository.findByUser(optUser.get());
-		if (optLastUploadInfo.isEmpty()) return Optional.empty();
-		LastUploadInfo lastUploadInfo = optLastUploadInfo.get().updateLastUploadDateTime();
+		if (optLastUploadInfo.isPresent()) return Optional.of(lastUploadInfoRepository.save(optLastUploadInfo.get().updateLastUploadDateTime()));
+		LastUploadInfo lastUploadInfo = new LastUploadInfo(null, optUser.get());
+		lastUploadInfo.updateLastUploadDateTime();
 		return Optional.of(lastUploadInfoRepository.save(lastUploadInfo));
 	}
 
