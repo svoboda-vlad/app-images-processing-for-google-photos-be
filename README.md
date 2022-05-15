@@ -189,16 +189,11 @@ restricted:
 
 **REST API endpoints - security + administration**
 
-unrestricted:
-- POST "/login" (LoginFilter)
-- POST "/google-login" (GoogleLoginFilter)
-
 restricted:
 - GET + DELETE "/user" (UserController)
 
 restricted (administrator):
 - GET "/admin/users" (UserAdminController)
-- PUT "/admin/user" (UserAdminController)
 - GET + PUT "/admin/parameters-default" (ProcessingParametersDefaultController)
 
 ## Models

@@ -15,7 +15,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 @AutoConfigureMockMvc(addFilters = false)
-//@WithMockUser - not needed
 public abstract class MockMvcUtil {
 
 	@Autowired

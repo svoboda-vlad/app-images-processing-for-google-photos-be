@@ -5,7 +5,6 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -13,21 +12,15 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import svobodavlad.imagesprocessing.jpaentities.LastUploadInfo;
 import svobodavlad.imagesprocessing.jpaentities.User;
-import svobodavlad.imagesprocessing.testutil.SecurityMockUtil;
 import svobodavlad.imagesprocessing.testutil.UnitTestTemplate;
 
-@WithMockUser(username = SecurityMockUtil.DEFAULT_USERNAME)
+@WithMockUser
 public class LastUploadInfoControllerTest extends UnitTestTemplate {
 		
 	@MockBean
 	private LastUploadInfoService lastUploadInfoService;	
 	
 	private User mockedUser;
-
-	@BeforeEach
-	private void initData() {
-		mockedUser = SecurityMockUtil.getMockedDefaultUserInternal();
-	}
 
 	@Test
 	void testGetLastUploadInfoOk200() throws Exception {

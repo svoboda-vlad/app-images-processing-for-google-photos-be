@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import svobodavlad.imagesprocessing.jpaentities.ProcessingParametersDefault;
@@ -31,9 +30,6 @@ public class StartupCommandLineRunner implements CommandLineRunner {
 	private UserService userService;
 
 	@Autowired
-	private PasswordEncoder encoder;
-
-	@Autowired
 	private ProcessingParametersDefaultRepository parametersRepository;
 
 	@Override
@@ -44,9 +40,9 @@ public class StartupCommandLineRunner implements CommandLineRunner {
 
 	void saveAdminUser() {
 		if (adminUser.getUsername() != null && adminUser.getPassword() != null) {
-			UserRegister userRegister = new UserRegister(adminUser.getUsername(), adminUser.getPassword(),
+			UserRegister userRegister = new UserRegister(adminUser.getUsername(),
 					"Administrator", "Administrator", null);
-			User user = userRegister.toUserInternal(encoder);
+			User user = userRegister.toUser();
 			try {
 				userService.registerAdminUser(user);
 			} catch (EntityExistsException e) {

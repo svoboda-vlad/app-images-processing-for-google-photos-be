@@ -74,15 +74,6 @@ public class UserService {
 		return Optional.of(userRepository.save(user));
 	}
 	
-	public Optional<User> updateCurrentUser(UserInfo userInfo) {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		if (!authentication.getName().equals(userInfo.getUsername())) return Optional.empty();
-		Optional<User> optUser = userRepository.findByUsername(userInfo.getUsername());
-		if (optUser.isEmpty()) return Optional.empty();
-		User user = optUser.get();
-		return Optional.of(userRepository.save(userInfo.toUser(user)));
-	}	
-	
 	public void deleteCurrentUser() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		Optional<User> optUser = userRepository.findByUsername(authentication.getName());

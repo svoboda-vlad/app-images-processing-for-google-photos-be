@@ -10,12 +10,14 @@ import org.springframework.security.test.context.support.WithMockUser;
 
 import svobodavlad.imagesprocessing.jpaentities.LastUploadInfo;
 import svobodavlad.imagesprocessing.jpaentities.User;
+import svobodavlad.imagesprocessing.security.UserRegister;
 import svobodavlad.imagesprocessing.security.UserRepository;
-import svobodavlad.imagesprocessing.testutil.SecurityMockUtil;
 import svobodavlad.imagesprocessing.testutil.UnitTestTemplate;
 
-@WithMockUser(username = SecurityMockUtil.DEFAULT_USERNAME) // mocking of SecurityContextHolder
+@WithMockUser // mocking of SecurityContextHolder
 class LastUploadInfoServiceTest extends UnitTestTemplate {
+	
+	private static final String MOCKED_USER_NAME = "user";
 
 	@MockBean
 	private LastUploadInfoRepository lastUploadInfoRepository;
@@ -28,7 +30,7 @@ class LastUploadInfoServiceTest extends UnitTestTemplate {
 
 	@Test
 	void testGetForCurrentUser() {
-		User mockedUser = SecurityMockUtil.getMockedDefaultUserInternal();
+		User mockedUser = new UserRegister(MOCKED_USER_NAME, MOCKED_USER_NAME, MOCKED_USER_NAME, null).toUser();
 		LastUploadInfo lastUploadInfo = new LastUploadInfo(Instant.now(), mockedUser);
 		
 		this.given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
@@ -39,7 +41,7 @@ class LastUploadInfoServiceTest extends UnitTestTemplate {
 
 	@Test
 	void testUpdateForCurrentUserWhenInfoExists() {
-		User mockedUser = SecurityMockUtil.getMockedDefaultUserInternal();
+		User mockedUser = new UserRegister(MOCKED_USER_NAME, MOCKED_USER_NAME, MOCKED_USER_NAME, null).toUser();
 		LastUploadInfo lastUploadInfo = new LastUploadInfo(Instant.now(), mockedUser);
 		
 		this.given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
@@ -54,7 +56,7 @@ class LastUploadInfoServiceTest extends UnitTestTemplate {
 	
 	@Test
 	void testUpdateForCurrentUserWhenInfoDoesNotExist() {
-		User mockedUser = SecurityMockUtil.getMockedDefaultUserInternal();
+		User mockedUser = new UserRegister(MOCKED_USER_NAME, MOCKED_USER_NAME, MOCKED_USER_NAME, null).toUser();
 		LastUploadInfo lastUploadInfo = new LastUploadInfo(Instant.now(), mockedUser);
 		
 		this.given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));

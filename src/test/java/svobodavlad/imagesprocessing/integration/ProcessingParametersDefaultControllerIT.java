@@ -8,19 +8,14 @@ import org.springframework.test.web.servlet.ResultActions;
 import svobodavlad.imagesprocessing.jpaentities.ProcessingParametersDefault;
 import svobodavlad.imagesprocessing.parameters.ProcessingParametersDefaultRepository;
 import svobodavlad.imagesprocessing.testutil.IntegTestTemplate;
-import svobodavlad.imagesprocessing.testutil.SecurityTestUtil;
 
 public class ProcessingParametersDefaultControllerIT extends IntegTestTemplate {
-	
-	@Autowired
-	private SecurityTestUtil securityTestUtil;
-	
+		
 	@Autowired
 	private ProcessingParametersDefaultRepository parametersRepository;
 	
 	@BeforeEach
 	void initData() {
-		securityTestUtil.saveAdminUser();
 		parametersRepository.save(new ProcessingParametersDefault(1800, 1000, 1000));
 	}
 

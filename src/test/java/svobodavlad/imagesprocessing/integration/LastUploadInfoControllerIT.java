@@ -12,24 +12,23 @@ import org.springframework.test.web.servlet.ResultActions;
 import svobodavlad.imagesprocessing.jpaentities.LastUploadInfo;
 import svobodavlad.imagesprocessing.jpaentities.User;
 import svobodavlad.imagesprocessing.lastupload.LastUploadInfoRepository;
+import svobodavlad.imagesprocessing.security.UserRegister;
 import svobodavlad.imagesprocessing.testutil.IntegTestTemplate;
-import svobodavlad.imagesprocessing.testutil.SecurityTestUtil;
 
 public class LastUploadInfoControllerIT extends IntegTestTemplate {
 	
-	@Autowired
-	private SecurityTestUtil securityTestUtil;
+	private static final String MOCKED_USER_NAME = "user";
 	
 	@Autowired
 	private LastUploadInfoRepository lastUploadInfoRepository;
 	
 	LastUploadInfo lastUploadInfo;
-	User user;
+	User mockedUser;
 			
 	@BeforeEach
 	void initData() {
-		user = securityTestUtil.saveDefaultUserInternal();
-		lastUploadInfo = lastUploadInfoRepository.save(new LastUploadInfo(Instant.now(), user));
+		mockedUser = new UserRegister(MOCKED_USER_NAME, MOCKED_USER_NAME, MOCKED_USER_NAME, null).toUser();
+		lastUploadInfo = lastUploadInfoRepository.save(new LastUploadInfo(Instant.now(), mockedUser));
 	}
 
 	@Test
@@ -40,7 +39,7 @@ public class LastUploadInfoControllerIT extends IntegTestTemplate {
 		String expectedJson = "{\"id\":" + lastUploadInfo.getId() 
 		+ ",\"lastUploadDateTime\":\"" + formatter.format(lastUploadInfo.getLastUploadDateTime()) + "\"}";
 		
-		ResultActions mvcResult = this.mockMvcPerformGetAuthorizationDefaultUserInternal(requestUrl);
+		ResultActions mvcResult = this.mockMvcPerformGetAuthorizationDefaultUser(requestUrl);
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
 	}
 	
@@ -52,7 +51,7 @@ public class LastUploadInfoControllerIT extends IntegTestTemplate {
 		
 		lastUploadInfoRepository.deleteAll();
 
-		ResultActions mvcResult = this.mockMvcPerformGetAuthorizationDefaultUserInternal(requestUrl);
+		ResultActions mvcResult = this.mockMvcPerformGetAuthorizationDefaultUser(requestUrl);
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);	
 	}	
 
@@ -62,7 +61,7 @@ public class LastUploadInfoControllerIT extends IntegTestTemplate {
 		int expectedStatus = 200;
 
 		Instant minTime = Instant.now();
-		ResultActions mvcResult = this.mockMvcPerformGetAuthorizationDefaultUserInternal(requestUrl);
+		ResultActions mvcResult = this.mockMvcPerformGetAuthorizationDefaultUser(requestUrl);
 		
 		lastUploadInfo = lastUploadInfoRepository.findById(lastUploadInfo.getId()).get();
 		this.assertThat(lastUploadInfo.getLastUploadDateTime()).isBetween(minTime, Instant.now());
@@ -81,9 +80,9 @@ public class LastUploadInfoControllerIT extends IntegTestTemplate {
 		
 		lastUploadInfoRepository.deleteAll();
 		Instant minTime = Instant.now();
-		ResultActions mvcResult = this.mockMvcPerformGetAuthorizationDefaultUserInternal(requestUrl);
+		ResultActions mvcResult = this.mockMvcPerformGetAuthorizationDefaultUser(requestUrl);
 		
-		lastUploadInfo = lastUploadInfoRepository.findByUser(user).get();
+		lastUploadInfo = lastUploadInfoRepository.findByUser(mockedUser).get();
 		this.assertThat(lastUploadInfo.getLastUploadDateTime()).isBetween(minTime, Instant.now());
 		
 		DateTimeFormatter formatter = DateTimeFormatter.ISO_INSTANT.withZone(ZoneId.systemDefault());
@@ -101,7 +100,7 @@ public class LastUploadInfoControllerIT extends IntegTestTemplate {
 		
 		lastUploadInfoRepository.deleteAll();
 
-		ResultActions mvcResult = this.mockMvcPerformGetAuthorizationDefaultUserInternal(requestUrl);
+		ResultActions mvcResult = this.mockMvcPerformGetAuthorizationDefaultUser(requestUrl);
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
 	}
 	

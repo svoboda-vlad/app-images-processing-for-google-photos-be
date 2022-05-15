@@ -15,9 +15,6 @@ http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibas
 			<column name="username" type="varchar(255)">
 				<constraints unique="true" nullable="false" />
 			</column>
-			<column name="password" type="varchar(255)">
-				<constraints nullable="false" />
-			</column>
 			<column name="login_provider" type="varchar(255)" />
 			<column name="family_name" type="varchar(255)" />
 			<column name="given_name" type="varchar(255)" />

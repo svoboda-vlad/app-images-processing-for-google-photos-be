@@ -1,6 +1,5 @@
 package svobodavlad.imagesprocessing.integration;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.ResultActions;
@@ -8,12 +7,9 @@ import org.springframework.test.web.servlet.ResultActions;
 import svobodavlad.imagesprocessing.parameters.ProcessingParametersDefaultRepository;
 import svobodavlad.imagesprocessing.parameters.ProcessingParametersUserRepository;
 import svobodavlad.imagesprocessing.testutil.IntegTestTemplate;
-import svobodavlad.imagesprocessing.testutil.SecurityTestUtil;
 
 public class ProcessingParametersUserControllerIT extends IntegTestTemplate {
 	
-	@Autowired
-	private SecurityTestUtil securityTestUtil;
 	
 	@Autowired
 	private ProcessingParametersUserRepository parametersRepository;
@@ -21,18 +17,13 @@ public class ProcessingParametersUserControllerIT extends IntegTestTemplate {
 	@Autowired
 	private ProcessingParametersDefaultRepository parametersDefaultRepository;	
 		
-	@BeforeEach
-	void initData() {
-		securityTestUtil.saveDefaultUserInternal();
-	}
-
 	@Test
 	void testGetProcessingParametersUserTemplateOk200() throws Exception {		
 		String requestUrl = "/parameters";
 		int expectedStatus = 200;
 		String expectedJson = "{\"timeDiffGroup\":1800,\"resizeWidth\":1000,\"resizeHeight\":1000}";
 		
-		ResultActions mvcResult = this.mockMvcPerformGetAuthorizationDefaultUserInternal(requestUrl);
+		ResultActions mvcResult = this.mockMvcPerformGetAuthorizationDefaultUser(requestUrl);
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
 	}
 	
@@ -44,7 +35,7 @@ public class ProcessingParametersUserControllerIT extends IntegTestTemplate {
 		
 		parametersRepository.deleteAll();
 
-		ResultActions mvcResult = this.mockMvcPerformGetAuthorizationDefaultUserInternal(requestUrl);
+		ResultActions mvcResult = this.mockMvcPerformGetAuthorizationDefaultUser(requestUrl);
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);	
 	}	
 
@@ -55,7 +46,7 @@ public class ProcessingParametersUserControllerIT extends IntegTestTemplate {
 		int expectedStatus = 200;
 		String expectedJson = "{\"timeDiffGroup\":7200,\"resizeWidth\":1000,\"resizeHeight\":1000}";
 
-		ResultActions mvcResult = this.mockMvcPerformPutAuthorizationDefaultUserInternal(requestUrl, requestJson);
+		ResultActions mvcResult = this.mockMvcPerformPutAuthorizationDefaultUser(requestUrl, requestJson);
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
 	}
 	
@@ -68,7 +59,7 @@ public class ProcessingParametersUserControllerIT extends IntegTestTemplate {
 		
 		parametersRepository.deleteAll();
 
-		ResultActions mvcResult = this.mockMvcPerformPutAuthorizationDefaultUserInternal(requestUrl, requestJson);
+		ResultActions mvcResult = this.mockMvcPerformPutAuthorizationDefaultUser(requestUrl, requestJson);
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
 	}
 	
@@ -78,14 +69,14 @@ public class ProcessingParametersUserControllerIT extends IntegTestTemplate {
 		int expectedStatus = 204;
 		String expectedJson = "";
 				
-		ResultActions mvcResult = this.mockMvcPerformGetAuthorizationDefaultUserInternal(requestUrl);
+		ResultActions mvcResult = this.mockMvcPerformGetAuthorizationDefaultUser(requestUrl);
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
 		
 		requestUrl = "/parameters";
 		expectedStatus = 200;
 		expectedJson = "{\"timeDiffGroup\":1800,\"resizeWidth\":1000,\"resizeHeight\":1000}";
 
-		mvcResult = this.mockMvcPerformGetAuthorizationDefaultUserInternal(requestUrl);
+		mvcResult = this.mockMvcPerformGetAuthorizationDefaultUser(requestUrl);
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
 	}
 		
@@ -97,14 +88,14 @@ public class ProcessingParametersUserControllerIT extends IntegTestTemplate {
 		
 		parametersRepository.deleteAll();
 				
-		ResultActions mvcResult = this.mockMvcPerformGetAuthorizationDefaultUserInternal(requestUrl);
+		ResultActions mvcResult = this.mockMvcPerformGetAuthorizationDefaultUser(requestUrl);
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
 		
 		requestUrl = "/parameters";
 		expectedStatus = 200;
 		expectedJson = "{\"timeDiffGroup\":1800,\"resizeWidth\":1000,\"resizeHeight\":1000}";
 
-		mvcResult = this.mockMvcPerformGetAuthorizationDefaultUserInternal(requestUrl);
+		mvcResult = this.mockMvcPerformGetAuthorizationDefaultUser(requestUrl);
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);	
 	}
 	
@@ -116,7 +107,7 @@ public class ProcessingParametersUserControllerIT extends IntegTestTemplate {
 		
 		parametersDefaultRepository.deleteAll();
 		
-		ResultActions mvcResult = this.mockMvcPerformGetAuthorizationDefaultUserInternal(requestUrl);
+		ResultActions mvcResult = this.mockMvcPerformGetAuthorizationDefaultUser(requestUrl);
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
 	}	
 	

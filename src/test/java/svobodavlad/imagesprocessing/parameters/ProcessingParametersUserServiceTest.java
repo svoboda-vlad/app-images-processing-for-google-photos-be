@@ -12,12 +12,14 @@ import org.springframework.security.test.context.support.WithMockUser;
 import svobodavlad.imagesprocessing.jpaentities.ProcessingParametersDefault;
 import svobodavlad.imagesprocessing.jpaentities.ProcessingParametersUser;
 import svobodavlad.imagesprocessing.jpaentities.User;
+import svobodavlad.imagesprocessing.security.UserRegister;
 import svobodavlad.imagesprocessing.security.UserRepository;
-import svobodavlad.imagesprocessing.testutil.SecurityMockUtil;
 import svobodavlad.imagesprocessing.testutil.UnitTestTemplate;
 
-@WithMockUser(username = SecurityMockUtil.DEFAULT_USERNAME) // mocking of SecurityContextHolder
+@WithMockUser // mocking of SecurityContextHolder
 class ProcessingParametersUserServiceTest extends UnitTestTemplate {
+	
+	private static final String MOCKED_USER_NAME = "user";
 
 	@MockBean
 	private ProcessingParametersUserRepository parametersRepository;
@@ -33,7 +35,7 @@ class ProcessingParametersUserServiceTest extends UnitTestTemplate {
 	
 	@Test
 	void testResetToDefaultReturnsDefault() {
-		User mockedUser = SecurityMockUtil.getMockedDefaultUserInternal();
+		User mockedUser = new UserRegister(MOCKED_USER_NAME, MOCKED_USER_NAME, MOCKED_USER_NAME, null).toUser();
 		ProcessingParametersUser parameters = new ProcessingParametersUser(1800, 1000, 1000, mockedUser);
 		
 		this.given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
@@ -50,7 +52,7 @@ class ProcessingParametersUserServiceTest extends UnitTestTemplate {
 	
 	@Test
 	void testResetToDefaultThrowsError() {
-		User mockedUser = SecurityMockUtil.getMockedDefaultUserInternal();
+		User mockedUser = new UserRegister(MOCKED_USER_NAME, MOCKED_USER_NAME, MOCKED_USER_NAME, null).toUser();
 		ProcessingParametersUser parameters = new ProcessingParametersUser(1800, 1000, 1000, mockedUser);
 		
 		this.given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
@@ -66,7 +68,7 @@ class ProcessingParametersUserServiceTest extends UnitTestTemplate {
 	
 	@Test
 	void testResetToDefaultReturnsDefaultWhenParametersUserNotFound() {
-		User mockedUser = SecurityMockUtil.getMockedDefaultUserInternal();
+		User mockedUser = new UserRegister(MOCKED_USER_NAME, MOCKED_USER_NAME, MOCKED_USER_NAME, null).toUser();
 		
 		this.given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
 		this.given(parametersRepository.findByUser(mockedUser)).willReturn(Optional.empty());
@@ -83,7 +85,7 @@ class ProcessingParametersUserServiceTest extends UnitTestTemplate {
 	
 	@Test
 	void testSetInitialParameters() {
-		User mockedUser = SecurityMockUtil.getMockedDefaultUserInternal();
+		User mockedUser = new UserRegister(MOCKED_USER_NAME, MOCKED_USER_NAME, MOCKED_USER_NAME, null).toUser();
 		
 		this.given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
 		this.given(parametersRepository.findByUser(mockedUser)).willReturn(Optional.empty());
@@ -99,7 +101,7 @@ class ProcessingParametersUserServiceTest extends UnitTestTemplate {
 	
 	@Test
 	void testSetInitialParametersThrowsError() {
-		User mockedUser = SecurityMockUtil.getMockedDefaultUserInternal();
+		User mockedUser = new UserRegister(MOCKED_USER_NAME, MOCKED_USER_NAME, MOCKED_USER_NAME, null).toUser();
 		
 		this.given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
 		this.given(parametersRepository.findByUser(mockedUser)).willReturn(Optional.empty());
@@ -113,7 +115,7 @@ class ProcessingParametersUserServiceTest extends UnitTestTemplate {
 	
 	@Test
 	void testSetInitialParametersDefaultParametersNotFound() {
-		User mockedUser = SecurityMockUtil.getMockedDefaultUserInternal();
+		User mockedUser = new UserRegister(MOCKED_USER_NAME, MOCKED_USER_NAME, MOCKED_USER_NAME, null).toUser();
 		
 		this.given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
 		
@@ -126,7 +128,7 @@ class ProcessingParametersUserServiceTest extends UnitTestTemplate {
 	
 	@Test
 	void testDeleteForCurrentUser() {
-		User mockedUser = SecurityMockUtil.getMockedDefaultUserInternal();
+		User mockedUser = new UserRegister(MOCKED_USER_NAME, MOCKED_USER_NAME, MOCKED_USER_NAME, null).toUser();
 		ProcessingParametersUser parameters = new ProcessingParametersUser(1800, 1000, 1000, mockedUser);
 		parameters.setId(1L);
 		
@@ -141,7 +143,7 @@ class ProcessingParametersUserServiceTest extends UnitTestTemplate {
 
 	@Test
 	void testGetForCurrentUser() {
-		User mockedUser = SecurityMockUtil.getMockedDefaultUserInternal();
+		User mockedUser = new UserRegister(MOCKED_USER_NAME, MOCKED_USER_NAME, MOCKED_USER_NAME, null).toUser();
 		ProcessingParametersUser parameters = new ProcessingParametersUser(1800, 1000, 1000, mockedUser);
 		
 		this.given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
@@ -152,7 +154,7 @@ class ProcessingParametersUserServiceTest extends UnitTestTemplate {
 
 	@Test
 	void testUpdateForCurrentUser() {
-		User mockedUser = SecurityMockUtil.getMockedDefaultUserInternal();
+		User mockedUser = new UserRegister(MOCKED_USER_NAME, MOCKED_USER_NAME, MOCKED_USER_NAME, null).toUser();
 		ProcessingParametersUser parameters = new ProcessingParametersUser(1800, 1000, 1000, mockedUser);
 		ProcessingParametersUser parametersUpdated = new ProcessingParametersUser(3600, 1000, 1000, mockedUser);
 		ProcessingParametersUserTemplate parametersTemplate = parametersUpdated.toProcessingParametersUserTemplate();
