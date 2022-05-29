@@ -4,8 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import javax.persistence.EntityExistsException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,15 +37,11 @@ public class UserService {
 	private static final String ADMIN_ROLE_NAME = "ROLE_ADMIN";
 
 	public User registerUser(User user) {
-
 		Optional<Role> optRole = roleRepository.findByName(USER_ROLE_NAME);
-
 		if (optRole.isEmpty()) {
 			log.info("Role {} not found in database.", USER_ROLE_NAME);
 			throw new RuntimeException("Role not found.");
 		} else {
-			if (userRepository.findByUsername(user.getUsername()).isPresent())
-				throw new EntityExistsException("User already exists.");
 			user.addRole(optRole.get());
 			user = userRepository.save(user);
 			parametersService.setInitialParameters(user.getUsername());
@@ -57,9 +51,7 @@ public class UserService {
 
 	public User registerAdminUser(User user) {
 		user = registerUser(user);
-
 		Optional<Role> optRole = roleRepository.findByName(ADMIN_ROLE_NAME);
-
 		if (optRole.isEmpty()) {
 			log.info("Role {} not found in database.", ADMIN_ROLE_NAME);
 			throw new RuntimeException("Role not found.");
@@ -101,8 +93,8 @@ public class UserService {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		Optional<User> optUser = userRepository.findByUsername(authentication.getName());
 		if (optUser.isPresent()) {
-			return optUser;
-			// return updateCurrentUser(getUserInfoWithAttributes(authentication));
+			updateCurrentUser(getUserInfoWithAttributes(authentication));
+			return updateCurrentUserLastLoginDateTime();
 		} else {
 			UserInfo userInfo = getUserInfoWithAttributes(authentication);
 			UserRegister userRegister = new UserRegister(

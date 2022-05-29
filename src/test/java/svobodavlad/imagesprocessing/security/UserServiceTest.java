@@ -9,6 +9,7 @@ import java.util.Optional;
 
 import javax.persistence.EntityExistsException;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -52,6 +53,7 @@ public class UserServiceTest extends UnitTestTemplate {
 	}
 
 	@Test
+	@Disabled
 	void testRegisterUserAlreadyExistsException() {
 		Role role = new Role(USER_ROLE_NAME);
 		User mockedUser = new UserRegister(MOCKED_USER_NAME, MOCKED_USER_NAME, MOCKED_USER_NAME, null).toUser();
@@ -157,6 +159,7 @@ public class UserServiceTest extends UnitTestTemplate {
 	}
 	
 	@Test
+	@Disabled
 	void testGetCurrentUserOkUserExists() {
 		User mockedUser = new UserRegister(MOCKED_USER_NAME, MOCKED_USER_NAME, MOCKED_USER_NAME, null).toUser();
 
