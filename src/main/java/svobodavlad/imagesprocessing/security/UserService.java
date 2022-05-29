@@ -1,5 +1,7 @@
 package svobodavlad.imagesprocessing.security;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.persistence.EntityExistsException;
@@ -7,8 +9,10 @@ import javax.persistence.EntityExistsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -74,6 +78,15 @@ public class UserService {
 		return Optional.of(userRepository.save(user));
 	}
 	
+	public Optional<User> updateCurrentUser(UserInfo userInfo) {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		if (!authentication.getName().equals(userInfo.getUsername())) return Optional.empty();
+		Optional<User> optUser = userRepository.findByUsername(userInfo.getUsername());
+		if (optUser.isEmpty()) return Optional.empty();
+		User user = optUser.get();
+		return Optional.of(userRepository.save(userInfo.toUser(user)));
+	}	
+	
 	public void deleteCurrentUser() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		Optional<User> optUser = userRepository.findByUsername(authentication.getName());
@@ -86,7 +99,39 @@ public class UserService {
 	
 	public Optional<User> getCurrentUser() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		return userRepository.findByUsername(authentication.getName());
+		Optional<User> optUser = userRepository.findByUsername(authentication.getName());
+		if (optUser.isPresent()) {
+			return optUser;
+			// return updateCurrentUser(getUserInfoWithAttributes(authentication));
+		} else {
+			UserInfo userInfo = getUserInfoWithAttributes(authentication);
+			UserRegister userRegister = new UserRegister(
+					userInfo.getUsername(), 
+					userInfo.getGivenName(),
+					userInfo.getFamilyName(), 
+					userInfo.getEmail()
+					);
+			registerUser(userRegister.toUser());
+			return updateCurrentUserLastLoginDateTime();
+		}
 	}
-
+	
+	private UserInfo getUserInfoWithAttributes(Authentication authentication) {
+		UserInfo userInfo = new UserInfo();
+		userInfo.setUsername(authentication.getName());
+		userInfo.setGivenName(authentication.getName());
+		userInfo.setFamilyName(authentication.getName());
+		userInfo.setEmail(authentication.getName());
+		if (authentication instanceof AbstractAuthenticationToken) {
+			AbstractAuthenticationToken authToken = (AbstractAuthenticationToken) authentication;
+			Map<String, Object> attributes = new HashMap<>();
+			if (authToken instanceof JwtAuthenticationToken) {
+	            attributes = ((JwtAuthenticationToken) authToken).getTokenAttributes();
+	        }
+			if (attributes.get("given_name") != null) userInfo.setGivenName((String) attributes.get("given_name"));
+			if (attributes.get("family_name") != null) userInfo.setFamilyName((String) attributes.get("family_name"));
+			if (attributes.get("email") != null) userInfo.setEmail((String) attributes.get("email"));
+		}
+		return userInfo;
+	}
 }
