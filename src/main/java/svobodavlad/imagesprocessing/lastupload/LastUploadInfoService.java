@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import svobodavlad.imagesprocessing.jpaentities.LastUploadInfo;
 import svobodavlad.imagesprocessing.jpaentities.User;
 import svobodavlad.imagesprocessing.security.UserRepository;
+import svobodavlad.imagesprocessing.util.DateTimeUtil;
 
 @Service
 @Transactional
@@ -19,6 +20,7 @@ public class LastUploadInfoService {
 	
 	private final LastUploadInfoRepository lastUploadInfoRepository;
 	private final UserRepository userRepository;
+	private final DateTimeUtil dateTimeUtil;
 	
 	public Optional<LastUploadInfo> getForCurrentUser() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -34,9 +36,12 @@ public class LastUploadInfoService {
 		Optional<User> optUser = userRepository.findByUsername(authentication.getName());
 		if (optUser.isEmpty()) return Optional.empty();
 		Optional<LastUploadInfo> optLastUploadInfo = lastUploadInfoRepository.findByUser(optUser.get());
-		if (optLastUploadInfo.isPresent()) return Optional.of(lastUploadInfoRepository.save(optLastUploadInfo.get().updateLastUploadDateTime()));
+		if (optLastUploadInfo.isPresent()) {
+			LastUploadInfo lastUploadInfo = optLastUploadInfo.get().updateLastUploadDateTime(dateTimeUtil.getCurrentDateTime());
+			return Optional.of(lastUploadInfoRepository.save(lastUploadInfo));			
+		}
 		LastUploadInfo lastUploadInfo = new LastUploadInfo(null, optUser.get());
-		lastUploadInfo.updateLastUploadDateTime();
+		lastUploadInfo.updateLastUploadDateTime(dateTimeUtil.getCurrentDateTime());
 		return Optional.of(lastUploadInfoRepository.save(lastUploadInfo));
 	}
 
