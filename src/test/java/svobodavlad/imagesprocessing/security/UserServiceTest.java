@@ -9,7 +9,6 @@ import java.util.Optional;
 
 import javax.persistence.EntityExistsException;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -19,6 +18,7 @@ import svobodavlad.imagesprocessing.jpaentities.Role;
 import svobodavlad.imagesprocessing.jpaentities.User;
 import svobodavlad.imagesprocessing.parameters.ProcessingParametersUserService;
 import svobodavlad.imagesprocessing.testutil.UnitTestTemplate;
+import svobodavlad.imagesprocessing.util.DateTimeUtil;
 
 @WithMockUser // mocking of SecurityContextHolder
 public class UserServiceTest extends UnitTestTemplate {
@@ -34,7 +34,10 @@ public class UserServiceTest extends UnitTestTemplate {
 	private UserRepository userRepository;
 	
 	@MockBean
-	private ProcessingParametersUserService parametersService;	
+	private ProcessingParametersUserService parametersService;
+	
+	@MockBean
+	private DateTimeUtil dateTimeUtil;
 
 	@Autowired
 	private UserService userService;
@@ -53,18 +56,13 @@ public class UserServiceTest extends UnitTestTemplate {
 	}
 
 	@Test
-	@Disabled
 	void testRegisterUserAlreadyExistsException() {
-		Role role = new Role(USER_ROLE_NAME);
 		User mockedUser = new UserRegister(MOCKED_USER_NAME, MOCKED_USER_NAME, MOCKED_USER_NAME, null).toUser();
 
-		this.given(roleRepository.findByName(USER_ROLE_NAME)).willReturn(Optional.of(role));
 		this.given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
-
 		this.assertThatExceptionOfType(EntityExistsException.class).isThrownBy(() -> {
 			userService.registerUser(mockedUser);
 		});
-
 	}
 
 	@Test
@@ -80,33 +78,31 @@ public class UserServiceTest extends UnitTestTemplate {
 
 	@Test
 	void testUpdateCurrentUserLastLoginDateTimeFirstLogin() {
+		Instant now = Instant.now();
 		User mockedUser = new UserRegister(MOCKED_USER_NAME, MOCKED_USER_NAME, MOCKED_USER_NAME, null).toUser();
-
+		mockedUser.setLastLoginDateTime(now);
+		mockedUser.setPreviousLoginDateTime(now);
+		
 		this.given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
+		this.given(dateTimeUtil.getCurrentDateTime()).willReturn(now);
 		this.given(userRepository.save(mockedUser)).willReturn(mockedUser);
-
-		Instant minTime = Instant.now();
 		
 		this.assertThat(userService.updateCurrentUserLastLoginDateTime()).isEqualTo(Optional.of(mockedUser));
-		this.assertThat(mockedUser.getLastLoginDateTime()).isBetween(minTime, Instant.now());
-		this.assertThat(mockedUser.getPreviousLoginDateTime()).isBetween(minTime, Instant.now());
 	}
 	
 	@Test
 	void testUpdateCurrentUserLastLoginDateTimeSecondLogin() {
+		Instant now = Instant.now();
 		User mockedUser = new UserRegister(MOCKED_USER_NAME, MOCKED_USER_NAME, MOCKED_USER_NAME, null).toUser();
 		Instant lastLoginDateTime = LocalDateTime.of(LocalDate.of(2021, 9, 26), LocalTime.of(12, 53)).toInstant(ZoneOffset.UTC);;
-		mockedUser.setLastLoginDateTime(lastLoginDateTime);
+		mockedUser.setLastLoginDateTime(now);
 		mockedUser.setPreviousLoginDateTime(lastLoginDateTime);
 		
 		this.given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
-		this.given(userRepository.save(mockedUser)).willReturn(mockedUser);
-
-		Instant minTime = Instant.now();
+		this.given(dateTimeUtil.getCurrentDateTime()).willReturn(now);
+		this.given(userRepository.save(mockedUser)).willReturn(mockedUser);	
 		
 		this.assertThat(userService.updateCurrentUserLastLoginDateTime()).isEqualTo(Optional.of(mockedUser));
-		this.assertThat(mockedUser.getLastLoginDateTime()).isBetween(minTime, Instant.now());
-		this.assertThat(mockedUser.getPreviousLoginDateTime()).isEqualTo(lastLoginDateTime);
 	}
 	
 	@Test
@@ -159,11 +155,12 @@ public class UserServiceTest extends UnitTestTemplate {
 	}
 	
 	@Test
-	@Disabled
 	void testGetCurrentUserOkUserExists() {
 		User mockedUser = new UserRegister(MOCKED_USER_NAME, MOCKED_USER_NAME, MOCKED_USER_NAME, null).toUser();
 
 		this.given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));		
+		this.given(userRepository.save(mockedUser)).willReturn(mockedUser);
+		
 		this.assertThat(userService.getCurrentUser()).isEqualTo(Optional.of(mockedUser));
 	}	
 

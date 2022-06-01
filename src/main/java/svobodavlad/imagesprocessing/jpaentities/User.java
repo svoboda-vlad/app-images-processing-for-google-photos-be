@@ -89,8 +89,8 @@ public class User extends JpaEntityTemplate {
 		return authorities;
 	}
 
-	public void updateLastLoginDateTime() {
-		Instant currentDateTime = Instant.now();
+	public void updateLastLoginDateTime(Instant currentDateTime) {
+		if (currentDateTime == null) currentDateTime = Instant.now();
 		if (this.lastLoginDateTime == null) {
 			this.previousLoginDateTime = currentDateTime;
 		} else {
@@ -108,5 +108,4 @@ public class User extends JpaEntityTemplate {
 				this.getLastLoginDateTime(), this.getPreviousLoginDateTime(), this.getRoles());
 		return userInfo;
 	}
-	
 }

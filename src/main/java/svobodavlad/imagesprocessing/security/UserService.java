@@ -4,9 +4,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import javax.persistence.EntityExistsException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -14,39 +15,39 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import lombok.RequiredArgsConstructor;
 import svobodavlad.imagesprocessing.jpaentities.Role;
 import svobodavlad.imagesprocessing.jpaentities.User;
 import svobodavlad.imagesprocessing.parameters.ProcessingParametersUserService;
+import svobodavlad.imagesprocessing.util.DateTimeUtil;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class UserService {
 
 	private final Logger log = LoggerFactory.getLogger(UserService.class);
 
-	@Autowired
-	private RoleRepository roleRepository;
-
-	@Autowired
-	private UserRepository userRepository;
-	
-	@Autowired
-	private ProcessingParametersUserService parametersService;
-
 	private static final String USER_ROLE_NAME = "ROLE_USER";
-	private static final String ADMIN_ROLE_NAME = "ROLE_ADMIN";
-
+	private static final String ADMIN_ROLE_NAME = "ROLE_ADMIN";	
+	
+	private final RoleRepository roleRepository;
+	private final UserRepository userRepository;
+	private final ProcessingParametersUserService parametersService;
+	private final DateTimeUtil dateTimeUtil;
+	
 	public User registerUser(User user) {
+		if (userRepository.findByUsername(user.getUsername()).isPresent())
+			throw new EntityExistsException("User already exists.");
 		Optional<Role> optRole = roleRepository.findByName(USER_ROLE_NAME);
 		if (optRole.isEmpty()) {
 			log.info("Role {} not found in database.", USER_ROLE_NAME);
 			throw new RuntimeException("Role not found.");
-		} else {
-			user.addRole(optRole.get());
-			user = userRepository.save(user);
-			parametersService.setInitialParameters(user.getUsername());
-			return user;
 		}
+		user.addRole(optRole.get());
+		user = userRepository.save(user);
+		parametersService.setInitialParameters(user.getUsername());
+		return user;
 	}
 
 	public User registerAdminUser(User user) {
@@ -66,7 +67,7 @@ public class UserService {
 		Optional<User> optUser = userRepository.findByUsername(authentication.getName());
 		if (optUser.isEmpty()) return Optional.empty();
 		User user = optUser.get();
-		user.updateLastLoginDateTime();
+		user.updateLastLoginDateTime(dateTimeUtil.getCurrentDateTime());
 		return Optional.of(userRepository.save(user));
 	}
 	
@@ -125,5 +126,6 @@ public class UserService {
 			if (attributes.get("email") != null) userInfo.setEmail((String) attributes.get("email"));
 		}
 		return userInfo;
-	}
+	}	
+	
 }
