@@ -2,10 +2,7 @@ package svobodavlad.imagesprocessing.jpaentities;
 
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -15,9 +12,6 @@ import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -79,14 +73,6 @@ public class User extends JpaEntityTemplate {
 		// @NotNull applied on user + role
 		// userRoles.setUser(null);
 		// userRoles.setRole(null);
-	}
-
-	public Collection<? extends GrantedAuthority> getAuthorities() {
-		Set<GrantedAuthority> authorities = new HashSet<GrantedAuthority>();
-		for (UserRoles role : this.roles) {
-			authorities.add(new SimpleGrantedAuthority(role.getRole().getName()));
-		}
-		return authorities;
 	}
 
 	public void updateLastLoginDateTime(Instant currentDateTime) {
