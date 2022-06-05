@@ -13,6 +13,7 @@ import svobodavlad.imagesprocessing.jpaentities.LastUploadInfo;
 import svobodavlad.imagesprocessing.jpaentities.User;
 import svobodavlad.imagesprocessing.lastupload.LastUploadInfoRepository;
 import svobodavlad.imagesprocessing.security.UserRegister;
+import svobodavlad.imagesprocessing.security.UserRepository;
 import svobodavlad.imagesprocessing.testutil.IntegTestTemplate;
 
 public class LastUploadInfoControllerIT extends IntegTestTemplate {
@@ -22,13 +23,15 @@ public class LastUploadInfoControllerIT extends IntegTestTemplate {
 	@Autowired
 	private LastUploadInfoRepository lastUploadInfoRepository;
 	
+	@Autowired
+	private UserRepository userRepository;
+	
 	LastUploadInfo lastUploadInfo;
-	User mockedUser;
 			
 	@BeforeEach
 	void initData() {
-		mockedUser = new UserRegister(MOCKED_USER_NAME, MOCKED_USER_NAME, MOCKED_USER_NAME, null).toUser();
-		lastUploadInfo = lastUploadInfoRepository.save(new LastUploadInfo(Instant.now(), mockedUser));
+		User defaultUser = userRepository.save(new UserRegister(MOCKED_USER_NAME, MOCKED_USER_NAME, MOCKED_USER_NAME, null).toUser());
+		lastUploadInfo = lastUploadInfoRepository.save(new LastUploadInfo(Instant.now(), defaultUser));
 	}
 
 	@Test
@@ -79,11 +82,7 @@ public class LastUploadInfoControllerIT extends IntegTestTemplate {
 		int expectedStatus = 200;
 		
 		lastUploadInfoRepository.deleteAll();
-		Instant minTime = Instant.now();
 		ResultActions mvcResult = this.mockMvcPerformGetAuthorizationDefaultUser(requestUrl);
-		
-		lastUploadInfo = lastUploadInfoRepository.findByUser(mockedUser).get();
-		this.assertThat(lastUploadInfo.getLastUploadDateTime()).isBetween(minTime, Instant.now());
 		
 		DateTimeFormatter formatter = DateTimeFormatter.ISO_INSTANT.withZone(ZoneId.systemDefault());
 		String expectedJson = "{\"id\":" + lastUploadInfo.getId() 

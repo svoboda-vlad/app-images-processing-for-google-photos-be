@@ -25,7 +25,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		.and().authorizeRequests()
 		.antMatchers("/h2-console/**").permitAll()
 		.antMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
-		.anyRequest().authenticated()
+		.antMatchers("/admin/**").hasRole("ADMIN").anyRequest().hasRole("USER")
 		.and()
 		.oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
 		.headers().frameOptions().disable()
