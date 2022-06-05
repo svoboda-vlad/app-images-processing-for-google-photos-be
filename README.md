@@ -178,6 +178,8 @@ Response:
 restricted:
 - GET + PUT "/parameters" (ProcessingParametersUserController)
 - GET "/parameters-reset-to-default" (ProcessingParametersUserController)
+- GET "/last-upload-info" (LastUploadInfoController)
+- GET "/last-upload-info-update" (LastUploadInfoController)
 
 **REST API endpoints - security + administration**
 
@@ -203,6 +205,10 @@ ProcessingParametersUser - id (long), timeDiffGroup (int, min = 60, max = 86400)
 
 ProcessingParametersUserTemplate - timeDiffGroup (int, min = 60, max = 86400), resizeWidth (int, min = 1, max = 10000), resizeHeight (int, min = 1, max = 10000)
 - GET "/parameters": {"timeDiffGroup":1800,"resizeWidth":1000,"resizeHeight":1000}
+
+LastUploadInfo - id (long), lastUploadDateTime (Instant), user (User) - @JsonIgnore
+- GET "/last-upload-info": TODO
+- GET "/last-upload-info-update": TODO
 
 **Security**
 
@@ -231,6 +237,7 @@ JDBC URL: "jdbc:h2:mem:testdb"
 Database tables - domain:
 - processing_parameters_default - id (int PRIMARY KEY), time_diff_group (int NOT NULL), resize_width (int NOT NULL), resize_height (int NOT NULL)
 - processing_parameters_user - id (int PRIMARY KEY), time_diff_group (int NOT NULL), resize_width (int NOT NULL), resize_height (int NOT NULL), user_id (int NOT NULL)
+- last_upload_info - id (int PRIMARY KEY), last_upload_date_time (TIMESTAMP), user_id (int NOT NULL)
 
 Database tables - security:
 - user - id (int PRIMARY KEY), username (VARCHAR(255) NOT NULL UNIQUE), last_login_date_time (TIMESTAMP), previous_login_date_time (TIMESTAMP), given_name (VARCHAR(255), family_name (VARCHAR(255)), email (VARCHAR(255))
