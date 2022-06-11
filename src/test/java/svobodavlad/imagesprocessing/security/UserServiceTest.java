@@ -25,7 +25,7 @@ public class UserServiceTest extends UnitTestTemplate {
 
 	private static final String USER_ROLE_NAME = "ROLE_USER";
 	private static final String ADMIN_ROLE_NAME = "ROLE_ADMIN";
-	private static final String MOCKED_USER_NAME = "user";
+	private static final String DEFAULT_USERNAME = "user";
 
 	@MockBean
 	private RoleRepository roleRepository;
@@ -43,31 +43,31 @@ public class UserServiceTest extends UnitTestTemplate {
 	private UserService userService;
 	
 	@Test
-	void testRegisterUserNewUser() {
+	void registerUserNewUser() {
 		Role role = new Role(USER_ROLE_NAME);
-		User mockedUser = new UserRegister(MOCKED_USER_NAME, MOCKED_USER_NAME, MOCKED_USER_NAME, null).toUser();
+		User mockedUser = new UserRegister(DEFAULT_USERNAME, DEFAULT_USERNAME, DEFAULT_USERNAME, null).toUser();
 
 		this.given(roleRepository.findByName(USER_ROLE_NAME)).willReturn(Optional.of(role));
-		this.given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.empty());
+		this.given(userRepository.findByUsername(DEFAULT_USERNAME)).willReturn(Optional.empty());
 		this.given(userRepository.save(mockedUser)).willReturn(mockedUser);
 
 		this.assertThat(userService.registerUser(mockedUser)).isEqualTo(mockedUser);
-		this.verify(parametersService, this.times(1)).setInitialParameters(mockedUser.getUsername());
+		this.verify(parametersService, this.times(1)).setInitialParameters(DEFAULT_USERNAME);
 	}
 
 	@Test
-	void testRegisterUserAlreadyExistsException() {
-		User mockedUser = new UserRegister(MOCKED_USER_NAME, MOCKED_USER_NAME, MOCKED_USER_NAME, null).toUser();
+	void registerUserAlreadyExistsException() {
+		User mockedUser = new UserRegister(DEFAULT_USERNAME, DEFAULT_USERNAME, DEFAULT_USERNAME, null).toUser();
 
-		this.given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
+		this.given(userRepository.findByUsername(DEFAULT_USERNAME)).willReturn(Optional.of(mockedUser));
 		this.assertThatExceptionOfType(EntityExistsException.class).isThrownBy(() -> {
 			userService.registerUser(mockedUser);
 		});
 	}
 
 	@Test
-	void testRegisterUserDefaultRoleNotFound() {
-		User mockedUser = new UserRegister(MOCKED_USER_NAME, MOCKED_USER_NAME, MOCKED_USER_NAME, null).toUser();
+	void registerUserDefaultRoleNotFound() {
+		User mockedUser = new UserRegister(DEFAULT_USERNAME, DEFAULT_USERNAME, DEFAULT_USERNAME, null).toUser();
 
 		this.given(roleRepository.findByName(USER_ROLE_NAME)).willReturn(Optional.empty());
 
@@ -77,13 +77,13 @@ public class UserServiceTest extends UnitTestTemplate {
 	}
 
 	@Test
-	void testUpdateCurrentUserLastLoginDateTimeFirstLogin() {
+	void updateCurrentUserLastLoginDateTimeFirstLogin() {
 		Instant now = Instant.now();
-		User mockedUser = new UserRegister(MOCKED_USER_NAME, MOCKED_USER_NAME, MOCKED_USER_NAME, null).toUser();
+		User mockedUser = new UserRegister(DEFAULT_USERNAME, DEFAULT_USERNAME, DEFAULT_USERNAME, null).toUser();
 		mockedUser.setLastLoginDateTime(now);
 		mockedUser.setPreviousLoginDateTime(now);
 		
-		this.given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
+		this.given(userRepository.findByUsername(DEFAULT_USERNAME)).willReturn(Optional.of(mockedUser));
 		this.given(dateTimeUtil.getCurrentDateTime()).willReturn(now);
 		this.given(userRepository.save(mockedUser)).willReturn(mockedUser);
 		
@@ -91,14 +91,14 @@ public class UserServiceTest extends UnitTestTemplate {
 	}
 	
 	@Test
-	void testUpdateCurrentUserLastLoginDateTimeSecondLogin() {
+	void updateCurrentUserLastLoginDateTimeSecondLogin() {
 		Instant now = Instant.now();
-		User mockedUser = new UserRegister(MOCKED_USER_NAME, MOCKED_USER_NAME, MOCKED_USER_NAME, null).toUser();
+		User mockedUser = new UserRegister(DEFAULT_USERNAME, DEFAULT_USERNAME, DEFAULT_USERNAME, null).toUser();
 		Instant lastLoginDateTime = LocalDateTime.of(LocalDate.of(2021, 9, 26), LocalTime.of(12, 53)).toInstant(ZoneOffset.UTC);;
 		mockedUser.setLastLoginDateTime(now);
 		mockedUser.setPreviousLoginDateTime(lastLoginDateTime);
 		
-		this.given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
+		this.given(userRepository.findByUsername(DEFAULT_USERNAME)).willReturn(Optional.of(mockedUser));
 		this.given(dateTimeUtil.getCurrentDateTime()).willReturn(now);
 		this.given(userRepository.save(mockedUser)).willReturn(mockedUser);	
 		
@@ -106,34 +106,34 @@ public class UserServiceTest extends UnitTestTemplate {
 	}
 	
 	@Test
-	void testUpdateCurrentUserLastLoginDateTimeUserDoesNotExist() {
-		this.given(userRepository.findByUsername(MOCKED_USER_NAME + "x")).willReturn(Optional.empty());
+	void updateCurrentUserLastLoginDateTimeUserDoesNotExist() {
+		this.given(userRepository.findByUsername(DEFAULT_USERNAME + "x")).willReturn(Optional.empty());
 		
 		this.assertThat(userService.updateCurrentUserLastLoginDateTime()).isEqualTo(Optional.empty());
 	}
 
 	@Test
-	void testRegisterUserNewAdminUser() {
+	void registerUserNewAdminUser() {
 		Role role1 = new Role(USER_ROLE_NAME);
 		Role role2 = new Role(ADMIN_ROLE_NAME);
-		User mockedUser = new UserRegister(MOCKED_USER_NAME, MOCKED_USER_NAME, MOCKED_USER_NAME, null).toUser();
+		User mockedUser = new UserRegister(DEFAULT_USERNAME, DEFAULT_USERNAME, DEFAULT_USERNAME, null).toUser();
 
 		this.given(roleRepository.findByName(USER_ROLE_NAME)).willReturn(Optional.of(role1));
 		this.given(roleRepository.findByName(ADMIN_ROLE_NAME)).willReturn(Optional.of(role2));
-		this.given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.empty());
+		this.given(userRepository.findByUsername(DEFAULT_USERNAME)).willReturn(Optional.empty());
 		this.given(userRepository.save(mockedUser)).willReturn(mockedUser);
 
 		this.assertThat(userService.registerAdminUser(mockedUser)).isEqualTo(mockedUser);
-		this.verify(parametersService, this.times(1)).setInitialParameters(mockedUser.getUsername());
+		this.verify(parametersService, this.times(1)).setInitialParameters(DEFAULT_USERNAME);
 	}
 
 	@Test
-	void testRegisterAdminUserAdminRoleNotFound() {
+	void registerAdminUserAdminRoleNotFound() {
 		Role role1 = new Role(USER_ROLE_NAME);
-		User mockedUser = new UserRegister(MOCKED_USER_NAME, MOCKED_USER_NAME, MOCKED_USER_NAME, null).toUser();
+		User mockedUser = new UserRegister(DEFAULT_USERNAME, DEFAULT_USERNAME, DEFAULT_USERNAME, null).toUser();
 
 		this.given(roleRepository.findByName(USER_ROLE_NAME)).willReturn(Optional.of(role1));
-		this.given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.empty());
+		this.given(userRepository.findByUsername(DEFAULT_USERNAME)).willReturn(Optional.empty());
 		this.given(userRepository.save(mockedUser)).willReturn(mockedUser);
 		this.given(roleRepository.findByName(ADMIN_ROLE_NAME)).willReturn(Optional.empty());
 
@@ -143,10 +143,10 @@ public class UserServiceTest extends UnitTestTemplate {
 	}
 	
 	@Test
-	void testDeleteUserOkUserDeleted() {
-		User mockedUser = new UserRegister(MOCKED_USER_NAME, MOCKED_USER_NAME, MOCKED_USER_NAME, null).toUser();
+	void deleteUserOkUserDeleted() {
+		User mockedUser = new UserRegister(DEFAULT_USERNAME, DEFAULT_USERNAME, DEFAULT_USERNAME, null).toUser();
 
-		this.given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));		
+		this.given(userRepository.findByUsername(DEFAULT_USERNAME)).willReturn(Optional.of(mockedUser));		
 		userService.deleteCurrentUser();
 
 		this.verify(parametersService, this.times(1)).deleteForCurrentUser();
@@ -155,11 +155,28 @@ public class UserServiceTest extends UnitTestTemplate {
 	}
 	
 	@Test
-	void testGetCurrentUserOkUserExists() {
-		User mockedUser = new UserRegister(MOCKED_USER_NAME, MOCKED_USER_NAME, MOCKED_USER_NAME, null).toUser();
+	void getCurrentUserOkUserExists() {
+		User mockedUser = new UserRegister(DEFAULT_USERNAME, DEFAULT_USERNAME, DEFAULT_USERNAME, null).toUser();
 
-		this.given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));		
+		this.given(userRepository.findByUsername(DEFAULT_USERNAME)).willReturn(Optional.of(mockedUser));		
 		this.given(userRepository.save(mockedUser)).willReturn(mockedUser);
+		
+		this.assertThat(userService.getCurrentUser()).isEqualTo(Optional.of(mockedUser));
+	}
+	
+	@Test
+	void getCurrentUserOkUserDoesNotExists() {
+		Role role = new Role(USER_ROLE_NAME);
+		Instant now = Instant.now();
+		User mockedUser = new UserRegister(DEFAULT_USERNAME, DEFAULT_USERNAME, DEFAULT_USERNAME, DEFAULT_USERNAME).toUser();
+
+		this.given(userRepository.findByUsername(DEFAULT_USERNAME))
+		.willReturn(Optional.empty())
+		.willReturn(Optional.empty())
+		.willReturn(Optional.of(mockedUser));
+		this.given(dateTimeUtil.getCurrentDateTime()).willReturn(now);
+		this.given(roleRepository.findByName(USER_ROLE_NAME)).willReturn(Optional.of(role));
+		this.given(userRepository.save(mockedUser)).willReturn(mockedUser);		
 		
 		this.assertThat(userService.getCurrentUser()).isEqualTo(Optional.of(mockedUser));
 	}	

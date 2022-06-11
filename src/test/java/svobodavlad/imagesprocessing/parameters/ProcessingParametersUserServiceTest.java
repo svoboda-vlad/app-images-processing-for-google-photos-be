@@ -34,7 +34,7 @@ class ProcessingParametersUserServiceTest extends UnitTestTemplate {
 	private ProcessingParametersUserService parametersService;
 	
 	@Test
-	void testResetToDefaultReturnsDefault() {
+	void resetToDefaultReturnsDefault() {
 		User mockedUser = new UserRegister(MOCKED_USER_NAME, MOCKED_USER_NAME, MOCKED_USER_NAME, null).toUser();
 		ProcessingParametersUser parameters = new ProcessingParametersUser(1800, 1000, 1000, mockedUser);
 		
@@ -51,7 +51,7 @@ class ProcessingParametersUserServiceTest extends UnitTestTemplate {
 	}
 	
 	@Test
-	void testResetToDefaultThrowsError() {
+	void resetToDefaultThrowsError() {
 		User mockedUser = new UserRegister(MOCKED_USER_NAME, MOCKED_USER_NAME, MOCKED_USER_NAME, null).toUser();
 		ProcessingParametersUser parameters = new ProcessingParametersUser(1800, 1000, 1000, mockedUser);
 		
@@ -67,7 +67,7 @@ class ProcessingParametersUserServiceTest extends UnitTestTemplate {
 	}
 	
 	@Test
-	void testResetToDefaultReturnsDefaultWhenParametersUserNotFound() {
+	void resetToDefaultReturnsDefaultWhenParametersUserNotFound() {
 		User mockedUser = new UserRegister(MOCKED_USER_NAME, MOCKED_USER_NAME, MOCKED_USER_NAME, null).toUser();
 		
 		this.given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
@@ -84,7 +84,7 @@ class ProcessingParametersUserServiceTest extends UnitTestTemplate {
 	}
 	
 	@Test
-	void testSetInitialParameters() {
+	void setInitialParameters() {
 		User mockedUser = new UserRegister(MOCKED_USER_NAME, MOCKED_USER_NAME, MOCKED_USER_NAME, null).toUser();
 		
 		this.given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
@@ -100,7 +100,7 @@ class ProcessingParametersUserServiceTest extends UnitTestTemplate {
 	}
 	
 	@Test
-	void testSetInitialParametersThrowsError() {
+	void setInitialParametersThrowsError() {
 		User mockedUser = new UserRegister(MOCKED_USER_NAME, MOCKED_USER_NAME, MOCKED_USER_NAME, null).toUser();
 		
 		this.given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));

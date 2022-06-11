@@ -86,7 +86,7 @@ public class UserService {
 		optUser.ifPresent(user -> {
 			parametersService.deleteForCurrentUser();
 			userRepository.delete(user);
-			userRepository.flush();		
+			userRepository.flush();
 		});
 	}
 	

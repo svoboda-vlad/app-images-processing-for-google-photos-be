@@ -1,24 +1,39 @@
 package svobodavlad.imagesprocessing.integration;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.ResultActions;
 
+import svobodavlad.imagesprocessing.jpaentities.User;
 import svobodavlad.imagesprocessing.parameters.ProcessingParametersDefaultRepository;
 import svobodavlad.imagesprocessing.parameters.ProcessingParametersUserRepository;
+import svobodavlad.imagesprocessing.parameters.ProcessingParametersUserService;
 import svobodavlad.imagesprocessing.testutil.IntegTestTemplate;
+import svobodavlad.imagesprocessing.testutil.SecurityTestUtil;
 
 public class ProcessingParametersUserControllerIT extends IntegTestTemplate {
-	
 	
 	@Autowired
 	private ProcessingParametersUserRepository parametersRepository;
 	
 	@Autowired
-	private ProcessingParametersDefaultRepository parametersDefaultRepository;	
+	private ProcessingParametersDefaultRepository parametersDefaultRepository;
+	
+	@Autowired
+	private SecurityTestUtil securityTestUtil;
+	
+	@Autowired
+	private ProcessingParametersUserService parametersService;
+	
+	@BeforeEach
+	void initData() {
+		User defaultUser = securityTestUtil.saveDefaultUser();
+		parametersService.setInitialParameters(defaultUser.getUsername());
+	}
 		
 	@Test
-	void testGetProcessingParametersUserTemplateOk200() throws Exception {		
+	void getProcessingParametersUserTemplateOk200() throws Exception {		
 		String requestUrl = "/parameters";
 		int expectedStatus = 200;
 		String expectedJson = "{\"timeDiffGroup\":1800,\"resizeWidth\":1000,\"resizeHeight\":1000}";
@@ -28,7 +43,7 @@ public class ProcessingParametersUserControllerIT extends IntegTestTemplate {
 	}
 	
 	@Test
-	void testGetProcessingParametersUserTemplateNotFound404() throws Exception {
+	void getProcessingParametersUserTemplateNotFound404() throws Exception {
 		String requestUrl = "/parameters";
 		int expectedStatus = 404;
 		String expectedJson = "";
@@ -40,7 +55,7 @@ public class ProcessingParametersUserControllerIT extends IntegTestTemplate {
 	}	
 
 	@Test
-	void testUpdateProcessingParametersUserTemplateOk200() throws Exception {
+	void updateProcessingParametersUserTemplateOk200() throws Exception {
 		String requestUrl = "/parameters";
 		String requestJson = "{\"timeDiffGroup\":7200,\"resizeWidth\":1000,\"resizeHeight\":1000}";
 		int expectedStatus = 200;
@@ -51,7 +66,7 @@ public class ProcessingParametersUserControllerIT extends IntegTestTemplate {
 	}
 	
 	@Test
-	void testUpdateProcessingParametersUserTemplateNotFound404() throws Exception {
+	void updateProcessingParametersUserTemplateNotFound404() throws Exception {
 		String requestUrl = "/parameters";
 		String requestJson = "{\"timeDiffGroup\":3600,\"resizeWidth\":1000,\"resizeHeight\":1000}";
 		int expectedStatus = 404;
@@ -64,7 +79,7 @@ public class ProcessingParametersUserControllerIT extends IntegTestTemplate {
 	}
 	
 	@Test
-	void testGetResetToDefaultOk204() throws Exception {
+	void getResetToDefaultOk204() throws Exception {
 		String requestUrl = "/parameters-reset-to-default";
 		int expectedStatus = 204;
 		String expectedJson = "";
@@ -81,7 +96,7 @@ public class ProcessingParametersUserControllerIT extends IntegTestTemplate {
 	}
 		
 	@Test
-	void testGetResetToDefaultNoUserParametersOk204() throws Exception {
+	void getResetToDefaultNoUserParametersOk204() throws Exception {
 		String requestUrl = "/parameters-reset-to-default";
 		int expectedStatus = 204;
 		String expectedJson = "";
@@ -100,7 +115,7 @@ public class ProcessingParametersUserControllerIT extends IntegTestTemplate {
 	}
 	
 	@Test
-	void testGetResetToDefaultNoDefaultParametersNotFound404() throws Exception {
+	void getResetToDefaultNoDefaultParametersNotFound404() throws Exception {
 		String requestUrl = "/parameters-reset-to-default";
 		int expectedStatus = 404;
 		String expectedJson = "";

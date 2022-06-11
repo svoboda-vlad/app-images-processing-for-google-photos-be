@@ -27,7 +27,7 @@ class UserAdminControllerTest extends UnitTestTemplate {
 	private UserService userService;
 
 	@Test
-	void testGetAllUsersOk200() throws Exception {
+	void getAllUsersOk200() throws Exception {
 		String requestUrl = "/admin/users";
 		int expectedStatus = 200;
 		String expectedJson = "[{\"username\":\"user\",\"givenName\":\"user\",\"familyName\":\"user\",\"email\":\"user@example.com\",\"lastLoginDateTime\":null,\"previousLoginDateTime\":null,\"userRoles\":[{\"role\":{\"id\":0,\"name\":\"ROLE_USER\"}}]},"

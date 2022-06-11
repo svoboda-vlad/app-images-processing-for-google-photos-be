@@ -33,7 +33,7 @@ class LastUploadInfoServiceTest extends UnitTestTemplate {
 	private LastUploadInfoService lastUploadInfoService;
 
 	@Test
-	void testGetForCurrentUser() {
+	void getForCurrentUser() {
 		User mockedUser = new UserRegister(MOCKED_USER_NAME, MOCKED_USER_NAME, MOCKED_USER_NAME, null).toUser();
 		LastUploadInfo lastUploadInfo = new LastUploadInfo(Instant.now(), mockedUser);
 		
@@ -44,7 +44,7 @@ class LastUploadInfoServiceTest extends UnitTestTemplate {
 	}
 
 	@Test
-	void testUpdateForCurrentUserWhenInfoExists() {
+	void updateForCurrentUserWhenInfoExists() {
 		User mockedUser = new UserRegister(MOCKED_USER_NAME, MOCKED_USER_NAME, MOCKED_USER_NAME, null).toUser();
 		Instant now = Instant.now();
 		LastUploadInfo lastUploadInfo = new LastUploadInfo(now, mockedUser);
@@ -59,7 +59,7 @@ class LastUploadInfoServiceTest extends UnitTestTemplate {
 	}
 	
 	@Test
-	void testUpdateForCurrentUserWhenInfoDoesNotExist() {
+	void updateForCurrentUserWhenInfoDoesNotExist() {
 		User mockedUser = new UserRegister(MOCKED_USER_NAME, MOCKED_USER_NAME, MOCKED_USER_NAME, null).toUser();
 		Instant now = Instant.now();
 		LastUploadInfo lastUploadInfo = new LastUploadInfo(now, mockedUser);

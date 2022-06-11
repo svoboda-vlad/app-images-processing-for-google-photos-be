@@ -20,7 +20,7 @@ public class UserServiceIT extends IntegTestTemplate {
 	private RoleRepository roleRepository;
 	
 	@Test
-	void testRegisterUserNewAdminUser() {
+	void registerUserNewAdminUser() {
 		User mockedUser = new UserRegister(MOCKED_USER_NAME, MOCKED_USER_NAME, MOCKED_USER_NAME, null).toUser();
 		
 		UserRegister userRegister = new UserRegister(mockedUser.getUsername(),
@@ -31,7 +31,7 @@ public class UserServiceIT extends IntegTestTemplate {
 	}
 
 	@Test
-	void testRegisterAdminUserAdminRoleNotFound() {
+	void registerAdminUserAdminRoleNotFound() {
 		User mockedUser = new UserRegister(MOCKED_USER_NAME, MOCKED_USER_NAME, MOCKED_USER_NAME, null).toUser();
 		
 		UserRegister userRegister = new UserRegister(mockedUser.getUsername(),

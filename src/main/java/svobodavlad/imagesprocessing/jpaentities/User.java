@@ -85,10 +85,6 @@ public class User extends JpaEntityTemplate {
 		this.lastLoginDateTime = currentDateTime;
 	}
 
-	public enum LoginProvider {
-		INTERNAL, GOOGLE
-	}
-
 	public UserInfo toUserInfo() {
 		UserInfo userInfo = new UserInfo(this.getUsername(), this.getGivenName(), this.getFamilyName(), this.getEmail(),
 				this.getLastLoginDateTime(), this.getPreviousLoginDateTime(), this.getRoles());

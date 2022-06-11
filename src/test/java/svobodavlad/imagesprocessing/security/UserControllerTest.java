@@ -27,7 +27,7 @@ class UserControllerTest extends UnitTestTemplate {
 	private PasswordEncoder encoder;
 
 	@Test
-	void testGetCurrentUserOk200() throws Exception {
+	void getUserInfoOk200() throws Exception {
 		String requestUrl = "/user";
 		int expectedStatus = 200;
 		String expectedJson = "{\"username\":\"user\",\"givenName\":\"user\",\"familyName\":\"user\",\"email\":\"user@example.com\",\"userRoles\":[{\"role\":{\"id\":0,\"name\":\"ROLE_USER\"}}],\"lastLoginDateTime\":null,\"previousLoginDateTime\":null}";
@@ -41,7 +41,7 @@ class UserControllerTest extends UnitTestTemplate {
 	}
 
 	@Test
-	void testDeleteUserNoContent204() throws Exception {
+	void deleteUserNoContent204() throws Exception {
 		String requestUrl = "/user";
 		int expectedStatus = 204;
 		String expectedJson = "";
