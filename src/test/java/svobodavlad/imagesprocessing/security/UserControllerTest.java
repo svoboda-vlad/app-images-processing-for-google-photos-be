@@ -32,7 +32,8 @@ class UserControllerTest extends UnitTestTemplate {
 		int expectedStatus = 200;
 		String expectedJson = "{\"username\":\"user\",\"givenName\":\"user\",\"familyName\":\"user\",\"email\":\"user@example.com\",\"userRoles\":[{\"role\":{\"id\":0,\"name\":\"ROLE_USER\"}}],\"lastLoginDateTime\":null,\"previousLoginDateTime\":null}";
 
-		User mockedUser = new UserRegister(MOCKED_USER_NAME, MOCKED_USER_NAME, MOCKED_USER_NAME, MOCKED_USER_EMAIL).toUser();
+		User mockedUser = new User(MOCKED_USER_NAME, MOCKED_USER_NAME, MOCKED_USER_NAME);
+		mockedUser.setEmail(MOCKED_USER_EMAIL);
 		mockedUser.addRole(new Role(ROLE_USER));
 		this.given(userService.getCurrentUser()).willReturn(Optional.of(mockedUser));
 
@@ -46,7 +47,7 @@ class UserControllerTest extends UnitTestTemplate {
 		int expectedStatus = 204;
 		String expectedJson = "";
 
-		User mockedUser = new UserRegister(MOCKED_USER_NAME, MOCKED_USER_NAME, MOCKED_USER_NAME, null).toUser();
+		User mockedUser = new User(MOCKED_USER_NAME, MOCKED_USER_NAME, MOCKED_USER_NAME);
 		mockedUser.setId(1L);
 		
 		ResultActions mvcResult = this.mockMvcPerformDeleteNoAuthorization(requestUrl);

@@ -10,7 +10,6 @@ import org.springframework.security.test.context.support.WithMockUser;
 
 import svobodavlad.imagesprocessing.jpaentities.LastUploadInfo;
 import svobodavlad.imagesprocessing.jpaentities.User;
-import svobodavlad.imagesprocessing.security.UserRegister;
 import svobodavlad.imagesprocessing.security.UserRepository;
 import svobodavlad.imagesprocessing.testutil.UnitTestTemplate;
 import svobodavlad.imagesprocessing.util.DateTimeUtil;
@@ -34,7 +33,7 @@ class LastUploadInfoServiceTest extends UnitTestTemplate {
 
 	@Test
 	void getForCurrentUser() {
-		User mockedUser = new UserRegister(MOCKED_USER_NAME, MOCKED_USER_NAME, MOCKED_USER_NAME, null).toUser();
+		User mockedUser = new User(MOCKED_USER_NAME, MOCKED_USER_NAME, MOCKED_USER_NAME);
 		LastUploadInfo lastUploadInfo = new LastUploadInfo(Instant.now(), mockedUser);
 		
 		this.given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
@@ -45,7 +44,7 @@ class LastUploadInfoServiceTest extends UnitTestTemplate {
 
 	@Test
 	void updateForCurrentUserWhenInfoExists() {
-		User mockedUser = new UserRegister(MOCKED_USER_NAME, MOCKED_USER_NAME, MOCKED_USER_NAME, null).toUser();
+		User mockedUser = new User(MOCKED_USER_NAME, MOCKED_USER_NAME, MOCKED_USER_NAME);
 		Instant now = Instant.now();
 		LastUploadInfo lastUploadInfo = new LastUploadInfo(now, mockedUser);
 		
@@ -60,7 +59,7 @@ class LastUploadInfoServiceTest extends UnitTestTemplate {
 	
 	@Test
 	void updateForCurrentUserWhenInfoDoesNotExist() {
-		User mockedUser = new UserRegister(MOCKED_USER_NAME, MOCKED_USER_NAME, MOCKED_USER_NAME, null).toUser();
+		User mockedUser = new User(MOCKED_USER_NAME, MOCKED_USER_NAME, MOCKED_USER_NAME);
 		Instant now = Instant.now();
 		LastUploadInfo lastUploadInfo = new LastUploadInfo(now, mockedUser);
 		

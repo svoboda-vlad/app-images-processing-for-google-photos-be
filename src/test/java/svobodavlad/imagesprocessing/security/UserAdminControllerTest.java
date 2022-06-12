@@ -33,9 +33,11 @@ class UserAdminControllerTest extends UnitTestTemplate {
 		String expectedJson = "[{\"username\":\"user\",\"givenName\":\"user\",\"familyName\":\"user\",\"email\":\"user@example.com\",\"lastLoginDateTime\":null,\"previousLoginDateTime\":null,\"userRoles\":[{\"role\":{\"id\":0,\"name\":\"ROLE_USER\"}}]},"
 				+ "{\"username\":\"admin\",\"givenName\":\"admin\",\"familyName\":\"admin\",\"email\":\"admin@example.com\",\"lastLoginDateTime\":null,\"previousLoginDateTime\":null,\"userRoles\":[{\"role\":{\"id\":0,\"name\":\"ROLE_USER\"}},{\"role\":{\"id\":0,\"name\":\"ROLE_ADMIN\"}}]}]";
 		
-		User mockedUser = new UserRegister(MOCKED_USER_NAME, MOCKED_USER_NAME, MOCKED_USER_NAME, MOCKED_USER_EMAIL).toUser();
+		User mockedUser = new User(MOCKED_USER_NAME, MOCKED_USER_NAME, MOCKED_USER_NAME);
+		mockedUser.setEmail(MOCKED_USER_EMAIL);
 		mockedUser.addRole(new Role(ROLE_USER));
-		User mockedUserAdmin = new UserRegister(MOCKED_USER_ADMIN_NAME, MOCKED_USER_ADMIN_NAME, MOCKED_USER_ADMIN_NAME, MOCKED_USER_ADMIN_EMAIL).toUser();
+		User mockedUserAdmin = new User(MOCKED_USER_ADMIN_NAME, MOCKED_USER_ADMIN_NAME, MOCKED_USER_ADMIN_NAME);
+		mockedUserAdmin.setEmail(MOCKED_USER_ADMIN_EMAIL);
 		mockedUserAdmin.addRole(new Role(ROLE_USER));
 		mockedUserAdmin.addRole(new Role(ROLE_ADMIN));
 		this.given(userRepository.findAll()).willReturn(new ArrayList<User>(List.of(mockedUser, mockedUserAdmin)));

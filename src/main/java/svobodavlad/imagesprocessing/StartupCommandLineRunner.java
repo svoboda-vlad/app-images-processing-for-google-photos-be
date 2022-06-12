@@ -1,5 +1,7 @@
 package svobodavlad.imagesprocessing;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -7,7 +9,7 @@ import org.springframework.stereotype.Component;
 import svobodavlad.imagesprocessing.jpaentities.ProcessingParametersDefault;
 import svobodavlad.imagesprocessing.jpaentities.User;
 import svobodavlad.imagesprocessing.parameters.ProcessingParametersDefaultRepository;
-import svobodavlad.imagesprocessing.security.UserRegister;
+import svobodavlad.imagesprocessing.security.UserRepository;
 import svobodavlad.imagesprocessing.security.UserService;
 
 @Component
@@ -22,6 +24,9 @@ public class StartupCommandLineRunner implements CommandLineRunner {
 
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	private UserRepository userRepository;	
 
 	@Autowired
 	private ProcessingParametersDefaultRepository parametersRepository;
@@ -33,10 +38,19 @@ public class StartupCommandLineRunner implements CommandLineRunner {
 	}
 
 	void saveAdminUser() {
-		if (adminUser.getUsername() != null) {
-			UserRegister userRegister = new UserRegister(adminUser.getUsername(), "N/A", "N/A", "N/A");
-			User user = userRegister.toUser();
-			userService.registerAdminUser(user);
+		String username = adminUser.getUsername();
+		if (username != null) {
+			Optional<User> optUser = userRepository.findByUsername(username);
+			if (optUser.isEmpty()) {
+				User user = new User(username, "N/A", "N/A");
+				userService.registerAdminUser(user);
+			} else {
+				User user = optUser.get();
+				if (!userService.isAdmin(user)) {
+					user = userService.addAdminRole(optUser.get());
+				}
+				userRepository.save(user);
+			}
 		}
 	}
 

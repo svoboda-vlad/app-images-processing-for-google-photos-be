@@ -45,7 +45,7 @@ public class UserServiceTest extends UnitTestTemplate {
 	@Test
 	void registerUserNewUser() {
 		Role role = new Role(USER_ROLE_NAME);
-		User mockedUser = new UserRegister(DEFAULT_USERNAME, DEFAULT_USERNAME, DEFAULT_USERNAME, null).toUser();
+		User mockedUser = new User(DEFAULT_USERNAME, DEFAULT_USERNAME, DEFAULT_USERNAME);
 
 		this.given(roleRepository.findByName(USER_ROLE_NAME)).willReturn(Optional.of(role));
 		this.given(userRepository.findByUsername(DEFAULT_USERNAME)).willReturn(Optional.empty());
@@ -57,7 +57,7 @@ public class UserServiceTest extends UnitTestTemplate {
 
 	@Test
 	void registerUserAlreadyExistsException() {
-		User mockedUser = new UserRegister(DEFAULT_USERNAME, DEFAULT_USERNAME, DEFAULT_USERNAME, null).toUser();
+		User mockedUser = new User(DEFAULT_USERNAME, DEFAULT_USERNAME, DEFAULT_USERNAME);
 
 		this.given(userRepository.findByUsername(DEFAULT_USERNAME)).willReturn(Optional.of(mockedUser));
 		this.assertThatExceptionOfType(EntityExistsException.class).isThrownBy(() -> {
@@ -67,7 +67,7 @@ public class UserServiceTest extends UnitTestTemplate {
 
 	@Test
 	void registerUserDefaultRoleNotFound() {
-		User mockedUser = new UserRegister(DEFAULT_USERNAME, DEFAULT_USERNAME, DEFAULT_USERNAME, null).toUser();
+		User mockedUser = new User(DEFAULT_USERNAME, DEFAULT_USERNAME, DEFAULT_USERNAME);
 
 		this.given(roleRepository.findByName(USER_ROLE_NAME)).willReturn(Optional.empty());
 
@@ -79,7 +79,7 @@ public class UserServiceTest extends UnitTestTemplate {
 	@Test
 	void updateCurrentUserLastLoginDateTimeFirstLogin() {
 		Instant now = Instant.now();
-		User mockedUser = new UserRegister(DEFAULT_USERNAME, DEFAULT_USERNAME, DEFAULT_USERNAME, null).toUser();
+		User mockedUser = new User(DEFAULT_USERNAME, DEFAULT_USERNAME, DEFAULT_USERNAME);
 		mockedUser.setLastLoginDateTime(now);
 		mockedUser.setPreviousLoginDateTime(now);
 		
@@ -93,7 +93,7 @@ public class UserServiceTest extends UnitTestTemplate {
 	@Test
 	void updateCurrentUserLastLoginDateTimeSecondLogin() {
 		Instant now = Instant.now();
-		User mockedUser = new UserRegister(DEFAULT_USERNAME, DEFAULT_USERNAME, DEFAULT_USERNAME, null).toUser();
+		User mockedUser = new User(DEFAULT_USERNAME, DEFAULT_USERNAME, DEFAULT_USERNAME);
 		Instant lastLoginDateTime = LocalDateTime.of(LocalDate.of(2021, 9, 26), LocalTime.of(12, 53)).toInstant(ZoneOffset.UTC);;
 		mockedUser.setLastLoginDateTime(now);
 		mockedUser.setPreviousLoginDateTime(lastLoginDateTime);
@@ -116,7 +116,7 @@ public class UserServiceTest extends UnitTestTemplate {
 	void registerUserNewAdminUser() {
 		Role role1 = new Role(USER_ROLE_NAME);
 		Role role2 = new Role(ADMIN_ROLE_NAME);
-		User mockedUser = new UserRegister(DEFAULT_USERNAME, DEFAULT_USERNAME, DEFAULT_USERNAME, null).toUser();
+		User mockedUser = new User(DEFAULT_USERNAME, DEFAULT_USERNAME, DEFAULT_USERNAME);
 
 		this.given(roleRepository.findByName(USER_ROLE_NAME)).willReturn(Optional.of(role1));
 		this.given(roleRepository.findByName(ADMIN_ROLE_NAME)).willReturn(Optional.of(role2));
@@ -130,7 +130,7 @@ public class UserServiceTest extends UnitTestTemplate {
 	@Test
 	void registerAdminUserAdminRoleNotFound() {
 		Role role1 = new Role(USER_ROLE_NAME);
-		User mockedUser = new UserRegister(DEFAULT_USERNAME, DEFAULT_USERNAME, DEFAULT_USERNAME, null).toUser();
+		User mockedUser = new User(DEFAULT_USERNAME, DEFAULT_USERNAME, DEFAULT_USERNAME);
 
 		this.given(roleRepository.findByName(USER_ROLE_NAME)).willReturn(Optional.of(role1));
 		this.given(userRepository.findByUsername(DEFAULT_USERNAME)).willReturn(Optional.empty());
@@ -144,7 +144,7 @@ public class UserServiceTest extends UnitTestTemplate {
 	
 	@Test
 	void deleteUserOkUserDeleted() {
-		User mockedUser = new UserRegister(DEFAULT_USERNAME, DEFAULT_USERNAME, DEFAULT_USERNAME, null).toUser();
+		User mockedUser = new User(DEFAULT_USERNAME, DEFAULT_USERNAME, DEFAULT_USERNAME);
 
 		this.given(userRepository.findByUsername(DEFAULT_USERNAME)).willReturn(Optional.of(mockedUser));		
 		userService.deleteCurrentUser();
@@ -156,7 +156,7 @@ public class UserServiceTest extends UnitTestTemplate {
 	
 	@Test
 	void getCurrentUserOkUserExists() {
-		User mockedUser = new UserRegister(DEFAULT_USERNAME, DEFAULT_USERNAME, DEFAULT_USERNAME, null).toUser();
+		User mockedUser = new User(DEFAULT_USERNAME, DEFAULT_USERNAME, DEFAULT_USERNAME);
 
 		this.given(userRepository.findByUsername(DEFAULT_USERNAME)).willReturn(Optional.of(mockedUser));		
 		this.given(userRepository.save(mockedUser)).willReturn(mockedUser);
@@ -168,7 +168,8 @@ public class UserServiceTest extends UnitTestTemplate {
 	void getCurrentUserOkUserDoesNotExists() {
 		Role role = new Role(USER_ROLE_NAME);
 		Instant now = Instant.now();
-		User mockedUser = new UserRegister(DEFAULT_USERNAME, DEFAULT_USERNAME, DEFAULT_USERNAME, DEFAULT_USERNAME).toUser();
+		User mockedUser = new User(DEFAULT_USERNAME, DEFAULT_USERNAME, DEFAULT_USERNAME);
+		mockedUser.setEmail(DEFAULT_USERNAME);
 
 		this.given(userRepository.findByUsername(DEFAULT_USERNAME))
 		.willReturn(Optional.empty())
@@ -179,6 +180,20 @@ public class UserServiceTest extends UnitTestTemplate {
 		this.given(userRepository.save(mockedUser)).willReturn(mockedUser);		
 		
 		this.assertThat(userService.getCurrentUser()).isEqualTo(Optional.of(mockedUser));
-	}	
-
+	}
+	
+	@Test
+	void isAdminTrue() {
+		User mockedUserAdmin = new User(DEFAULT_USERNAME, DEFAULT_USERNAME, DEFAULT_USERNAME);
+		mockedUserAdmin.addRole(new Role(USER_ROLE_NAME));
+		mockedUserAdmin.addRole(new Role(ADMIN_ROLE_NAME));
+		this.assertThat(userService.isAdmin(mockedUserAdmin)).isEqualTo(true);
+	}
+	
+	@Test
+	void isAdminFalse() {
+		User mockedUserAdmin = new User(DEFAULT_USERNAME, DEFAULT_USERNAME, DEFAULT_USERNAME);
+		mockedUserAdmin.addRole(new Role(USER_ROLE_NAME));
+		this.assertThat(userService.isAdmin(mockedUserAdmin)).isEqualTo(false);
+	}
 }

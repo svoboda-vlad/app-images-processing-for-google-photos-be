@@ -52,14 +52,8 @@ public class UserService {
 
 	public User registerAdminUser(User user) {
 		user = registerUser(user);
-		Optional<Role> optRole = roleRepository.findByName(ADMIN_ROLE_NAME);
-		if (optRole.isEmpty()) {
-			log.info("Role {} not found in database.", ADMIN_ROLE_NAME);
-			throw new RuntimeException("Role not found.");
-		} else {
-			user.addRole(optRole.get());
-			return userRepository.save(user);
-		}
+		user = addAdminRole(user);
+		return userRepository.save(user);
 	}
 
 	public Optional<User> updateCurrentUserLastLoginDateTime() {
@@ -98,13 +92,9 @@ public class UserService {
 			return updateCurrentUserLastLoginDateTime();
 		} else {
 			UserInfo userInfo = getUserInfoWithAttributes(authentication);
-			UserRegister userRegister = new UserRegister(
-					userInfo.getUsername(), 
-					userInfo.getGivenName(),
-					userInfo.getFamilyName(), 
-					userInfo.getEmail()
-					);
-			registerUser(userRegister.toUser());
+			User user = new User(userInfo.getUsername(), userInfo.getGivenName(), userInfo.getFamilyName());
+			user.setEmail(userInfo.getEmail());
+			registerUser(user);
 			return updateCurrentUserLastLoginDateTime();
 		}
 	}
@@ -126,6 +116,21 @@ public class UserService {
 			if (attributes.get("email") != null) userInfo.setEmail((String) attributes.get("email"));
 		}
 		return userInfo;
-	}	
+	}
+	
+	public User addAdminRole(User user) {
+		Optional<Role> optRole = roleRepository.findByName(ADMIN_ROLE_NAME);
+		if (optRole.isEmpty()) {
+			log.info("Role {} not found in database.", ADMIN_ROLE_NAME);
+			throw new RuntimeException("Role not found.");
+		} else {
+			user.addRole(optRole.get());
+			return userRepository.save(user);
+		}
+	}
+	
+	public boolean isAdmin(User user) {
+		return user.roles.stream().filter(role -> ADMIN_ROLE_NAME.equals(role.getRole().getName())).count() != 0;
+	}
 	
 }
