@@ -11,6 +11,5 @@ import lombok.Data;
 public class AdminUserBean {
 
 	private String username;
-	private String password;
 
 }

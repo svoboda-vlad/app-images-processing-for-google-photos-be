@@ -5,7 +5,6 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -13,10 +12,9 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import svobodavlad.imagesprocessing.jpaentities.LastUploadInfo;
 import svobodavlad.imagesprocessing.jpaentities.User;
-import svobodavlad.imagesprocessing.testutil.SecurityMockUtil;
 import svobodavlad.imagesprocessing.testutil.UnitTestTemplate;
 
-@WithMockUser(username = SecurityMockUtil.DEFAULT_USERNAME)
+@WithMockUser
 public class LastUploadInfoControllerTest extends UnitTestTemplate {
 		
 	@MockBean
@@ -24,13 +22,8 @@ public class LastUploadInfoControllerTest extends UnitTestTemplate {
 	
 	private User mockedUser;
 
-	@BeforeEach
-	private void initData() {
-		mockedUser = SecurityMockUtil.getMockedDefaultUserInternal();
-	}
-
 	@Test
-	void testGetLastUploadInfoOk200() throws Exception {
+	void getLastUploadInfoOk200() throws Exception {
 		String requestUrl = "/last-upload-info";
 		int expectedStatus = 200;
 		
@@ -47,7 +40,7 @@ public class LastUploadInfoControllerTest extends UnitTestTemplate {
 	}
 	
 	@Test
-	void testGetLastUploadInfoNotFound404() throws Exception {
+	void getLastUploadInfoNotFound404() throws Exception {
 		String requestUrl = "/last-upload-info";
 		int expectedStatus = 404;
 		String expectedJson = "";
@@ -59,7 +52,7 @@ public class LastUploadInfoControllerTest extends UnitTestTemplate {
 	}
 
 	@Test
-	void testUpdateLastUploadInfoOk200() throws Exception {
+	void updateLastUploadInfoOk200() throws Exception {
 		String requestUrl = "/last-upload-info-update";
 		int expectedStatus = 200;
 		Instant lastUploadDateTime = Instant.now();

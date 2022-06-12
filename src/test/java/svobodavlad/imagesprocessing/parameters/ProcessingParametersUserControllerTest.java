@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -13,10 +12,9 @@ import org.springframework.test.web.servlet.ResultActions;
 import svobodavlad.imagesprocessing.jpaentities.ProcessingParametersDefault;
 import svobodavlad.imagesprocessing.jpaentities.ProcessingParametersUser;
 import svobodavlad.imagesprocessing.jpaentities.User;
-import svobodavlad.imagesprocessing.testutil.SecurityMockUtil;
 import svobodavlad.imagesprocessing.testutil.UnitTestTemplate;
 
-@WithMockUser(username = SecurityMockUtil.DEFAULT_USERNAME)
+@WithMockUser
 public class ProcessingParametersUserControllerTest extends UnitTestTemplate {
 	
 	@MockBean
@@ -27,13 +25,8 @@ public class ProcessingParametersUserControllerTest extends UnitTestTemplate {
 	
 	private User mockedUser;
 
-	@BeforeEach
-	private void initData() {
-		mockedUser = SecurityMockUtil.getMockedDefaultUserInternal();
-	}
-
 	@Test
-	void testGetProcessingParametersUserTemplateOk200() throws Exception {
+	void getProcessingParametersUserTemplateOk200() throws Exception {
 		String requestUrl = "/parameters";
 		int expectedStatus = 200;
 		String expectedJson = "{\"timeDiffGroup\":1800,\"resizeWidth\":1000,\"resizeHeight\":1000}";
@@ -48,7 +41,7 @@ public class ProcessingParametersUserControllerTest extends UnitTestTemplate {
 	}
 	
 	@Test
-	void testGetProcessingParametersUserTemplateNoParametersNotFound404() throws Exception {
+	void getProcessingParametersUserTemplateNoParametersNotFound404() throws Exception {
 		String requestUrl = "/parameters";
 		int expectedStatus = 404;
 		String expectedJson = "";
@@ -60,7 +53,7 @@ public class ProcessingParametersUserControllerTest extends UnitTestTemplate {
 	}
 
 	@Test
-	void testUpdateProcessingParametersUserTemplateOk200() throws Exception {
+	void updateProcessingParametersUserTemplateOk200() throws Exception {
 		String requestUrl = "/parameters";
 		String requestJson = "{\"timeDiffGroup\":3600,\"resizeWidth\":1000,\"resizeHeight\":1000}";
 		int expectedStatus = 200;
@@ -79,7 +72,7 @@ public class ProcessingParametersUserControllerTest extends UnitTestTemplate {
 	
 	
 	@Test
-	void testUpdateProcessingParametersDefaultNotFound404() throws Exception {
+	void updateProcessingParametersDefaultNotFound404() throws Exception {
 		String requestUrl = "/parameters";
 		String requestJson = "{\"timeDiffGroup\":3600,\"resizeWidth\":1000,\"resizeHeight\":1000}";
 		int expectedStatus = 404;
@@ -97,7 +90,7 @@ public class ProcessingParametersUserControllerTest extends UnitTestTemplate {
 	}
 	
 	@Test
-	void testGetResetToDefaultOk204() throws Exception {
+	void getResetToDefaultOk204() throws Exception {
 		String requestUrl = "/parameters-reset-to-default";
 		int expectedStatus = 204;
 		String expectedJson = "";
@@ -112,7 +105,7 @@ public class ProcessingParametersUserControllerTest extends UnitTestTemplate {
 	}
 	
 	@Test
-	void testGetResetToDefaultNoDefaultParametersNotFound404() throws Exception {
+	void getResetToDefaultNoDefaultParametersNotFound404() throws Exception {
 		String requestUrl = "/parameters-reset-to-default";
 		int expectedStatus = 404;
 		String expectedJson = "";

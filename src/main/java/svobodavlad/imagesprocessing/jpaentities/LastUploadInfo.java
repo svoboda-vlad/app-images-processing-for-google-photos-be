@@ -36,8 +36,9 @@ public class LastUploadInfo extends JpaEntityTemplate {
 	@JsonIgnore
 	private User user;
 	
-	public LastUploadInfo updateLastUploadDateTime() {
-		this.lastUploadDateTime = Instant.now();
+	public LastUploadInfo updateLastUploadDateTime(Instant currentDateTime) {
+		if (currentDateTime == null) currentDateTime = Instant.now();
+		this.lastUploadDateTime = currentDateTime;
 		return this;
 	}	
 

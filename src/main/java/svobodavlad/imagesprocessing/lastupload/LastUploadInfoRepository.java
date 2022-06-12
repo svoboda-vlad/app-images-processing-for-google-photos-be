@@ -11,4 +11,6 @@ public interface LastUploadInfoRepository extends JpaRepository<LastUploadInfo, 
 	
 	Optional<LastUploadInfo> findByUser(User user);
 
+	Optional<LastUploadInfo> findByUser_Username(String username);
+	
 }

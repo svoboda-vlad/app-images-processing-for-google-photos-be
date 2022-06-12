@@ -2,27 +2,16 @@ package svobodavlad.imagesprocessing.jpaentities;
 
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -39,7 +28,7 @@ import svobodavlad.imagesprocessing.security.UserInfo;
 @EqualsAndHashCode(callSuper = true, exclude = "roles") // roles excluded to avoid circular dependency
 @NoArgsConstructor
 @RequiredArgsConstructor
-public class User extends JpaEntityTemplate implements UserDetails {
+public class User extends JpaEntityTemplate {
 	
 	private static final long serialVersionUID = 1L;
 
@@ -47,17 +36,6 @@ public class User extends JpaEntityTemplate implements UserDetails {
 	@Size(min = 1, max = 255)
 	@NonNull
 	private String username;
-
-	@NotNull
-	@Size(min = 60, max = 60)
-	@JsonIgnore
-	@NonNull
-	private String password;
-
-	@NotNull
-	@Enumerated(EnumType.STRING)
-	@NonNull
-	private LoginProvider loginProvider;
 
 	@NotNull
 	@Size(min = 1, max = 255)
@@ -97,37 +75,8 @@ public class User extends JpaEntityTemplate implements UserDetails {
 		// userRoles.setRole(null);
 	}
 
-	@Override
-	public Collection<? extends GrantedAuthority> getAuthorities() {
-		Set<GrantedAuthority> authorities = new HashSet<GrantedAuthority>();
-		for (UserRoles role : this.roles) {
-			authorities.add(new SimpleGrantedAuthority(role.getRole().getName()));
-		}
-		return authorities;
-	}
-
-	@Override
-	public boolean isAccountNonExpired() {
-		return true;
-	}
-
-	@Override
-	public boolean isAccountNonLocked() {
-		return true;
-	}
-
-	@Override
-	public boolean isCredentialsNonExpired() {
-		return true;
-	}
-
-	@Override
-	public boolean isEnabled() {
-		return true;
-	}
-
-	public void updateLastLoginDateTime() {
-		Instant currentDateTime = Instant.now();
+	public void updateLastLoginDateTime(Instant currentDateTime) {
+		if (currentDateTime == null) currentDateTime = Instant.now();
 		if (this.lastLoginDateTime == null) {
 			this.previousLoginDateTime = currentDateTime;
 		} else {
@@ -136,14 +85,9 @@ public class User extends JpaEntityTemplate implements UserDetails {
 		this.lastLoginDateTime = currentDateTime;
 	}
 
-	public enum LoginProvider {
-		INTERNAL, GOOGLE
-	}
-
 	public UserInfo toUserInfo() {
 		UserInfo userInfo = new UserInfo(this.getUsername(), this.getGivenName(), this.getFamilyName(), this.getEmail(),
 				this.getLastLoginDateTime(), this.getPreviousLoginDateTime(), this.getRoles());
 		return userInfo;
 	}
-	
 }

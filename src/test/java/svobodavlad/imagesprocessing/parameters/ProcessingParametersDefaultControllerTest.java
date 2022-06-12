@@ -16,7 +16,7 @@ public class ProcessingParametersDefaultControllerTest extends UnitTestTemplate 
 	private ProcessingParametersDefaultRepository parametersRepository;
 
 	@Test
-	void testGetProcessingParametersDefaultTemplateOk200() throws Exception {
+	void getProcessingParametersDefaultTemplateOk200() throws Exception {
 		String requestUrl = "/admin/parameters-default";
 		int expectedStatus = 200;
 		String expectedJson = "{\"timeDiffGroup\":1800,\"resizeWidth\":1000,\"resizeHeight\":1000}";
@@ -33,7 +33,7 @@ public class ProcessingParametersDefaultControllerTest extends UnitTestTemplate 
 	}
 	
 	@Test
-	void testGetProcessingParametersDefaultTemplateNotFound404() throws Exception {
+	void getProcessingParametersDefaultTemplateNotFound404() throws Exception {
 		String requestUrl = "/admin/parameters-default";
 		int expectedStatus = 404;
 		String expectedJson = "";
@@ -45,7 +45,7 @@ public class ProcessingParametersDefaultControllerTest extends UnitTestTemplate 
 	}	
 	
 	@Test
-	void testUpdateProcessingParametersDefaultTemplateOk200() throws Exception {
+	void updateProcessingParametersDefaultTemplateOk200() throws Exception {
 		String requestUrl = "/admin/parameters-default";
 		String requestJson = "{\"timeDiffGroup\":3600,\"resizeWidth\":1000,\"resizeHeight\":1000}";
 		int expectedStatus = 200;
@@ -61,7 +61,7 @@ public class ProcessingParametersDefaultControllerTest extends UnitTestTemplate 
 	}	
 	
 	@Test
-	void testUpdateProcessingParametersDefaultTemplateNotFound404() throws Exception {
+	void updateProcessingParametersDefaultTemplateNotFound404() throws Exception {
 		String requestUrl = "/admin/parameters-default";
 		String requestJson = "{\"timeDiffGroup\":3600,\"resizeWidth\":1000,\"resizeHeight\":1000}";
 		int expectedStatus = 404;
