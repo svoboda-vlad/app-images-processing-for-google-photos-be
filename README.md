@@ -117,7 +117,7 @@ mvn clean install -DskipTests
 Run the JAR file (application) with defining administrator account (username: admin) and Spring profiles (dev) using in-memory H2 database
 
 ```
-java -D"admin.username=admin" -jar target/*.jar
+java -D"admin.username=admin" -jar target/images-processing-0.0.1-SNAPSHOT.jar
 (sudo java -Dadmin.username=admin -jar target/*.jar)
 ```
 
@@ -192,34 +192,9 @@ restricted (administrator):
 
 ## Models
 
-**Domain**
-
-ProcessingParametersDefault - id (long), timeDiffGroup (int, min = 60, max = 86400), resizeWidth (int, min = 1, max = 10000), resizeHeight (int, min = 1, max = 10000)
-- no endpoint
-
-ProcessingParametersDefaultTemplate - timeDiffGroup (int, min = 60, max = 86400), resizeWidth (int, min = 1, max = 10000), resizeHeight (int, min = 1, max = 10000)
-- GET "/admin/parameters-default": {"timeDiffGroup":1800,"resizeWidth":1000,"resizeHeight":1000}
-
-ProcessingParametersUser - id (long), timeDiffGroup (int, min = 60, max = 86400), resizeWidth (int, min = 1, max = 10000), resizeHeight (int, min = 1, max = 10000), user (User)
-- no endpoint
-
-ProcessingParametersUserTemplate - timeDiffGroup (int, min = 60, max = 86400), resizeWidth (int, min = 1, max = 10000), resizeHeight (int, min = 1, max = 10000)
-- GET "/parameters": {"timeDiffGroup":1800,"resizeWidth":1000,"resizeHeight":1000}
-
-LastUploadInfo - id (long), lastUploadDateTime (Instant), user (User) - @JsonIgnore
-- GET "/last-upload-info": TODO
-- GET "/last-upload-info-update": TODO
-
-**Security**
+**JPA Entities**
 
 User - id (long), username (String, min = 1, max = 255), lastLoginDateTime (Instant), previousLoginDateTime (Instant), givenName (String, min = 1, max = 255), familyName (String, min = 1, max = 255), email (String, min = 1, max = 255)
-- no endpoint
-
-UserInfo - username (String, min = 1, max = 255), lastLoginDateTime (Instant), previousLoginDateTime (Instant), givenName (String, min = 1, max = 255), familyName (String, min = 1, max = 255), email (String, min = 1, max = 255)
-- GET "/user": {"username": "user1","givenName": "User 1","familyName": "User 1","lastLoginDateTime": "2021-05-05T12:50:12.354751","previousLoginDateTime": "2021-05-05T12:50:12.354751","email": "user1@gmail.com","userRoles":[{"role":{"id":1,"name":"ROLE_USER"}}]}
-- GET "/admin/users": [{"username":"user2","givenName":"User 2","familyName":"User 2","lastLoginDateTime": "2021-07-27T08:08:50.759683","previousLoginDateTime": "2021-07-27T08:08:50.759683","email": "user2@gmail.com","userRoles":[{"role":{"id":1,"name":"ROLE_USER"}}]},{"username":"user1","givenName":"User 1","familyName":"User 1","lastLoginDateTime": "2021-07-27T08:08:50.759683","previousLoginDateTime": "2021-07-27T08:08:50.759683","email": "user1@gmail.com","userRoles":[{"role":{"id":1,"name":"ROLE_USER"}},{"role":{"id":2,"name":"ROLE_ADMIN"}}]}]
-
-UserRegister - username (String, min = 1, max = 255), givenName (String, min = 1, max = 255), familyName (String, min = 1, max = 255), email (String, min = 1, max = 255)
 - no endpoint
 
 Role
@@ -228,21 +203,43 @@ Role
 UserRoles
 - no endpoint - id (long), user (User), role (Role)
 
+ProcessingParametersDefault - id (long), timeDiffGroup (int, min = 60, max = 86400), resizeWidth (int, min = 1, max = 10000), resizeHeight (int, min = 1, max = 10000)
+- no endpoint
+
+ProcessingParametersUser - id (long), timeDiffGroup (int, min = 60, max = 86400), resizeWidth (int, min = 1, max = 10000), resizeHeight (int, min = 1, max = 10000), user (User)
+- no endpoint
+
+LastUploadInfo - id (long), lastUploadDateTime (Instant), user (User) - @JsonIgnore
+- GET "/last-upload-info": {"id": 1,"lastUploadDateTime": "2022-06-12T15:10:21.952Z"}
+- GET "/last-upload-info-update": {"id": 1,"lastUploadDateTime": "2022-06-12T15:10:21.952Z"}
+
+**DTOs**
+
+ProcessingParametersDefaultTemplate - timeDiffGroup (int, min = 60, max = 86400), resizeWidth (int, min = 1, max = 10000), resizeHeight (int, min = 1, max = 10000)
+- GET "/admin/parameters-default": {"timeDiffGroup":1800,"resizeWidth":1000,"resizeHeight":1000}
+- PUT "/admin/parameters-default"
+
+ProcessingParametersUserTemplate - timeDiffGroup (int, min = 60, max = 86400), resizeWidth (int, min = 1, max = 10000), resizeHeight (int, min = 1, max = 10000)
+- GET "/parameters": {"timeDiffGroup":1800,"resizeWidth":1000,"resizeHeight":1000}
+- PUT "/parameters"
+
+UserInfo - username (String, min = 1, max = 255), lastLoginDateTime (Instant), previousLoginDateTime (Instant), givenName (String, min = 1, max = 255), familyName (String, min = 1, max = 255), email (String, min = 1, max = 255)
+- GET "/user": {"username": "user1","givenName": "User 1","familyName": "User 1","lastLoginDateTime": "2021-05-05T12:50:12.354751","previousLoginDateTime": "2021-05-05T12:50:12.354751","email": "user1@gmail.com","userRoles":[{"role":{"id":1,"name":"ROLE_USER"}}]}
+- GET "/admin/users": [{"username":"user2","givenName":"User 2","familyName":"User 2","lastLoginDateTime": "2021-07-27T08:08:50.759683","previousLoginDateTime": "2021-07-27T08:08:50.759683","email": "user2@gmail.com","userRoles":[{"role":{"id":1,"name":"ROLE_USER"}}]},{"username":"user1","givenName":"User 1","familyName":"User 1","lastLoginDateTime": "2021-07-27T08:08:50.759683","previousLoginDateTime": "2021-07-27T08:08:50.759683","email": "user1@gmail.com","userRoles":[{"role":{"id":1,"name":"ROLE_USER"}},{"role":{"id":2,"name":"ROLE_ADMIN"}}]}]
+
 ## Database
 
 H2 in-memory database + liquibase
 
 JDBC URL: "jdbc:h2:mem:testdb"
 
-Database tables - domain:
-- processing_parameters_default - id (int PRIMARY KEY), time_diff_group (int NOT NULL), resize_width (int NOT NULL), resize_height (int NOT NULL)
-- processing_parameters_user - id (int PRIMARY KEY), time_diff_group (int NOT NULL), resize_width (int NOT NULL), resize_height (int NOT NULL), user_id (int NOT NULL)
-- last_upload_info - id (int PRIMARY KEY), last_upload_date_time (TIMESTAMP), user_id (int NOT NULL)
-
-Database tables - security:
+Database tables:
 - user - id (int PRIMARY KEY), username (VARCHAR(255) NOT NULL UNIQUE), last_login_date_time (TIMESTAMP), previous_login_date_time (TIMESTAMP), given_name (VARCHAR(255), family_name (VARCHAR(255)), email (VARCHAR(255))
 - user_roles - user_id (int NOT NULL), role_id (int NOT NULL), user_id + role_id - PRIMARY KEY
 - role - id (int PRIMARY KEY), name (VARCHAR(255) NOT NULL UNIQUE) - default values: "ROLE_USER", "ROLE_ADMIN"
+- processing_parameters_default - id (int PRIMARY KEY), time_diff_group (int NOT NULL), resize_width (int NOT NULL), resize_height (int NOT NULL)
+- processing_parameters_user - id (int PRIMARY KEY), time_diff_group (int NOT NULL), resize_width (int NOT NULL), resize_height (int NOT NULL), user_id (int NOT NULL)
+- last_upload_info - id (int PRIMARY KEY), last_upload_date_time (TIMESTAMP), user_id (int NOT NULL)
 
 ## Authentication - Spring Security
 OAuth 2.0 Resource Server
