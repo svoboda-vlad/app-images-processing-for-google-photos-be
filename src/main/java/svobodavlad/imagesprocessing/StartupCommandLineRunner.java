@@ -7,7 +7,6 @@ import org.springframework.stereotype.Component;
 import svobodavlad.imagesprocessing.jpaentities.ProcessingParametersDefault;
 import svobodavlad.imagesprocessing.jpaentities.User;
 import svobodavlad.imagesprocessing.parameters.ProcessingParametersDefaultRepository;
-import svobodavlad.imagesprocessing.security.UserRegister;
 import svobodavlad.imagesprocessing.security.UserService;
 
 @Component
@@ -34,8 +33,7 @@ public class StartupCommandLineRunner implements CommandLineRunner {
 
 	void saveAdminUser() {
 		if (adminUser.getUsername() != null) {
-			UserRegister userRegister = new UserRegister(adminUser.getUsername(), "N/A", "N/A", "N/A");
-			User user = userRegister.toUser();
+			User user = new User(adminUser.getUsername(), "N/A", "N/A");
 			userService.registerAdminUser(user);
 		}
 	}

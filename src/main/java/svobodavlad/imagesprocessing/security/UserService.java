@@ -98,13 +98,9 @@ public class UserService {
 			return updateCurrentUserLastLoginDateTime();
 		} else {
 			UserInfo userInfo = getUserInfoWithAttributes(authentication);
-			UserRegister userRegister = new UserRegister(
-					userInfo.getUsername(), 
-					userInfo.getGivenName(),
-					userInfo.getFamilyName(), 
-					userInfo.getEmail()
-					);
-			registerUser(userRegister.toUser());
+			User user = new User(userInfo.getUsername(), userInfo.getGivenName(), userInfo.getFamilyName());
+			user.setEmail(userInfo.getEmail());
+			registerUser(user);
 			return updateCurrentUserLastLoginDateTime();
 		}
 	}
