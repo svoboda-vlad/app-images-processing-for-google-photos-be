@@ -45,7 +45,10 @@ public class StartupCommandLineRunner implements CommandLineRunner {
 				User user = new User(username, "N/A", "N/A");
 				userService.registerAdminUser(user);
 			} else {
-				User user = userService.addAdminRole(optUser.get());
+				User user = optUser.get();
+				if (!userService.isAdmin(user)) {
+					user = userService.addAdminRole(optUser.get());
+				}
 				userRepository.save(user);
 			}
 		}

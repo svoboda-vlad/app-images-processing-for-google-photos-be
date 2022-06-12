@@ -180,6 +180,20 @@ public class UserServiceTest extends UnitTestTemplate {
 		this.given(userRepository.save(mockedUser)).willReturn(mockedUser);		
 		
 		this.assertThat(userService.getCurrentUser()).isEqualTo(Optional.of(mockedUser));
-	}	
-
+	}
+	
+	@Test
+	void isAdminTrue() {
+		User mockedUserAdmin = new User(DEFAULT_USERNAME, DEFAULT_USERNAME, DEFAULT_USERNAME);
+		mockedUserAdmin.addRole(new Role(USER_ROLE_NAME));
+		mockedUserAdmin.addRole(new Role(ADMIN_ROLE_NAME));
+		this.assertThat(userService.isAdmin(mockedUserAdmin)).isEqualTo(true);
+	}
+	
+	@Test
+	void isAdminFalse() {
+		User mockedUserAdmin = new User(DEFAULT_USERNAME, DEFAULT_USERNAME, DEFAULT_USERNAME);
+		mockedUserAdmin.addRole(new Role(USER_ROLE_NAME));
+		this.assertThat(userService.isAdmin(mockedUserAdmin)).isEqualTo(false);
+	}
 }

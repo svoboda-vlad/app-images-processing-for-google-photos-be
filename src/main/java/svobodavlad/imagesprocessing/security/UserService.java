@@ -129,4 +129,8 @@ public class UserService {
 		}
 	}
 	
+	public boolean isAdmin(User user) {
+		return user.roles.stream().filter(role -> ADMIN_ROLE_NAME.equals(role.getRole().getName())).count() != 0;
+	}
+	
 }
