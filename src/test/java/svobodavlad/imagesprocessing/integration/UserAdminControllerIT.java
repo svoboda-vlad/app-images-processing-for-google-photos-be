@@ -12,7 +12,9 @@ import svobodavlad.imagesprocessing.testutil.IntegTestTemplate;
 import svobodavlad.imagesprocessing.testutil.SecurityTestUtil;
 
 public class UserAdminControllerIT extends IntegTestTemplate {
-		
+	
+	private final static String ADMIN_USERNAME = "admin";
+	
 	@Autowired
 	private UserRepository userRepository;	
 	
@@ -21,7 +23,6 @@ public class UserAdminControllerIT extends IntegTestTemplate {
 		
 	@BeforeEach
 	void initData() {
-		securityTestUtil.saveAdminUser();
 		securityTestUtil.saveDefaultUser();
 	}	
 
@@ -30,7 +31,7 @@ public class UserAdminControllerIT extends IntegTestTemplate {
 		String requestUrl = "/admin/users";
 		int expectedStatus = 200;
 		String rolesJsonAdmin = "";
-		User adminUser = userRepository.findByUsername(SecurityTestUtil.ADMIN_USERNAME).get();
+		User adminUser = userRepository.findByUsername(ADMIN_USERNAME).get();
 		for (UserRoles userRole : adminUser.getRoles()) {
 			if (rolesJsonAdmin.length() > 0) rolesJsonAdmin += ",";
 			rolesJsonAdmin += "{\"role\":{\"id\":" + userRole.getRole().getId() +",\"name\":\"" + userRole.getRole().getName() + "\"}}";

@@ -4,8 +4,8 @@ import java.time.Instant;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.springframework.security.test.context.support.WithMockUser;
 
 import svobodavlad.imagesprocessing.jpaentities.LastUploadInfo;
@@ -19,16 +19,16 @@ class LastUploadInfoServiceTest extends UnitTestTemplate {
 	
 	private static final String MOCKED_USER_NAME = "user";
 
-	@MockBean
+	@Mock
 	private LastUploadInfoRepository lastUploadInfoRepository;
 	
-	@MockBean
+	@Mock
 	private UserRepository userRepository;
 	
-	@MockBean
+	@Mock
 	private DateTimeUtil dateTimeUtil;
 	
-	@Autowired
+	@InjectMocks
 	private LastUploadInfoService lastUploadInfoService;
 
 	@Test

@@ -3,15 +3,18 @@ package svobodavlad.imagesprocessing.security;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.ResultActions;
 
 import svobodavlad.imagesprocessing.jpaentities.Role;
 import svobodavlad.imagesprocessing.jpaentities.User;
-import svobodavlad.imagesprocessing.testutil.UnitTestTemplate;
+import svobodavlad.imagesprocessing.testutil.UnitTestTemplateMockMvc;
 
-class UserControllerTest extends UnitTestTemplate {
+@WebMvcTest(UserController.class)
+@AutoConfigureMockMvc(addFilters = false)
+class UserControllerTest extends UnitTestTemplateMockMvc {
 	
 	private static final String MOCKED_USER_NAME = "user";
 	private static final String MOCKED_USER_EMAIL = "user@example.com";
@@ -22,10 +25,7 @@ class UserControllerTest extends UnitTestTemplate {
 
 	@MockBean
 	private UserService userService;
-
-	@MockBean
-	private PasswordEncoder encoder;
-
+	
 	@Test
 	void getUserInfoOk200() throws Exception {
 		String requestUrl = "/user";

@@ -4,17 +4,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.ResultActions;
 
 import svobodavlad.imagesprocessing.jpaentities.ProcessingParametersDefault;
-import svobodavlad.imagesprocessing.testutil.UnitTestTemplate;
+import svobodavlad.imagesprocessing.testutil.UnitTestTemplateMockMvc;
 
-public class ProcessingParametersDefaultControllerTest extends UnitTestTemplate {
+@WebMvcTest(ProcessingParametersDefaultController.class)
+@AutoConfigureMockMvc(addFilters = false)
+public class ProcessingParametersDefaultControllerTest extends UnitTestTemplateMockMvc {
 	
 	@MockBean
 	private ProcessingParametersDefaultRepository parametersRepository;
-
+	
 	@Test
 	void getProcessingParametersDefaultTemplateOk200() throws Exception {
 		String requestUrl = "/admin/parameters-default";

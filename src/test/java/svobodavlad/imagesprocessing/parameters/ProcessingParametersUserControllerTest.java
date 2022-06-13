@@ -5,25 +5,27 @@ import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.ResultActions;
 
 import svobodavlad.imagesprocessing.jpaentities.ProcessingParametersDefault;
 import svobodavlad.imagesprocessing.jpaentities.ProcessingParametersUser;
 import svobodavlad.imagesprocessing.jpaentities.User;
-import svobodavlad.imagesprocessing.testutil.UnitTestTemplate;
+import svobodavlad.imagesprocessing.testutil.UnitTestTemplateMockMvc;
 
-@WithMockUser
-public class ProcessingParametersUserControllerTest extends UnitTestTemplate {
+@WebMvcTest(ProcessingParametersUserController.class)
+@AutoConfigureMockMvc(addFilters = false)
+public class ProcessingParametersUserControllerTest extends UnitTestTemplateMockMvc {
+	
+	private static final String MOCKED_USER_NAME = "user";
 	
 	@MockBean
 	private ProcessingParametersDefaultRepository parametersDefaultRepository;
 	
 	@MockBean
-	private ProcessingParametersUserService parametersService;	
-	
-	private User mockedUser;
+	private ProcessingParametersUserService parametersService;
 
 	@Test
 	void getProcessingParametersUserTemplateOk200() throws Exception {
@@ -31,6 +33,7 @@ public class ProcessingParametersUserControllerTest extends UnitTestTemplate {
 		int expectedStatus = 200;
 		String expectedJson = "{\"timeDiffGroup\":1800,\"resizeWidth\":1000,\"resizeHeight\":1000}";
 		
+		User mockedUser = new User(MOCKED_USER_NAME, MOCKED_USER_NAME, MOCKED_USER_NAME);
 		ProcessingParametersUser parameters = new ProcessingParametersUser(1800, 1000, 1000, mockedUser);
 		parameters.setId(1);
 		
@@ -59,6 +62,7 @@ public class ProcessingParametersUserControllerTest extends UnitTestTemplate {
 		int expectedStatus = 200;
 		String expectedJson = "{\"timeDiffGroup\":3600,\"resizeWidth\":1000,\"resizeHeight\":1000}";
 		
+		User mockedUser = new User(MOCKED_USER_NAME, MOCKED_USER_NAME, MOCKED_USER_NAME);
 		ProcessingParametersUser parameters = new ProcessingParametersUser(3600, 1000, 1000, mockedUser);
 		parameters.setId(1);
 
@@ -78,6 +82,7 @@ public class ProcessingParametersUserControllerTest extends UnitTestTemplate {
 		int expectedStatus = 404;
 		String expectedJson = "";
 		
+		User mockedUser = new User(MOCKED_USER_NAME, MOCKED_USER_NAME, MOCKED_USER_NAME);
 		ProcessingParametersUser parameters = new ProcessingParametersUser(3600, 1000, 1000, mockedUser);
 		parameters.setId(1);
 		

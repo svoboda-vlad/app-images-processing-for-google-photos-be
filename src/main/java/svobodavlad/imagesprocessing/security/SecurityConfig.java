@@ -20,7 +20,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	
-	@Value( "${authority.admin.username}" )
+	@Value( "${admin.username}" )
 	private String adminUsername;
 
 	@Override

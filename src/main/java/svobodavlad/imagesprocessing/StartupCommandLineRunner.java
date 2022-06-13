@@ -42,7 +42,7 @@ public class StartupCommandLineRunner implements CommandLineRunner {
 		if (username != null) {
 			Optional<User> optUser = userRepository.findByUsername(username);
 			if (optUser.isEmpty()) {
-				User user = new User(username, "N/A", "N/A");
+				User user = new User(username, username, username);
 				userService.registerAdminUser(user);
 			} else {
 				User user = optUser.get();
