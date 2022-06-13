@@ -44,7 +44,7 @@ public class ProcessingParametersUserController {
 
 	@Operation(security = { @SecurityRequirement(name = "bearer-key") })
 	@GetMapping(PARAMETERS_USER_RESET_URL)
-	public ResponseEntity<String> getResetToDefault() {
+	public ResponseEntity<Void> getResetToDefault() {
 		if (parametersDefaultRepository.findAll().isEmpty()) return ResponseEntity.notFound().build();
 		parametersService.resetToDefault();
 		return ResponseEntity.noContent().build();

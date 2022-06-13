@@ -1,20 +1,21 @@
 package svobodavlad.imagesprocessing.testutil;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 
+import org.assertj.core.api.AbstractInstantAssert;
 import org.assertj.core.api.AbstractLocalDateTimeAssert;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.ObjectAssert;
 import org.assertj.core.api.ThrowableTypeAssert;
+import org.mockito.ArgumentMatchers;
 import org.mockito.BDDMockito;
 import org.mockito.Mockito;
 import org.mockito.verification.VerificationMode;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
-@SpringBootTest
 @ActiveProfiles(value = {"dev", "noliquibase"})
-public class UnitTestTemplateWithSecurity extends MockMvcUtilWithSecurity {
+public class UnitTestTemplateMockMvc extends MockMvcUtil {
 
 	public <T> BDDMockito.BDDMyOngoingStubbing<T> given(T methodCall) {
 		return BDDMockito.given(methodCall);
@@ -40,8 +41,16 @@ public class UnitTestTemplateWithSecurity extends MockMvcUtilWithSecurity {
 		return Assertions.assertThat(actual);
 	}	
 	
+	public AbstractInstantAssert<?> assertThat(Instant actual) {
+		return Assertions.assertThat(actual);
+	}
+	
 	public <T extends Throwable> ThrowableTypeAssert<T> assertThatExceptionOfType(final Class<? extends T> exceptionType) {
 		return Assertions.assertThatExceptionOfType(exceptionType);
+	}
+	
+	public <T> T any(Class<T> type) {
+		return ArgumentMatchers.any(type);
 	}
 
 }

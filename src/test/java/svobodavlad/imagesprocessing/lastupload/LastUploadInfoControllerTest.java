@@ -5,32 +5,27 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.ResultActions;
 
 import svobodavlad.imagesprocessing.jpaentities.LastUploadInfo;
 import svobodavlad.imagesprocessing.jpaentities.User;
-import svobodavlad.imagesprocessing.testutil.SecurityMockUtil;
-import svobodavlad.imagesprocessing.testutil.UnitTestTemplate;
+import svobodavlad.imagesprocessing.testutil.UnitTestTemplateMockMvc;
 
-@WithMockUser(username = SecurityMockUtil.DEFAULT_USERNAME)
-public class LastUploadInfoControllerTest extends UnitTestTemplate {
-		
-	@MockBean
-	private LastUploadInfoService lastUploadInfoService;	
+@WebMvcTest(LastUploadInfoController.class)
+@AutoConfigureMockMvc(addFilters = false)
+public class LastUploadInfoControllerTest extends UnitTestTemplateMockMvc {
+
+	private static final String MOCKED_USER_NAME = "user";
 	
-	private User mockedUser;
-
-	@BeforeEach
-	private void initData() {
-		mockedUser = SecurityMockUtil.getMockedDefaultUserInternal();
-	}
+	@MockBean
+	private LastUploadInfoService lastUploadInfoService;
 
 	@Test
-	void testGetLastUploadInfoOk200() throws Exception {
+	void getLastUploadInfoOk200() throws Exception {
 		String requestUrl = "/last-upload-info";
 		int expectedStatus = 200;
 		
@@ -38,6 +33,7 @@ public class LastUploadInfoControllerTest extends UnitTestTemplate {
 		DateTimeFormatter formatter = DateTimeFormatter.ISO_INSTANT.withZone(ZoneId.systemDefault());		
 		String expectedJson = "{\"id\":0,\"lastUploadDateTime\":\"" + formatter.format(lastUploadDateTime) + "\"}";
 		
+		User mockedUser = new User(MOCKED_USER_NAME, MOCKED_USER_NAME, MOCKED_USER_NAME);
 		LastUploadInfo lastUpdateInfo = new LastUploadInfo(lastUploadDateTime, mockedUser);
 		
 		this.given(lastUploadInfoService.getForCurrentUser()).willReturn(Optional.of(lastUpdateInfo));
@@ -47,7 +43,7 @@ public class LastUploadInfoControllerTest extends UnitTestTemplate {
 	}
 	
 	@Test
-	void testGetLastUploadInfoNotFound404() throws Exception {
+	void getLastUploadInfoNotFound404() throws Exception {
 		String requestUrl = "/last-upload-info";
 		int expectedStatus = 404;
 		String expectedJson = "";
@@ -59,13 +55,14 @@ public class LastUploadInfoControllerTest extends UnitTestTemplate {
 	}
 
 	@Test
-	void testUpdateLastUploadInfoOk200() throws Exception {
+	void updateLastUploadInfoOk200() throws Exception {
 		String requestUrl = "/last-upload-info-update";
 		int expectedStatus = 200;
 		Instant lastUploadDateTime = Instant.now();
 		DateTimeFormatter formatter = DateTimeFormatter.ISO_INSTANT.withZone(ZoneId.systemDefault());		
 		String expectedJson = "{\"id\":0,\"lastUploadDateTime\":\"" + formatter.format(lastUploadDateTime) +"\"}";
 		
+		User mockedUser = new User(MOCKED_USER_NAME, MOCKED_USER_NAME, MOCKED_USER_NAME);
 		LastUploadInfo lastUploadInfo = new LastUploadInfo(lastUploadDateTime, mockedUser);
 		
 		this.given(lastUploadInfoService.updateForCurrentUser()).willReturn(Optional.of(lastUploadInfo));
