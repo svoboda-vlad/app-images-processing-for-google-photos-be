@@ -8,16 +8,17 @@ import org.assertj.core.api.AbstractLocalDateTimeAssert;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.ObjectAssert;
 import org.assertj.core.api.ThrowableTypeAssert;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatchers;
 import org.mockito.BDDMockito;
 import org.mockito.Mockito;
 import org.mockito.verification.VerificationMode;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-@SpringBootTest
+@ExtendWith(SpringExtension.class)
 @ActiveProfiles(value = {"dev", "noliquibase"})
-public class UnitTestTemplate extends MockMvcUtil {
+public class UnitTestTemplate {
 
 	public <T> BDDMockito.BDDMyOngoingStubbing<T> given(T methodCall) {
 		return BDDMockito.given(methodCall);

@@ -248,6 +248,10 @@ OAuth 2.0 Resource Server
 
 SessionCreationPolicy.STATELESS
 
+JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
+grantedAuthoritiesConverter.setAuthoritiesClaimName("sub");
+grantedAuthoritiesConverter.setAuthorityPrefix("");
+
 ## Dependencies
 
 compile scope (default):
@@ -284,6 +288,8 @@ spring.jpa.hibernate.ddl-auto=none
 springdoc.show-login-endpoint=true
 
 spring.security.oauth2.resourceserver.jwt.issuer-uri=https://accounts.google.com
+
+admin.username=admin
 
 DEV:
 

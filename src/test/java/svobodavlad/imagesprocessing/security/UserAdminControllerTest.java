@@ -4,14 +4,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.ResultActions;
 
 import svobodavlad.imagesprocessing.jpaentities.Role;
 import svobodavlad.imagesprocessing.jpaentities.User;
-import svobodavlad.imagesprocessing.testutil.UnitTestTemplate;
+import svobodavlad.imagesprocessing.testutil.UnitTestTemplateMockMvc;
 
-class UserAdminControllerTest extends UnitTestTemplate {
+@WebMvcTest(UserAdminController.class)
+@AutoConfigureMockMvc(addFilters = false)
+class UserAdminControllerTest extends UnitTestTemplateMockMvc {
 	
 	private static final String MOCKED_USER_NAME = "user";
 	private static final String MOCKED_USER_EMAIL = "user@example.com";	
@@ -25,7 +29,7 @@ class UserAdminControllerTest extends UnitTestTemplate {
 	
 	@MockBean
 	private UserService userService;
-
+	
 	@Test
 	void getAllUsersOk200() throws Exception {
 		String requestUrl = "/admin/users";

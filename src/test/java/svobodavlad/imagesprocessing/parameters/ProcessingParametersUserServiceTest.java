@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.springframework.security.test.context.support.WithMockUser;
 
 import svobodavlad.imagesprocessing.jpaentities.ProcessingParametersDefault;
@@ -20,16 +20,16 @@ class ProcessingParametersUserServiceTest extends UnitTestTemplate {
 	
 	private static final String MOCKED_USER_NAME = "user";
 
-	@MockBean
+	@Mock
 	private ProcessingParametersUserRepository parametersRepository;
 	
-	@MockBean
+	@Mock
 	private ProcessingParametersDefaultRepository parametersDefaultRepository;
 	
-	@MockBean
+	@Mock
 	private UserRepository userRepository;
 	
-	@Autowired
+	@InjectMocks
 	private ProcessingParametersUserService parametersService;
 	
 	@Test

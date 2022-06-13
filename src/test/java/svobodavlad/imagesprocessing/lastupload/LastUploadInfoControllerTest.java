@@ -6,21 +6,23 @@ import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.ResultActions;
 
 import svobodavlad.imagesprocessing.jpaentities.LastUploadInfo;
 import svobodavlad.imagesprocessing.jpaentities.User;
-import svobodavlad.imagesprocessing.testutil.UnitTestTemplate;
+import svobodavlad.imagesprocessing.testutil.UnitTestTemplateMockMvc;
 
-@WithMockUser
-public class LastUploadInfoControllerTest extends UnitTestTemplate {
-		
-	@MockBean
-	private LastUploadInfoService lastUploadInfoService;	
+@WebMvcTest(LastUploadInfoController.class)
+@AutoConfigureMockMvc(addFilters = false)
+public class LastUploadInfoControllerTest extends UnitTestTemplateMockMvc {
+
+	private static final String MOCKED_USER_NAME = "user";
 	
-	private User mockedUser;
+	@MockBean
+	private LastUploadInfoService lastUploadInfoService;
 
 	@Test
 	void getLastUploadInfoOk200() throws Exception {
@@ -31,6 +33,7 @@ public class LastUploadInfoControllerTest extends UnitTestTemplate {
 		DateTimeFormatter formatter = DateTimeFormatter.ISO_INSTANT.withZone(ZoneId.systemDefault());		
 		String expectedJson = "{\"id\":0,\"lastUploadDateTime\":\"" + formatter.format(lastUploadDateTime) + "\"}";
 		
+		User mockedUser = new User(MOCKED_USER_NAME, MOCKED_USER_NAME, MOCKED_USER_NAME);
 		LastUploadInfo lastUpdateInfo = new LastUploadInfo(lastUploadDateTime, mockedUser);
 		
 		this.given(lastUploadInfoService.getForCurrentUser()).willReturn(Optional.of(lastUpdateInfo));
@@ -59,6 +62,7 @@ public class LastUploadInfoControllerTest extends UnitTestTemplate {
 		DateTimeFormatter formatter = DateTimeFormatter.ISO_INSTANT.withZone(ZoneId.systemDefault());		
 		String expectedJson = "{\"id\":0,\"lastUploadDateTime\":\"" + formatter.format(lastUploadDateTime) +"\"}";
 		
+		User mockedUser = new User(MOCKED_USER_NAME, MOCKED_USER_NAME, MOCKED_USER_NAME);
 		LastUploadInfo lastUploadInfo = new LastUploadInfo(lastUploadDateTime, mockedUser);
 		
 		this.given(lastUploadInfoService.updateForCurrentUser()).willReturn(Optional.of(lastUploadInfo));

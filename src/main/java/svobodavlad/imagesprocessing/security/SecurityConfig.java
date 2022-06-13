@@ -2,6 +2,7 @@ package svobodavlad.imagesprocessing.security;
 
 import java.util.Arrays;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -9,6 +10,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -16,6 +19,9 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+	
+	@Value( "${admin.username}" )
+	private String adminUsername;
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
@@ -25,7 +31,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		.and().authorizeRequests()
 		.antMatchers("/h2-console/**").permitAll()
 		.antMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
-		.antMatchers("/admin/**").hasRole("ADMIN").anyRequest().hasRole("USER")
+		.antMatchers("/admin/**").hasAuthority(adminUsername).anyRequest().authenticated()
 		.and()
 		.oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
 		.headers().frameOptions().disable()
@@ -45,6 +51,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 		source.registerCorsConfiguration("/**", config);
 		return source;
+	}
+	
+	@Bean
+	public JwtAuthenticationConverter jwtAuthenticationConverter() {
+	    JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
+	    grantedAuthoritiesConverter.setAuthoritiesClaimName("sub");
+	    grantedAuthoritiesConverter.setAuthorityPrefix("");
+
+	    JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
+	    jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
+	    return jwtAuthenticationConverter;
 	}
 
 }
