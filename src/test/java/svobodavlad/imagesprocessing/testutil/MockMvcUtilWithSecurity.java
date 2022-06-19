@@ -22,32 +22,29 @@ public abstract class MockMvcUtilWithSecurity extends MockMvcUtil {
 
 	public ResultActions mockMvcPerformGetAuthorizationAdminUser(String requestUrl) throws Exception {
 		return this.mockMvc.perform(get(requestUrl)
-				.with(jwt().jwt(jwt -> jwt.subject(ADMIN_USERNAME)).authorities(new SimpleGrantedAuthority("ROLE_USER"), new SimpleGrantedAuthority(ADMIN_USERNAME)))
+				.with(jwt().jwt(jwt -> jwt.subject(ADMIN_USERNAME)).authorities(new SimpleGrantedAuthority(ADMIN_USERNAME)))
 				.accept(MediaType.APPLICATION_JSON));
 	}
 
 	public ResultActions mockMvcPerformGetAuthorizationDefaultUser(String requestUrl) throws Exception {
 		return this.mockMvc.perform(get(requestUrl)
-				.with(jwt().authorities(new SimpleGrantedAuthority("ROLE_USER")))
-				.accept(MediaType.APPLICATION_JSON));
+				.with(jwt()).accept(MediaType.APPLICATION_JSON));
 	}
 	
 	public ResultActions mockMvcPerformPutAuthorizationAdminUser(String requestUrl, String requestJson)
 			throws Exception {
 		return this.mockMvc.perform(put(requestUrl)
-				.with(jwt().jwt(jwt -> jwt.subject(ADMIN_USERNAME)).authorities(new SimpleGrantedAuthority("ROLE_USER"), new SimpleGrantedAuthority(ADMIN_USERNAME)))
+				.with(jwt().jwt(jwt -> jwt.subject(ADMIN_USERNAME)).authorities(new SimpleGrantedAuthority(ADMIN_USERNAME)))
 				.content(requestJson).contentType(MediaType.APPLICATION_JSON));
 	}
 
 	public ResultActions mockMvcPerformPutAuthorizationDefaultUser(String requestUrl, String requestJson)
 			throws Exception {
 		return this.mockMvc.perform(put(requestUrl)
-				.with(jwt().authorities(new SimpleGrantedAuthority("ROLE_USER")))
-				.content(requestJson).contentType(MediaType.APPLICATION_JSON));
+				.with(jwt()).content(requestJson).contentType(MediaType.APPLICATION_JSON));
 	}
 
 	public ResultActions mockMvcPerformDeleteAuthorizationDefaultUser(String requestUrl) throws Exception {
-		return this.mockMvc.perform(delete(requestUrl)
-				.with(jwt().authorities(new SimpleGrantedAuthority("ROLE_USER"), new SimpleGrantedAuthority("ROLE_ADMIN"))));
+		return this.mockMvc.perform(delete(requestUrl).with(jwt()));
 	}
 }
