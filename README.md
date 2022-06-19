@@ -15,7 +15,7 @@ The [app-images-processing-for-google-photos-fe](https://github.com/svoboda-vlad
 
 Swagger UI
 
-[https://images-proc-for-google-photos.herokuapp.com/swagger-ui.html](https://images-proc-for-google-photos.herokuapp.com/swagger-ui.html)
+[https://processing-gphotos.herokuapp.com/swagger-ui.html](https://processing-gphotos.herokuapp.com/swagger-ui.html)
 
 ## Front-end - Registration of a new user and log in
 
@@ -48,7 +48,7 @@ GET /parameters REST API endpoint:
 - using cURL tool:
 
 ```
-curl -i https://images-proc-for-google-photos.herokuapp.com/parameters -H "Authorization: Bearer abcdef"
+curl -i https://processing-gphotos.herokuapp.com/parameters -H "Authorization: Bearer abcdef"
 ```
 
 data in JSON format returned in HTTP response body:
@@ -59,7 +59,7 @@ data in JSON format returned in HTTP response body:
 
 - using Swagger (OpenAPI) interface of the application 
 
-[https://images-proc-for-google-photos.herokuapp.com/swagger-ui.html](https://images-proc-for-google-photos.herokuapp.com/swagger-ui.html)
+[https://processing-gphotos.herokuapp.com/swagger-ui.html](https://processing-gphotos.herokuapp.com/swagger-ui.html)
 
 "Authorize" button > enter ID token to "bearer-key  (http, Bearer)" field > "Authorize" button
 
