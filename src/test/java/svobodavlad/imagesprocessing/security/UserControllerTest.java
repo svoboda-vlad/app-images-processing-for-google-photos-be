@@ -8,7 +8,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.ResultActions;
 
-import svobodavlad.imagesprocessing.jpaentities.Role;
 import svobodavlad.imagesprocessing.jpaentities.User;
 import svobodavlad.imagesprocessing.testutil.UnitTestTemplateMockMvc;
 
@@ -18,7 +17,6 @@ class UserControllerTest extends UnitTestTemplateMockMvc {
 	
 	private static final String MOCKED_USER_NAME = "user";
 	private static final String MOCKED_USER_EMAIL = "user@example.com";
-	private static final String ROLE_USER = "ROLE_USER";
 
 	@MockBean
 	private UserRepository userRepository;
@@ -30,11 +28,10 @@ class UserControllerTest extends UnitTestTemplateMockMvc {
 	void getUserInfoOk200() throws Exception {
 		String requestUrl = "/user";
 		int expectedStatus = 200;
-		String expectedJson = "{\"username\":\"user\",\"givenName\":\"user\",\"familyName\":\"user\",\"email\":\"user@example.com\",\"userRoles\":[{\"role\":{\"id\":0,\"name\":\"ROLE_USER\"}}],\"lastLoginDateTime\":null,\"previousLoginDateTime\":null}";
+		String expectedJson = "{\"username\":\"user\",\"givenName\":\"user\",\"familyName\":\"user\",\"email\":\"user@example.com\",\"lastLoginDateTime\":null,\"previousLoginDateTime\":null}";
 
 		User mockedUser = new User(MOCKED_USER_NAME, MOCKED_USER_NAME, MOCKED_USER_NAME);
 		mockedUser.setEmail(MOCKED_USER_EMAIL);
-		mockedUser.addRole(new Role(ROLE_USER));
 		this.given(userService.getCurrentUser()).willReturn(Optional.of(mockedUser));
 
 		ResultActions mvcResult = this.mockMvcPerformGetNoAuthorization(requestUrl);

@@ -143,4 +143,9 @@ http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibas
 			<column name="login_provider" />
 		</dropColumn>
 	</changeSet>	
+	<changeSet id="20220619175300" author="svoboda-vlad">
+		<dropForeignKeyConstraint baseTableName="user_roles" constraintName="fk_user_roles_role_id"/>
+		<dropTable tableName="role"/>
+		<dropTable tableName="user_roles"/>
+	</changeSet>
 </databaseChangeLog>
