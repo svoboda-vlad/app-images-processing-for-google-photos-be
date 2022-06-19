@@ -30,7 +30,7 @@ class UserControllerTest extends UnitTestTemplateMockMvc {
 		int expectedStatus = 200;
 		String expectedJson = "{\"username\":\"user\",\"givenName\":\"user\",\"familyName\":\"user\",\"email\":\"user@example.com\",\"lastLoginDateTime\":null,\"previousLoginDateTime\":null}";
 
-		User mockedUser = new User(MOCKED_USER_NAME, MOCKED_USER_NAME, MOCKED_USER_NAME);
+		User mockedUser = new User().setUsername(MOCKED_USER_NAME).setGivenName(MOCKED_USER_NAME).setFamilyName(MOCKED_USER_NAME);
 		mockedUser.setEmail(MOCKED_USER_EMAIL);
 		this.given(userService.getCurrentUser()).willReturn(Optional.of(mockedUser));
 
@@ -44,7 +44,7 @@ class UserControllerTest extends UnitTestTemplateMockMvc {
 		int expectedStatus = 204;
 		String expectedJson = "";
 
-		User mockedUser = new User(MOCKED_USER_NAME, MOCKED_USER_NAME, MOCKED_USER_NAME);
+		User mockedUser = new User().setUsername(MOCKED_USER_NAME).setGivenName(MOCKED_USER_NAME).setFamilyName(MOCKED_USER_NAME);
 		mockedUser.setId(1L);
 		
 		ResultActions mvcResult = this.mockMvcPerformDeleteNoAuthorization(requestUrl);

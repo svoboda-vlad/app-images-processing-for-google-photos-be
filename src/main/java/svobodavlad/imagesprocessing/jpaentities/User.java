@@ -3,25 +3,23 @@ package svobodavlad.imagesprocessing.jpaentities;
 import java.time.Instant;
 
 import javax.persistence.Entity;
-import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.Accessors;
 import svobodavlad.imagesprocessing.security.UserInfo;
 
 @Entity
-@Table(name = "user", schema = "public") // needed for PostgreSQL
-@Getter @Setter @ToString(callSuper = true)
+@Data
+@ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true) // roles excluded to avoid circular dependency
 @NoArgsConstructor
-@RequiredArgsConstructor
+@Accessors(chain = true)
 public class User extends JpaEntityTemplate {
 	
 	private static final long serialVersionUID = 1L;
@@ -58,8 +56,12 @@ public class User extends JpaEntityTemplate {
 	}
 
 	public UserInfo toUserInfo() {
-		UserInfo userInfo = new UserInfo(this.getUsername(), this.getGivenName(), this.getFamilyName(), this.getEmail(),
-				this.getLastLoginDateTime(), this.getPreviousLoginDateTime());
-		return userInfo;
+		return new UserInfo()
+				.setUsername(this.getUsername())
+				.setGivenName(this.getGivenName())
+				.setFamilyName(this.getFamilyName())
+				.setEmail(this.getEmail())
+				.setLastLoginDateTime(this.getLastLoginDateTime())
+				.setPreviousLoginDateTime(this.getPreviousLoginDateTime());
 	}
 }

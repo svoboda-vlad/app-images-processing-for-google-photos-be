@@ -4,12 +4,12 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.experimental.Accessors;
 import svobodavlad.imagesprocessing.jpaentities.ProcessingParametersDefault;
 
 @Data
-@AllArgsConstructor
+@Accessors(chain = true)
 public class ProcessingParametersDefaultTemplate {
 
 	@NotNull
