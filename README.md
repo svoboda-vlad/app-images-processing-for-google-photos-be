@@ -107,14 +107,14 @@ git clone https://github.com/svoboda-vlad/app-images-processing-for-google-photo
 cd app-images-processing-for-google-photos-be
 ```
 
-scripts/maveninstallandjavarunh2.sh - Build JAR file from the source code with Maven (without running tests)
+Build JAR file from the source code with Maven (without running tests)
 
 ```
 mvn clean install -DskipTests
 (sudo mvn clean install -Dhttps.protocols=TLSv1.2 -DskipTests)
 ```
 
-Run the JAR file (application) with defining administrator account (username: admin) and Spring profiles (dev) using in-memory H2 database
+Run the JAR file (application) with defining administrator account (Google sub: admin) and Spring profiles (dev) using in-memory H2 database
 
 ```
 java -D"admin.username=admin" -jar target/images-processing-0.0.1-SNAPSHOT.jar
@@ -134,21 +134,21 @@ H2 database console
 
 ## Maven build - Spring profiles
 
-scripts/mavenunittest.sh - default "dev" profile - unit testing (mocked repositories)
+Default "dev" profile - unit testing (mocked repositories)
 
 ```
 mvn clean package
 (sudo mvn clean package -Dhttps.protocols=TLSv1.2)
 ```
 
-scripts/mavenintegtesth2.sh - default "dev" profile - integration testing against H2 database
+Default "dev" profile - integration testing against H2 database
 
 ```
 mvn clean install
 (sudo mvn clean install -Dhttps.protocols=TLSv1.2)
 ```
 
-mavenintegtestpostgres.sh - "integ" profile - integration testing against PostgreSQL database (see details in section PostgreSQL within Homestead Vagrant box)
+"integ" profile - integration testing against PostgreSQL database (see details in section PostgreSQL within Homestead Vagrant box)
 
 ```
 mvn clean install -D"spring.profiles.active=integ"
@@ -197,12 +197,6 @@ restricted (administrator):
 User - id (long), username (String, min = 1, max = 255), lastLoginDateTime (Instant), previousLoginDateTime (Instant), givenName (String, min = 1, max = 255), familyName (String, min = 1, max = 255), email (String, min = 1, max = 255)
 - no endpoint
 
-Role
-- no endpoint - id (long), name (String, min = 1, max = 255)
-
-UserRoles
-- no endpoint - id (long), user (User), role (Role)
-
 ProcessingParametersDefault - id (long), timeDiffGroup (int, min = 60, max = 86400), resizeWidth (int, min = 1, max = 10000), resizeHeight (int, min = 1, max = 10000)
 - no endpoint
 
@@ -224,8 +218,8 @@ ProcessingParametersUserTemplate - timeDiffGroup (int, min = 60, max = 86400), r
 - PUT "/parameters"
 
 UserInfo - username (String, min = 1, max = 255), lastLoginDateTime (Instant), previousLoginDateTime (Instant), givenName (String, min = 1, max = 255), familyName (String, min = 1, max = 255), email (String, min = 1, max = 255)
-- GET "/user": {"username": "user1","givenName": "User 1","familyName": "User 1","lastLoginDateTime": "2021-05-05T12:50:12.354751","previousLoginDateTime": "2021-05-05T12:50:12.354751","email": "user1@gmail.com","userRoles":[{"role":{"id":1,"name":"ROLE_USER"}}]}
-- GET "/admin/users": [{"username":"user2","givenName":"User 2","familyName":"User 2","lastLoginDateTime": "2021-07-27T08:08:50.759683","previousLoginDateTime": "2021-07-27T08:08:50.759683","email": "user2@gmail.com","userRoles":[{"role":{"id":1,"name":"ROLE_USER"}}]},{"username":"user1","givenName":"User 1","familyName":"User 1","lastLoginDateTime": "2021-07-27T08:08:50.759683","previousLoginDateTime": "2021-07-27T08:08:50.759683","email": "user1@gmail.com","userRoles":[{"role":{"id":1,"name":"ROLE_USER"}},{"role":{"id":2,"name":"ROLE_ADMIN"}}]}]
+- GET "/user": {"username": "user1","givenName": "User 1","familyName": "User 1","lastLoginDateTime": "2021-05-05T12:50:12.354751","previousLoginDateTime": "2021-05-05T12:50:12.354751","email": "user1@gmail.com"}
+- GET "/admin/users": [{"username":"user2","givenName":"User 2","familyName":"User 2","lastLoginDateTime": "2021-07-27T08:08:50.759683","previousLoginDateTime": "2021-07-27T08:08:50.759683","email": "user2@gmail.com"},{"username":"user1","givenName":"User 1","familyName":"User 1","lastLoginDateTime": "2021-07-27T08:08:50.759683","previousLoginDateTime": "2021-07-27T08:08:50.759683","email": "user1@gmail.com"}]
 
 ## Database
 
@@ -235,8 +229,6 @@ JDBC URL: "jdbc:h2:mem:testdb"
 
 Database tables:
 - user - id (int PRIMARY KEY), username (VARCHAR(255) NOT NULL UNIQUE), last_login_date_time (TIMESTAMP), previous_login_date_time (TIMESTAMP), given_name (VARCHAR(255), family_name (VARCHAR(255)), email (VARCHAR(255))
-- user_roles - user_id (int NOT NULL), role_id (int NOT NULL), user_id + role_id - PRIMARY KEY
-- role - id (int PRIMARY KEY), name (VARCHAR(255) NOT NULL UNIQUE) - default values: "ROLE_USER", "ROLE_ADMIN"
 - processing_parameters_default - id (int PRIMARY KEY), time_diff_group (int NOT NULL), resize_width (int NOT NULL), resize_height (int NOT NULL)
 - processing_parameters_user - id (int PRIMARY KEY), time_diff_group (int NOT NULL), resize_width (int NOT NULL), resize_height (int NOT NULL), user_id (int NOT NULL)
 - last_upload_info - id (int PRIMARY KEY), last_upload_date_time (TIMESTAMP), user_id (int NOT NULL)
@@ -284,8 +276,6 @@ spring.liquibase.enabled=true
 spring.profiles.active=dev
 
 spring.jpa.hibernate.ddl-auto=none
-
-springdoc.show-login-endpoint=true
 
 spring.security.oauth2.resourceserver.jwt.issuer-uri=https://accounts.google.com
 
