@@ -5,14 +5,14 @@ import java.time.Instant;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 import svobodavlad.imagesprocessing.jpaentities.User;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
+@Accessors(chain = true)
 public class UserInfo {
 
 	@NotNull

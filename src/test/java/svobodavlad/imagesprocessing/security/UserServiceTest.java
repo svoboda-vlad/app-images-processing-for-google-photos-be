@@ -38,7 +38,7 @@ public class UserServiceTest extends UnitTestTemplate {
 	
 	@Test
 	void registerUserNewUser() {
-		User mockedUser = new User(DEFAULT_USERNAME, DEFAULT_USERNAME, DEFAULT_USERNAME);
+		User mockedUser = new User().setUsername(DEFAULT_USERNAME).setGivenName(DEFAULT_USERNAME).setFamilyName(DEFAULT_USERNAME);
 
 		this.given(userRepository.findByUsername(DEFAULT_USERNAME)).willReturn(Optional.empty());
 		this.given(userRepository.save(mockedUser)).willReturn(mockedUser);
@@ -49,7 +49,7 @@ public class UserServiceTest extends UnitTestTemplate {
 
 	@Test
 	void registerUserAlreadyExistsException() {
-		User mockedUser = new User(DEFAULT_USERNAME, DEFAULT_USERNAME, DEFAULT_USERNAME);
+		User mockedUser = new User().setUsername(DEFAULT_USERNAME).setGivenName(DEFAULT_USERNAME).setFamilyName(DEFAULT_USERNAME);
 
 		this.given(userRepository.findByUsername(DEFAULT_USERNAME)).willReturn(Optional.of(mockedUser));
 		this.assertThatExceptionOfType(EntityExistsException.class).isThrownBy(() -> {
@@ -59,7 +59,7 @@ public class UserServiceTest extends UnitTestTemplate {
 
 	@Test
 	void registerUserDefaultRoleNotFound() {
-		User mockedUser = new User(DEFAULT_USERNAME, DEFAULT_USERNAME, DEFAULT_USERNAME);
+		User mockedUser = new User().setUsername(DEFAULT_USERNAME).setGivenName(DEFAULT_USERNAME).setFamilyName(DEFAULT_USERNAME);
 
 		this.assertThatExceptionOfType(RuntimeException.class).isThrownBy(() -> {
 			userService.registerUser(mockedUser);
@@ -69,7 +69,7 @@ public class UserServiceTest extends UnitTestTemplate {
 	@Test
 	void updateCurrentUserLastLoginDateTimeFirstLogin() {
 		Instant now = Instant.now();
-		User mockedUser = new User(DEFAULT_USERNAME, DEFAULT_USERNAME, DEFAULT_USERNAME);
+		User mockedUser = new User().setUsername(DEFAULT_USERNAME).setGivenName(DEFAULT_USERNAME).setFamilyName(DEFAULT_USERNAME);
 		mockedUser.setLastLoginDateTime(now);
 		mockedUser.setPreviousLoginDateTime(now);
 		
@@ -83,7 +83,7 @@ public class UserServiceTest extends UnitTestTemplate {
 	@Test
 	void updateCurrentUserLastLoginDateTimeSecondLogin() {
 		Instant now = Instant.now();
-		User mockedUser = new User(DEFAULT_USERNAME, DEFAULT_USERNAME, DEFAULT_USERNAME);
+		User mockedUser = new User().setUsername(DEFAULT_USERNAME).setGivenName(DEFAULT_USERNAME).setFamilyName(DEFAULT_USERNAME);;
 		Instant lastLoginDateTime = LocalDateTime.of(LocalDate.of(2021, 9, 26), LocalTime.of(12, 53)).toInstant(ZoneOffset.UTC);;
 		mockedUser.setLastLoginDateTime(now);
 		mockedUser.setPreviousLoginDateTime(lastLoginDateTime);
@@ -104,7 +104,7 @@ public class UserServiceTest extends UnitTestTemplate {
 	
 	@Test
 	void deleteUserOkUserDeleted() {
-		User mockedUser = new User(DEFAULT_USERNAME, DEFAULT_USERNAME, DEFAULT_USERNAME);
+		User mockedUser = new User().setUsername(DEFAULT_USERNAME).setGivenName(DEFAULT_USERNAME).setFamilyName(DEFAULT_USERNAME);
 
 		this.given(userRepository.findByUsername(DEFAULT_USERNAME)).willReturn(Optional.of(mockedUser));		
 		userService.deleteCurrentUser();
@@ -116,7 +116,7 @@ public class UserServiceTest extends UnitTestTemplate {
 	
 	@Test
 	void getCurrentUserOkUserExists() {
-		User mockedUser = new User(DEFAULT_USERNAME, DEFAULT_USERNAME, DEFAULT_USERNAME);
+		User mockedUser = new User().setUsername(DEFAULT_USERNAME).setGivenName(DEFAULT_USERNAME).setFamilyName(DEFAULT_USERNAME);
 
 		this.given(userRepository.findByUsername(DEFAULT_USERNAME)).willReturn(Optional.of(mockedUser));		
 		this.given(userRepository.save(mockedUser)).willReturn(mockedUser);
@@ -127,7 +127,7 @@ public class UserServiceTest extends UnitTestTemplate {
 	@Test
 	void getCurrentUserOkUserDoesNotExists() {
 		Instant now = Instant.now();
-		User mockedUser = new User(DEFAULT_USERNAME, DEFAULT_USERNAME, DEFAULT_USERNAME);
+		User mockedUser = new User().setUsername(DEFAULT_USERNAME).setGivenName(DEFAULT_USERNAME).setFamilyName(DEFAULT_USERNAME);
 		mockedUser.setEmail(DEFAULT_USERNAME);
 
 		this.given(userRepository.findByUsername(DEFAULT_USERNAME))

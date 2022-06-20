@@ -24,7 +24,7 @@ public class LastUploadInfoControllerIT extends IntegTestTemplate {
 			
 	@BeforeEach
 	void initData() {
-		lastUploadInfoRepository.save(new LastUploadInfo(Instant.now(), securityTestUtil.saveDefaultUser()));
+		lastUploadInfoRepository.save(new LastUploadInfo().setLastUploadDateTime(Instant.now()).setUser(securityTestUtil.saveDefaultUser()));
 	}
 
 	@Test

@@ -26,7 +26,7 @@ public class ProcessingParametersDefaultControllerTest extends UnitTestTemplateM
 		String expectedJson = "{\"timeDiffGroup\":1800,\"resizeWidth\":1000,\"resizeHeight\":1000}";
 		
 		List<ProcessingParametersDefault> parametersList = new ArrayList<ProcessingParametersDefault>();
-		ProcessingParametersDefault parameters = new ProcessingParametersDefault(1800, 1000, 1000);
+		ProcessingParametersDefault parameters = new ProcessingParametersDefault().setTimeDiffGroup(1800).setResizeHeight(1000).setResizeWidth(1000);
 		parameters.setId(1);
 		parametersList.add(parameters);
 		
@@ -55,7 +55,7 @@ public class ProcessingParametersDefaultControllerTest extends UnitTestTemplateM
 		int expectedStatus = 200;
 		String expectedJson = "{\"timeDiffGroup\":3600,\"resizeWidth\":1000,\"resizeHeight\":1000}";
 		
-		ProcessingParametersDefault parameters = new ProcessingParametersDefault(3600, 1000, 1000);
+		ProcessingParametersDefault parameters = new ProcessingParametersDefault().setTimeDiffGroup(3600).setResizeHeight(1000).setResizeWidth(1000);
 		parameters.setId(1);
 		this.given(parametersRepository.findAll()).willReturn(new ArrayList<ProcessingParametersDefault>(List.of(parameters)));
 		this.given(parametersRepository.save(parameters)).willReturn(parameters);

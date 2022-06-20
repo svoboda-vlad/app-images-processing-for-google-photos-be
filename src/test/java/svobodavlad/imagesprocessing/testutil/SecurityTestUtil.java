@@ -23,6 +23,6 @@ public class SecurityTestUtil {
 	public User saveDefaultUser() {
 		Optional<User> optUser = userRepository.findByUsername(DEFAULT_USERNAME);
 		if (optUser.isPresent()) return optUser.get();
-		return userService.registerUser(new User(DEFAULT_USERNAME, DEFAULT_USERNAME, DEFAULT_USERNAME));
+		return userService.registerUser(new User().setUsername(DEFAULT_USERNAME).setGivenName(DEFAULT_USERNAME).setFamilyName(DEFAULT_USERNAME));
 	}
 }
