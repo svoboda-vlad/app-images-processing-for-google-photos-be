@@ -16,7 +16,9 @@ public class ProcessingParametersDefaultControllerIT extends IntegTestTemplate {
 	
 	@BeforeEach
 	void initData() {
-		parametersRepository.save(new ProcessingParametersDefault(1800, 1000, 1000));
+		if (parametersRepository.findAll().size() == 0) {
+			parametersRepository.save(new ProcessingParametersDefault().setTimeDiffGroup(1800).setResizeWidth(1000).setResizeHeight(1000));			
+		}
 	}
 
 	@Test

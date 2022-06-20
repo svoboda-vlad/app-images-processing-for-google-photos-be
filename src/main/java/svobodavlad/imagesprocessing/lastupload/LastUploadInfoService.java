@@ -40,7 +40,7 @@ public class LastUploadInfoService {
 			LastUploadInfo lastUploadInfo = optLastUploadInfo.get().updateLastUploadDateTime(dateTimeUtil.getCurrentDateTime());
 			return Optional.of(lastUploadInfoRepository.save(lastUploadInfo));			
 		}
-		LastUploadInfo lastUploadInfo = new LastUploadInfo(null, optUser.get());
+		LastUploadInfo lastUploadInfo = new LastUploadInfo().setUser(optUser.get());
 		lastUploadInfo.updateLastUploadDateTime(dateTimeUtil.getCurrentDateTime());
 		return Optional.of(lastUploadInfoRepository.save(lastUploadInfo));
 	}

@@ -5,24 +5,22 @@ import java.time.Instant;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.OneToOne;
-import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.Accessors;
 
 @Entity
-@Table(name = "last_upload_info", schema = "public") // needed for PostgreSQL
-@Getter @Setter @ToString(callSuper = true)
+@Data
+@ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
-@AllArgsConstructor
+@Accessors(chain = true)
 public class LastUploadInfo extends JpaEntityTemplate {
 	
 	private static final long serialVersionUID = 1L;

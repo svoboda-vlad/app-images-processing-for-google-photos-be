@@ -71,7 +71,7 @@ public class UserService {
 			return updateCurrentUserLastLoginDateTime();
 		} else {
 			UserInfo userInfo = getUserInfoWithAttributes(authentication);
-			User user = new User(userInfo.getUsername(), userInfo.getGivenName(), userInfo.getFamilyName());
+			User user = new User().setUsername(userInfo.getUsername()).setGivenName(userInfo.getGivenName()).setFamilyName(userInfo.getFamilyName());
 			user.setEmail(userInfo.getEmail());
 			registerUser(user);
 			return updateCurrentUserLastLoginDateTime();

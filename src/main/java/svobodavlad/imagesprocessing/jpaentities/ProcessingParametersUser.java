@@ -3,27 +3,25 @@ package svobodavlad.imagesprocessing.jpaentities;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.OneToOne;
-import javax.persistence.Table;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.Accessors;
 import svobodavlad.imagesprocessing.parameters.ProcessingParametersUserTemplate;
 
 @Entity
-@Table(name = "processing_parameters_user", schema = "public") // needed for PostgreSQL
-@Getter @Setter @ToString(callSuper = true)
+@Data
+@ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
-@AllArgsConstructor
+@Accessors(chain = true)
 public class ProcessingParametersUser extends JpaEntityTemplate {
 	
 	private static final long serialVersionUID = 1L;
@@ -48,7 +46,10 @@ public class ProcessingParametersUser extends JpaEntityTemplate {
 	private User user;	
 	
 	public ProcessingParametersUserTemplate toProcessingParametersUserTemplate() {
-		return new ProcessingParametersUserTemplate(this.getTimeDiffGroup(), this.getResizeWidth(), this.getResizeHeight());
+		return new ProcessingParametersUserTemplate()
+				.setTimeDiffGroup(this.getTimeDiffGroup())
+				.setResizeWidth(this.getResizeWidth())
+				.setResizeHeight(this.getResizeHeight());
 	}
 	
 	public ProcessingParametersUser resetToDefault(ProcessingParametersDefault parametersDefault) {
