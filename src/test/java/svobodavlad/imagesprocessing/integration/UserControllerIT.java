@@ -37,9 +37,7 @@ public class UserControllerIT extends IntegTestTemplate {
 		ResultActions mvcResult = this.mockMvcPerformGetAuthorizationDefaultUser(requestUrl);
 		
 		defaultUser = userRepository.getById(defaultUser.getId());
-		String expectedJson = "{\"username\":\"user\",\"givenName\":\"user\",\"familyName\":\"user\",\"email\":\"user\",\"lastLoginDateTime\":\"" 
-				+ defaultUser.getLastLoginDateTime() + "\",\"previousLoginDateTime\":\"" 
-				+ defaultUser.getPreviousLoginDateTime() + "\"}";
+		String expectedJson = "{\"username\":\"user\",\"givenName\":\"user\",\"familyName\":\"user\",\"email\":\"user\"}";
 
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
 	}
@@ -54,10 +52,7 @@ public class UserControllerIT extends IntegTestTemplate {
 
 		ResultActions mvcResult = this.mockMvcPerformGetAuthorizationDefaultUser(requestUrl);
 		
-		User defaultUser = userRepository.findByUsername(SecurityTestUtil.DEFAULT_USERNAME).get();
-		String expectedJson = "{\"username\":\"user\",\"givenName\":\"user\",\"familyName\":\"user\",\"email\":\"user\",\"lastLoginDateTime\":\"" 
-				+ defaultUser.getLastLoginDateTime() + "\",\"previousLoginDateTime\":\"" 
-				+ defaultUser.getPreviousLoginDateTime() + "\"}";
+		String expectedJson = "{\"username\":\"user\",\"givenName\":\"user\",\"familyName\":\"user\",\"email\":\"user\"}";
 
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
 	}	

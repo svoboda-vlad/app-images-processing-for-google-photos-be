@@ -34,8 +34,7 @@ public class LastUploadInfoControllerIT extends IntegTestTemplate {
 		DateTimeFormatter formatter = DateTimeFormatter.ISO_INSTANT.withZone(ZoneId.systemDefault());
 		
 		LastUploadInfo lastUploadInfo = lastUploadInfoRepository.findByUser_Username(SecurityTestUtil.DEFAULT_USERNAME).get();
-		String expectedJson = "{\"id\":" + lastUploadInfo.getId() 
-		+ ",\"lastUploadDateTime\":\"" + formatter.format(lastUploadInfo.getLastUploadDateTime()) + "\"}";
+		String expectedJson = "{\"lastUploadDateTime\":\"" + formatter.format(lastUploadInfo.getLastUploadDateTime()) + "\"}";
 		
 		ResultActions mvcResult = this.mockMvcPerformGetAuthorizationDefaultUser(requestUrl);
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
@@ -65,8 +64,7 @@ public class LastUploadInfoControllerIT extends IntegTestTemplate {
 		this.assertThat(lastUploadInfo.getLastUploadDateTime()).isBetween(minTime, Instant.now());
 		
 		DateTimeFormatter formatter = DateTimeFormatter.ISO_INSTANT.withZone(ZoneId.systemDefault());
-		String expectedJson = "{\"id\":" + lastUploadInfo.getId() 
-		+ ",\"lastUploadDateTime\":\"" + formatter.format(lastUploadInfo.getLastUploadDateTime()) + "\"}";		
+		String expectedJson = "{\"lastUploadDateTime\":\"" + formatter.format(lastUploadInfo.getLastUploadDateTime()) + "\"}";		
 		
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
 	}
@@ -81,8 +79,7 @@ public class LastUploadInfoControllerIT extends IntegTestTemplate {
 		
 		LastUploadInfo newLastUploadInfo = lastUploadInfoRepository.findByUser_Username(SecurityTestUtil.DEFAULT_USERNAME).get();
 		DateTimeFormatter formatter = DateTimeFormatter.ISO_INSTANT.withZone(ZoneId.systemDefault());
-		String expectedJson = "{\"id\":" + newLastUploadInfo.getId() 
-		+ ",\"lastUploadDateTime\":\"" + formatter.format(newLastUploadInfo.getLastUploadDateTime()) + "\"}";		
+		String expectedJson = "{\"lastUploadDateTime\":\"" + formatter.format(newLastUploadInfo.getLastUploadDateTime()) + "\"}";		
 		
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
 	}	

@@ -1,10 +1,6 @@
 package svobodavlad.imagesprocessing.security;
 
 import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZoneOffset;
 import java.util.Optional;
 
 import javax.persistence.EntityExistsException;
@@ -64,42 +60,6 @@ public class UserServiceTest extends UnitTestTemplate {
 		this.assertThatExceptionOfType(RuntimeException.class).isThrownBy(() -> {
 			userService.registerUser(mockedUser);
 		});
-	}
-
-	@Test
-	void updateCurrentUserLastLoginDateTimeFirstLogin() {
-		Instant now = Instant.now();
-		User mockedUser = new User().setUsername(DEFAULT_USERNAME).setGivenName(DEFAULT_USERNAME).setFamilyName(DEFAULT_USERNAME);
-		mockedUser.setLastLoginDateTime(now);
-		mockedUser.setPreviousLoginDateTime(now);
-		
-		this.given(userRepository.findByUsername(DEFAULT_USERNAME)).willReturn(Optional.of(mockedUser));
-		this.given(dateTimeUtil.getCurrentDateTime()).willReturn(now);
-		this.given(userRepository.save(mockedUser)).willReturn(mockedUser);
-		
-		this.assertThat(userService.updateCurrentUserLastLoginDateTime()).isEqualTo(Optional.of(mockedUser));
-	}
-	
-	@Test
-	void updateCurrentUserLastLoginDateTimeSecondLogin() {
-		Instant now = Instant.now();
-		User mockedUser = new User().setUsername(DEFAULT_USERNAME).setGivenName(DEFAULT_USERNAME).setFamilyName(DEFAULT_USERNAME);;
-		Instant lastLoginDateTime = LocalDateTime.of(LocalDate.of(2021, 9, 26), LocalTime.of(12, 53)).toInstant(ZoneOffset.UTC);;
-		mockedUser.setLastLoginDateTime(now);
-		mockedUser.setPreviousLoginDateTime(lastLoginDateTime);
-		
-		this.given(userRepository.findByUsername(DEFAULT_USERNAME)).willReturn(Optional.of(mockedUser));
-		this.given(dateTimeUtil.getCurrentDateTime()).willReturn(now);
-		this.given(userRepository.save(mockedUser)).willReturn(mockedUser);	
-		
-		this.assertThat(userService.updateCurrentUserLastLoginDateTime()).isEqualTo(Optional.of(mockedUser));
-	}
-	
-	@Test
-	void updateCurrentUserLastLoginDateTimeUserDoesNotExist() {
-		this.given(userRepository.findByUsername(DEFAULT_USERNAME + "x")).willReturn(Optional.empty());
-		
-		this.assertThat(userService.updateCurrentUserLastLoginDateTime()).isEqualTo(Optional.empty());
 	}
 	
 	@Test

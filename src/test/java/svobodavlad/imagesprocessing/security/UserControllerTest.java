@@ -28,7 +28,7 @@ class UserControllerTest extends UnitTestTemplateMockMvc {
 	void getUserInfoOk200() throws Exception {
 		String requestUrl = "/user";
 		int expectedStatus = 200;
-		String expectedJson = "{\"username\":\"user\",\"givenName\":\"user\",\"familyName\":\"user\",\"email\":\"user@example.com\",\"lastLoginDateTime\":null,\"previousLoginDateTime\":null}";
+		String expectedJson = "{\"username\":\"user\",\"givenName\":\"user\",\"familyName\":\"user\",\"email\":\"user@example.com\"}";
 
 		User mockedUser = new User().setUsername(MOCKED_USER_NAME).setGivenName(MOCKED_USER_NAME).setFamilyName(MOCKED_USER_NAME);
 		mockedUser.setEmail(MOCKED_USER_EMAIL);

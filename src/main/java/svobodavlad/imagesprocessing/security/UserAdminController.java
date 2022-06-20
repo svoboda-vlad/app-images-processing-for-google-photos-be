@@ -23,9 +23,9 @@ public class UserAdminController {
 
 	@Operation(security = { @SecurityRequirement(name = "bearer-key") })
 	@GetMapping(ADMIN_USERS_URL)
-	public ResponseEntity<List<UserInfo>> getAllUsers() {
+	public ResponseEntity<List<UserTemplate>> getAllUsers() {
 		List<User> users = userRepository.findAll();
-		List<UserInfo> userInfoList = new ArrayList<UserInfo>();
+		List<UserTemplate> userInfoList = new ArrayList<UserTemplate>();
 		users.forEach(user -> {
 			userInfoList.add(user.toUserInfo());
 		});

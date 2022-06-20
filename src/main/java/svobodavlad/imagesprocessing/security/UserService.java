@@ -16,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import svobodavlad.imagesprocessing.jpaentities.User;
 import svobodavlad.imagesprocessing.parameters.ProcessingParametersUserService;
-import svobodavlad.imagesprocessing.util.DateTimeUtil;
 
 @Service
 @Transactional
@@ -25,7 +24,6 @@ public class UserService {
 
 	private final UserRepository userRepository;
 	private final ProcessingParametersUserService parametersService;
-	private final DateTimeUtil dateTimeUtil;
 	
 	public User registerUser(User user) {
 		if (userRepository.findByUsername(user.getUsername()).isPresent())
@@ -34,17 +32,8 @@ public class UserService {
 		parametersService.setInitialParameters(user.getUsername());
 		return user;
 	}
-
-	public Optional<User> updateCurrentUserLastLoginDateTime() {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		Optional<User> optUser = userRepository.findByUsername(authentication.getName());
-		if (optUser.isEmpty()) return Optional.empty();
-		User user = optUser.get();
-		user.updateLastLoginDateTime(dateTimeUtil.getCurrentDateTime());
-		return Optional.of(userRepository.save(user));
-	}
 	
-	public Optional<User> updateCurrentUser(UserInfo userInfo) {
+	public Optional<User> updateCurrentUser(UserTemplate userInfo) {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		if (!authentication.getName().equals(userInfo.getUsername())) return Optional.empty();
 		Optional<User> optUser = userRepository.findByUsername(userInfo.getUsername());
@@ -67,19 +56,17 @@ public class UserService {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		Optional<User> optUser = userRepository.findByUsername(authentication.getName());
 		if (optUser.isPresent()) {
-			updateCurrentUser(getUserInfoWithAttributes(authentication));
-			return updateCurrentUserLastLoginDateTime();
+			return updateCurrentUser(getUserInfoWithAttributes(authentication));
 		} else {
-			UserInfo userInfo = getUserInfoWithAttributes(authentication);
+			UserTemplate userInfo = getUserInfoWithAttributes(authentication);
 			User user = new User().setUsername(userInfo.getUsername()).setGivenName(userInfo.getGivenName()).setFamilyName(userInfo.getFamilyName());
 			user.setEmail(userInfo.getEmail());
-			registerUser(user);
-			return updateCurrentUserLastLoginDateTime();
+			return Optional.of(registerUser(user));
 		}
 	}
 	
-	private UserInfo getUserInfoWithAttributes(Authentication authentication) {
-		UserInfo userInfo = new UserInfo();
+	private UserTemplate getUserInfoWithAttributes(Authentication authentication) {
+		UserTemplate userInfo = new UserTemplate();
 		userInfo.setUsername(authentication.getName());
 		userInfo.setGivenName(authentication.getName());
 		userInfo.setFamilyName(authentication.getName());
