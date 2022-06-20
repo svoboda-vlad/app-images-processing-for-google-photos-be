@@ -7,8 +7,6 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -42,7 +40,6 @@ public class ProcessingParametersUser extends JpaEntityTemplate {
 	// fetch - changed to lazy
 	// @JoinColumn(name = "user_id") - specified by default
 	@OneToOne(fetch = FetchType.LAZY)
-	@JsonIgnore
 	private User user;	
 	
 	public ProcessingParametersUserTemplate toProcessingParametersUserTemplate() {

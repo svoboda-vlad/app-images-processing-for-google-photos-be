@@ -16,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import svobodavlad.imagesprocessing.jpaentities.User;
 import svobodavlad.imagesprocessing.parameters.ProcessingParametersUserService;
-import svobodavlad.imagesprocessing.util.DateTimeUtil;
 
 @Service
 @Transactional
@@ -25,7 +24,6 @@ public class UserService {
 
 	private final UserRepository userRepository;
 	private final ProcessingParametersUserService parametersService;
-	private final DateTimeUtil dateTimeUtil;
 	
 	public User registerUser(User user) {
 		if (userRepository.findByUsername(user.getUsername()).isPresent())
@@ -34,23 +32,14 @@ public class UserService {
 		parametersService.setInitialParameters(user.getUsername());
 		return user;
 	}
-
-	public Optional<User> updateCurrentUserLastLoginDateTime() {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		Optional<User> optUser = userRepository.findByUsername(authentication.getName());
-		if (optUser.isEmpty()) return Optional.empty();
-		User user = optUser.get();
-		user.updateLastLoginDateTime(dateTimeUtil.getCurrentDateTime());
-		return Optional.of(userRepository.save(user));
-	}
 	
-	public Optional<User> updateCurrentUser(UserInfo userInfo) {
+	public Optional<User> updateCurrentUser(UserTemplate userTemplate) {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		if (!authentication.getName().equals(userInfo.getUsername())) return Optional.empty();
-		Optional<User> optUser = userRepository.findByUsername(userInfo.getUsername());
+		if (!authentication.getName().equals(userTemplate.getUsername())) return Optional.empty();
+		Optional<User> optUser = userRepository.findByUsername(userTemplate.getUsername());
 		if (optUser.isEmpty()) return Optional.empty();
 		User user = optUser.get();
-		return Optional.of(userRepository.save(userInfo.toUser(user)));
+		return Optional.of(userRepository.save(userTemplate.toUser(user)));
 	}	
 	
 	public void deleteCurrentUser() {
@@ -67,34 +56,32 @@ public class UserService {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		Optional<User> optUser = userRepository.findByUsername(authentication.getName());
 		if (optUser.isPresent()) {
-			updateCurrentUser(getUserInfoWithAttributes(authentication));
-			return updateCurrentUserLastLoginDateTime();
+			return updateCurrentUser(getUserTemplateWithAttributes(authentication));
 		} else {
-			UserInfo userInfo = getUserInfoWithAttributes(authentication);
-			User user = new User().setUsername(userInfo.getUsername()).setGivenName(userInfo.getGivenName()).setFamilyName(userInfo.getFamilyName());
-			user.setEmail(userInfo.getEmail());
-			registerUser(user);
-			return updateCurrentUserLastLoginDateTime();
+			UserTemplate userTemplate = getUserTemplateWithAttributes(authentication);
+			User user = new User().setUsername(userTemplate.getUsername()).setGivenName(userTemplate.getGivenName()).setFamilyName(userTemplate.getFamilyName());
+			user.setEmail(userTemplate.getEmail());
+			return Optional.of(registerUser(user));
 		}
 	}
 	
-	private UserInfo getUserInfoWithAttributes(Authentication authentication) {
-		UserInfo userInfo = new UserInfo();
-		userInfo.setUsername(authentication.getName());
-		userInfo.setGivenName(authentication.getName());
-		userInfo.setFamilyName(authentication.getName());
-		userInfo.setEmail(authentication.getName());
+	private UserTemplate getUserTemplateWithAttributes(Authentication authentication) {
+		UserTemplate userTemplate = new UserTemplate();
+		userTemplate.setUsername(authentication.getName());
+		userTemplate.setGivenName(authentication.getName());
+		userTemplate.setFamilyName(authentication.getName());
+		userTemplate.setEmail(authentication.getName());
 		if (authentication instanceof AbstractAuthenticationToken) {
 			AbstractAuthenticationToken authToken = (AbstractAuthenticationToken) authentication;
 			Map<String, Object> attributes = new HashMap<>();
 			if (authToken instanceof JwtAuthenticationToken) {
 	            attributes = ((JwtAuthenticationToken) authToken).getTokenAttributes();
 	        }
-			if (attributes.get("given_name") != null) userInfo.setGivenName((String) attributes.get("given_name"));
-			if (attributes.get("family_name") != null) userInfo.setFamilyName((String) attributes.get("family_name"));
-			if (attributes.get("email") != null) userInfo.setEmail((String) attributes.get("email"));
+			if (attributes.get("given_name") != null) userTemplate.setGivenName((String) attributes.get("given_name"));
+			if (attributes.get("family_name") != null) userTemplate.setFamilyName((String) attributes.get("family_name"));
+			if (attributes.get("email") != null) userTemplate.setEmail((String) attributes.get("email"));
 		}
-		return userInfo;
+		return userTemplate;
 	}
 	
 }

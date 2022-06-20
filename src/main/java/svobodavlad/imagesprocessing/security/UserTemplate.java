@@ -1,7 +1,5 @@
 package svobodavlad.imagesprocessing.security;
 
-import java.time.Instant;
-
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -13,7 +11,7 @@ import svobodavlad.imagesprocessing.jpaentities.User;
 @Data
 @NoArgsConstructor
 @Accessors(chain = true)
-public class UserInfo {
+public class UserTemplate {
 
 	@NotNull
 	@Size(min = 1, max = 255)
@@ -29,9 +27,6 @@ public class UserInfo {
 	
 	@Size(min = 1, max = 255)
 	private String email;
-
-	private Instant lastLoginDateTime;
-	private Instant previousLoginDateTime;
 
 	public User toUser(User user) {
 		user.setFamilyName(familyName);
