@@ -23,7 +23,7 @@ public class UserAdminControllerIT extends IntegTestTemplate {
 	void getAllUsersOk200() throws Exception {
 		String requestUrl = "/admin/users";
 		int expectedStatus = 200;
-		String expectedJson = "[{\"username\":\"user\",\"givenName\":\"user\",\"familyName\":\"user\",\"email\":null,\"lastLoginDateTime\":null,\"previousLoginDateTime\":null}]";
+		String expectedJson = "[{\"username\":\"user\",\"givenName\":\"user\",\"familyName\":\"user\",\"email\":null}]";
 		ResultActions mvcResult = this.mockMvcPerformGetAuthorizationAdminUser(requestUrl);
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
 	}

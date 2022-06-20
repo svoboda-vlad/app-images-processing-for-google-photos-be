@@ -23,10 +23,10 @@ public class UserController {
 	
 	@Operation(security = { @SecurityRequirement(name = "bearer-key") })
 	@GetMapping(USER_URL)
-	public ResponseEntity<UserInfo> getUserInfo() {
+	public ResponseEntity<UserTemplate> getUserTemplate() {
 		Optional<User> currentUser = userService.getCurrentUser();
 		if (currentUser.isEmpty()) return ResponseEntity.notFound().build();
-		return ResponseEntity.ok(currentUser.get().toUserInfo());
+		return ResponseEntity.ok(currentUser.get().toUserTemplate());
 	}
 
 	@Operation(security = { @SecurityRequirement(name = "bearer-key") })

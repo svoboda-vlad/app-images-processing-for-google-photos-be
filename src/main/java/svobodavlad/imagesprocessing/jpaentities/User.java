@@ -1,7 +1,5 @@
 package svobodavlad.imagesprocessing.jpaentities;
 
-import java.time.Instant;
-
 import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -12,7 +10,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
 import lombok.experimental.Accessors;
-import svobodavlad.imagesprocessing.security.UserInfo;
+import svobodavlad.imagesprocessing.security.UserTemplate;
 
 @Entity
 @Data
@@ -40,28 +38,13 @@ public class User extends JpaEntityTemplate {
 	private String familyName;
 	
 	@Size(min = 1, max = 255)
-	private String email;	
+	private String email;
 
-	private Instant lastLoginDateTime;
-	private Instant previousLoginDateTime;
-
-	public void updateLastLoginDateTime(Instant currentDateTime) {
-		if (currentDateTime == null) currentDateTime = Instant.now();
-		if (this.lastLoginDateTime == null) {
-			this.previousLoginDateTime = currentDateTime;
-		} else {
-			this.previousLoginDateTime = this.lastLoginDateTime;
-		}
-		this.lastLoginDateTime = currentDateTime;
-	}
-
-	public UserInfo toUserInfo() {
-		return new UserInfo()
+	public UserTemplate toUserTemplate() {
+		return new UserTemplate()
 				.setUsername(this.getUsername())
 				.setGivenName(this.getGivenName())
 				.setFamilyName(this.getFamilyName())
-				.setEmail(this.getEmail())
-				.setLastLoginDateTime(this.getLastLoginDateTime())
-				.setPreviousLoginDateTime(this.getPreviousLoginDateTime());
+				.setEmail(this.getEmail());
 	}
 }

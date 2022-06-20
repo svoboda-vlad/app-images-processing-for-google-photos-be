@@ -31,7 +31,7 @@ public class LastUploadInfoControllerTest extends UnitTestTemplateMockMvc {
 		
 		Instant lastUploadDateTime = Instant.now();
 		DateTimeFormatter formatter = DateTimeFormatter.ISO_INSTANT.withZone(ZoneId.systemDefault());		
-		String expectedJson = "{\"id\":0,\"lastUploadDateTime\":\"" + formatter.format(lastUploadDateTime) + "\"}";
+		String expectedJson = "{\"lastUploadDateTime\":\"" + formatter.format(lastUploadDateTime) + "\"}";
 		
 		User mockedUser = new User().setUsername(MOCKED_USER_NAME).setGivenName(MOCKED_USER_NAME).setFamilyName(MOCKED_USER_NAME);
 		LastUploadInfo lastUploadInfo = new LastUploadInfo().setLastUploadDateTime(lastUploadDateTime).setUser(mockedUser);
@@ -60,7 +60,7 @@ public class LastUploadInfoControllerTest extends UnitTestTemplateMockMvc {
 		int expectedStatus = 200;
 		Instant lastUploadDateTime = Instant.now();
 		DateTimeFormatter formatter = DateTimeFormatter.ISO_INSTANT.withZone(ZoneId.systemDefault());		
-		String expectedJson = "{\"id\":0,\"lastUploadDateTime\":\"" + formatter.format(lastUploadDateTime) +"\"}";
+		String expectedJson = "{\"lastUploadDateTime\":\"" + formatter.format(lastUploadDateTime) +"\"}";
 		
 		User mockedUser = new User().setUsername(MOCKED_USER_NAME).setGivenName(MOCKED_USER_NAME).setFamilyName(MOCKED_USER_NAME);
 		LastUploadInfo lastUploadInfo = new LastUploadInfo().setLastUploadDateTime(lastUploadDateTime).setUser(mockedUser);

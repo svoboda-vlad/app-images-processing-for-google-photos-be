@@ -194,7 +194,7 @@ restricted (administrator):
 
 **JPA Entities**
 
-User - id (long), username (String, min = 1, max = 255), lastLoginDateTime (Instant), previousLoginDateTime (Instant), givenName (String, min = 1, max = 255), familyName (String, min = 1, max = 255), email (String, min = 1, max = 255)
+User - id (long), username (String, min = 1, max = 255), givenName (String, min = 1, max = 255), familyName (String, min = 1, max = 255), email (String, min = 1, max = 255)
 - no endpoint
 
 ProcessingParametersDefault - id (long), timeDiffGroup (int, min = 60, max = 86400), resizeWidth (int, min = 1, max = 10000), resizeHeight (int, min = 1, max = 10000)
@@ -203,9 +203,8 @@ ProcessingParametersDefault - id (long), timeDiffGroup (int, min = 60, max = 864
 ProcessingParametersUser - id (long), timeDiffGroup (int, min = 60, max = 86400), resizeWidth (int, min = 1, max = 10000), resizeHeight (int, min = 1, max = 10000), user (User)
 - no endpoint
 
-LastUploadInfo - id (long), lastUploadDateTime (Instant), user (User) - @JsonIgnore
-- GET "/last-upload-info": {"id": 1,"lastUploadDateTime": "2022-06-12T15:10:21.952Z"}
-- GET "/last-upload-info-update": {"id": 1,"lastUploadDateTime": "2022-06-12T15:10:21.952Z"}
+LastUploadInfo - id (long), lastUploadDateTime (Instant), user (User)
+- no endpoint
 
 **DTOs**
 
@@ -217,9 +216,13 @@ ProcessingParametersUserTemplate - timeDiffGroup (int, min = 60, max = 86400), r
 - GET "/parameters": {"timeDiffGroup":1800,"resizeWidth":1000,"resizeHeight":1000}
 - PUT "/parameters"
 
-UserInfo - username (String, min = 1, max = 255), lastLoginDateTime (Instant), previousLoginDateTime (Instant), givenName (String, min = 1, max = 255), familyName (String, min = 1, max = 255), email (String, min = 1, max = 255)
-- GET "/user": {"username": "user1","givenName": "User 1","familyName": "User 1","lastLoginDateTime": "2021-05-05T12:50:12.354751","previousLoginDateTime": "2021-05-05T12:50:12.354751","email": "user1@gmail.com"}
-- GET "/admin/users": [{"username":"user2","givenName":"User 2","familyName":"User 2","lastLoginDateTime": "2021-07-27T08:08:50.759683","previousLoginDateTime": "2021-07-27T08:08:50.759683","email": "user2@gmail.com"},{"username":"user1","givenName":"User 1","familyName":"User 1","lastLoginDateTime": "2021-07-27T08:08:50.759683","previousLoginDateTime": "2021-07-27T08:08:50.759683","email": "user1@gmail.com"}]
+UserTemplate - username (String, min = 1, max = 255), givenName (String, min = 1, max = 255), familyName (String, min = 1, max = 255), email (String, min = 1, max = 255)
+- GET "/user": {"username": "user1","givenName": "User 1","familyName": "User 1","email": "user1@gmail.com"}
+- GET "/admin/users": [{"username":"user2","givenName":"User 2","familyName":"User 2","email": "user2@gmail.com"},{"username":"user1","givenName":"User 1","familyName":"User 1","email": "user1@gmail.com"}]
+
+LastUploadInfoTemplate - lastUploadDateTime (Instant)
+- GET "/last-upload-info": {"lastUploadDateTime": "2022-06-12T15:10:21.952Z"}
+- GET "/last-upload-info-update": {lastUploadDateTime": "2022-06-12T15:10:21.952Z"}
 
 ## Database
 
@@ -227,8 +230,10 @@ H2 in-memory database + liquibase
 
 JDBC URL: "jdbc:h2:mem:testdb"
 
+default schema: public
+
 Database tables:
-- user - id (int PRIMARY KEY), username (VARCHAR(255) NOT NULL UNIQUE), last_login_date_time (TIMESTAMP), previous_login_date_time (TIMESTAMP), given_name (VARCHAR(255), family_name (VARCHAR(255)), email (VARCHAR(255))
+- user - id (int PRIMARY KEY), username (VARCHAR(255) NOT NULL UNIQUE), given_name (VARCHAR(255), family_name (VARCHAR(255)), email (VARCHAR(255))
 - processing_parameters_default - id (int PRIMARY KEY), time_diff_group (int NOT NULL), resize_width (int NOT NULL), resize_height (int NOT NULL)
 - processing_parameters_user - id (int PRIMARY KEY), time_diff_group (int NOT NULL), resize_width (int NOT NULL), resize_height (int NOT NULL), user_id (int NOT NULL)
 - last_upload_info - id (int PRIMARY KEY), last_upload_date_time (TIMESTAMP), user_id (int NOT NULL)
@@ -280,6 +285,8 @@ spring.jpa.hibernate.ddl-auto=none
 spring.security.oauth2.resourceserver.jwt.issuer-uri=https://accounts.google.com
 
 admin.username=admin
+
+spring.jpa.properties.hibernate.default_schema=public
 
 DEV:
 

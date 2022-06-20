@@ -23,18 +23,18 @@ public class LastUploadInfoController {
 
 	@Operation(security = { @SecurityRequirement(name = "bearer-key") })
 	@GetMapping(LAST_UPLOAD_INFO_URL)
-	public ResponseEntity<LastUploadInfo> getLastUploadInfo() {
+	public ResponseEntity<LastUploadInfoTemplate> getLastUploadInfoTemplate() {
 		Optional<LastUploadInfo> lastUploadInfo = lastUploadInfoService.getForCurrentUser();
 		if (lastUploadInfo.isEmpty()) return ResponseEntity.notFound().build();
-		return ResponseEntity.ok(lastUploadInfo.get());
+		return ResponseEntity.ok(lastUploadInfo.get().toLastUploadInfoTemplate());
 	}
 	
 	@Operation(security = { @SecurityRequirement(name = "bearer-key") })
 	@GetMapping(LAST_UPLOAD_INFO_UPDATE_URL)
-	public ResponseEntity<LastUploadInfo> updateLastUploadInfo() {		
+	public ResponseEntity<LastUploadInfoTemplate> updateLastUploadInfoTemplate() {		
 		Optional<LastUploadInfo> optLastUploadInfo = lastUploadInfoService.updateForCurrentUser();
 		if (optLastUploadInfo.isEmpty()) return ResponseEntity.notFound().build();
-		return ResponseEntity.ok(optLastUploadInfo.get());
+		return ResponseEntity.ok(optLastUploadInfo.get().toLastUploadInfoTemplate());
 	}
 	
 }

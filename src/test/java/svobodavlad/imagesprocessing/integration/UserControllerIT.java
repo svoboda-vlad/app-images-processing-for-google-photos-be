@@ -28,7 +28,7 @@ public class UserControllerIT extends IntegTestTemplate {
 	}
 	
 	@Test
-	void getUserInfoOk200() throws Exception {
+	void getUserTemplateOk200() throws Exception {
 		User defaultUser = userRepository.findByUsername(SecurityTestUtil.DEFAULT_USERNAME).get();
 		
 		String requestUrl = "/user";
@@ -37,15 +37,13 @@ public class UserControllerIT extends IntegTestTemplate {
 		ResultActions mvcResult = this.mockMvcPerformGetAuthorizationDefaultUser(requestUrl);
 		
 		defaultUser = userRepository.getById(defaultUser.getId());
-		String expectedJson = "{\"username\":\"user\",\"givenName\":\"user\",\"familyName\":\"user\",\"email\":\"user\",\"lastLoginDateTime\":\"" 
-				+ defaultUser.getLastLoginDateTime() + "\",\"previousLoginDateTime\":\"" 
-				+ defaultUser.getPreviousLoginDateTime() + "\"}";
+		String expectedJson = "{\"username\":\"user\",\"givenName\":\"user\",\"familyName\":\"user\",\"email\":\"user\"}";
 
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
 	}
 	
 	@Test
-	void getUserInfoOk200NewUser() throws Exception {
+	void getUserTemplateOk200NewUser() throws Exception {
 		parametersRepository.deleteAll();
 		userRepository.deleteAll();
 		
@@ -54,16 +52,13 @@ public class UserControllerIT extends IntegTestTemplate {
 
 		ResultActions mvcResult = this.mockMvcPerformGetAuthorizationDefaultUser(requestUrl);
 		
-		User defaultUser = userRepository.findByUsername(SecurityTestUtil.DEFAULT_USERNAME).get();
-		String expectedJson = "{\"username\":\"user\",\"givenName\":\"user\",\"familyName\":\"user\",\"email\":\"user\",\"lastLoginDateTime\":\"" 
-				+ defaultUser.getLastLoginDateTime() + "\",\"previousLoginDateTime\":\"" 
-				+ defaultUser.getPreviousLoginDateTime() + "\"}";
+		String expectedJson = "{\"username\":\"user\",\"givenName\":\"user\",\"familyName\":\"user\",\"email\":\"user\"}";
 
 		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
 	}	
 
 	@Test
-	void getUserInfoMissingAuthroizationHeaderUnauthorized401() throws Exception {
+	void getUserTemplateMissingAuthroizationHeaderUnauthorized401() throws Exception {
 		String requestUrl = "/user";
 		int expectedStatus = 401;
 		String expectedJson = "";
