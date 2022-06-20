@@ -7,13 +7,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.Data;
 
 @MappedSuperclass
-@Getter @Setter @ToString @EqualsAndHashCode
+@Data
 public abstract class JpaEntityTemplate implements Serializable {
 
     public static final long serialVersionUID = 1L;

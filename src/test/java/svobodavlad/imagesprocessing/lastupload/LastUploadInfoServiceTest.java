@@ -33,8 +33,8 @@ class LastUploadInfoServiceTest extends UnitTestTemplate {
 
 	@Test
 	void getForCurrentUser() {
-		User mockedUser = new User(MOCKED_USER_NAME, MOCKED_USER_NAME, MOCKED_USER_NAME);
-		LastUploadInfo lastUploadInfo = new LastUploadInfo(Instant.now(), mockedUser);
+		User mockedUser = new User().setUsername(MOCKED_USER_NAME).setGivenName(MOCKED_USER_NAME).setFamilyName(MOCKED_USER_NAME);
+		LastUploadInfo lastUploadInfo = new LastUploadInfo().setLastUploadDateTime(Instant.now()).setUser(mockedUser);
 		
 		this.given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
 		this.given(lastUploadInfoRepository.findByUser(mockedUser)).willReturn(Optional.of(lastUploadInfo));
@@ -44,9 +44,9 @@ class LastUploadInfoServiceTest extends UnitTestTemplate {
 
 	@Test
 	void updateForCurrentUserWhenInfoExists() {
-		User mockedUser = new User(MOCKED_USER_NAME, MOCKED_USER_NAME, MOCKED_USER_NAME);
+		User mockedUser = new User().setUsername(MOCKED_USER_NAME).setGivenName(MOCKED_USER_NAME).setFamilyName(MOCKED_USER_NAME);
 		Instant now = Instant.now();
-		LastUploadInfo lastUploadInfo = new LastUploadInfo(now, mockedUser);
+		LastUploadInfo lastUploadInfo = new LastUploadInfo().setLastUploadDateTime(now).setUser(mockedUser);
 		
 		this.given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
 		this.given(lastUploadInfoRepository.findByUser(mockedUser)).willReturn(Optional.of(lastUploadInfo));
@@ -59,9 +59,9 @@ class LastUploadInfoServiceTest extends UnitTestTemplate {
 	
 	@Test
 	void updateForCurrentUserWhenInfoDoesNotExist() {
-		User mockedUser = new User(MOCKED_USER_NAME, MOCKED_USER_NAME, MOCKED_USER_NAME);
+		User mockedUser = new User().setUsername(MOCKED_USER_NAME).setGivenName(MOCKED_USER_NAME).setFamilyName(MOCKED_USER_NAME);
 		Instant now = Instant.now();
-		LastUploadInfo lastUploadInfo = new LastUploadInfo(now, mockedUser);
+		LastUploadInfo lastUploadInfo = new LastUploadInfo().setLastUploadDateTime(now).setUser(mockedUser);
 		
 		this.given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
 		this.given(lastUploadInfoRepository.findByUser(mockedUser)).willReturn(Optional.empty());		

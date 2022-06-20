@@ -148,4 +148,17 @@ http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibas
 		<dropTable tableName="role"/>
 		<dropTable tableName="user_roles"/>
 	</changeSet>
+	<changeSet id="20220619230100" author="svoboda-vlad">
+		<preConditions onFail="WARN">
+			<and>
+				<tableExists tableName="processing_parameters_default"/>
+            	<sqlCheck expectedResult="0">select count(*) from processing_parameters_default</sqlCheck>
+			</and>
+        </preConditions>
+		<insert tableName="processing_parameters_default">
+			<column name="time_diff_group" value="1800"/>
+			<column name="resize_width" value="1000"/>
+			<column name="resize_height" value="1000"/>			
+		</insert>
+	</changeSet>	
 </databaseChangeLog>

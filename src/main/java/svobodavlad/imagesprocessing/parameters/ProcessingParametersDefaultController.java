@@ -34,12 +34,7 @@ public class ProcessingParametersDefaultController {
 	
 	@Operation(security = { @SecurityRequirement(name = "bearer-key") })
 	@PutMapping(PARAMETERS_DEFAULT_URL)
-    // @PutMapping(PARAMETERS_DEFAULT_URL + "/{id}")
-    // public ResponseEntity<ProcessingParametersDefaultTemplate> updateProcessingParametersDefaultTemplate(@Valid @RequestBody ProcessingParametersDefaultTemplate parameters, @PathVariable long id) throws URISyntaxException { 
-	public ResponseEntity<ProcessingParametersDefaultTemplate> updateProcessingParametersDefaultTemplate(@Valid @RequestBody ProcessingParametersDefaultTemplate parametersTemplate) {		
-        // if (parameters.getId() == 0L) return ResponseEntity.badRequest().build();
-        // if (id != parameters.getId()) return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        // if (parametersRepository.findById(parameters.getId()).isEmpty()) return ResponseEntity.badRequest().build();
+	public ResponseEntity<ProcessingParametersDefaultTemplate> updateProcessingParametersDefaultTemplate(@Valid @RequestBody ProcessingParametersDefaultTemplate parametersTemplate) {
 		List<ProcessingParametersDefault> parametersList = parametersRepository.findAll();
 		if (parametersList.isEmpty()) return ResponseEntity.notFound().build();
 		ProcessingParametersDefault parameters = parametersTemplate.toProcessingParametersDefault(parametersList.get(0));

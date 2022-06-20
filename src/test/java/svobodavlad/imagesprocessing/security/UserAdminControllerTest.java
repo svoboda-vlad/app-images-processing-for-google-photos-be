@@ -34,9 +34,9 @@ class UserAdminControllerTest extends UnitTestTemplateMockMvc {
 		String expectedJson = "[{\"username\":\"user\",\"givenName\":\"user\",\"familyName\":\"user\",\"email\":\"user@example.com\",\"lastLoginDateTime\":null,\"previousLoginDateTime\":null},"
 				+ "{\"username\":\"admin\",\"givenName\":\"admin\",\"familyName\":\"admin\",\"email\":\"admin@example.com\",\"lastLoginDateTime\":null,\"previousLoginDateTime\":null}]";
 		
-		User mockedUser = new User(MOCKED_USER_NAME, MOCKED_USER_NAME, MOCKED_USER_NAME);
+		User mockedUser = new User().setUsername(MOCKED_USER_NAME).setGivenName(MOCKED_USER_NAME).setFamilyName(MOCKED_USER_NAME);
 		mockedUser.setEmail(MOCKED_USER_EMAIL);
-		User mockedUserAdmin = new User(MOCKED_USER_ADMIN_NAME, MOCKED_USER_ADMIN_NAME, MOCKED_USER_ADMIN_NAME);
+		User mockedUserAdmin = new User().setUsername(MOCKED_USER_ADMIN_NAME).setGivenName(MOCKED_USER_ADMIN_NAME).setFamilyName(MOCKED_USER_ADMIN_NAME);
 		mockedUserAdmin.setEmail(MOCKED_USER_ADMIN_EMAIL);
 		this.given(userRepository.findAll()).willReturn(new ArrayList<User>(List.of(mockedUser, mockedUserAdmin)));
 		
