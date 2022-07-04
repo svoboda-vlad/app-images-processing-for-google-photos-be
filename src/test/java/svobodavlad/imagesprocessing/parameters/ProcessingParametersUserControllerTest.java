@@ -5,10 +5,11 @@ import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.web.servlet.ResultActions;
 
 import svobodavlad.imagesprocessing.jpaentities.ProcessingParametersDefault;
 import svobodavlad.imagesprocessing.jpaentities.ProcessingParametersUser;
@@ -21,105 +22,88 @@ public class ProcessingParametersUserControllerTest extends UnitTestTemplateMock
 	
 	private static final String MOCKED_USER_NAME = "user";
 	
+	private static final int TIME_DIFF_GROUP = 1800;
+	private static final int RESIZE_HEIGHT = 1000;
+	private static final int RESIZE_WIDTH = 1000;
+	
+	private static final int TIME_DIFF_GROUP_UPDATED = 3600;
+	
+	private static final String PARAMETERS_URL = "/parameters";
+	private static final String PARAMETERS_RESET_TO_DEFAULT_URL = "/parameters-reset-to-default";
+	
+	private static final int HTTP_OK = 200;
+	private static final int HTTP_NO_CONTENT = 204;
+	private static final int HTTP_NOT_FOUND = 404;	
+	
 	@MockBean
 	private ProcessingParametersDefaultRepository parametersDefaultRepository;
 	
 	@MockBean
 	private ProcessingParametersUserService parametersService;
+	
+    @Autowired
+    private JacksonTester<ProcessingParametersUserTemplate> jacksonTester;		
 
 	@Test
 	void getProcessingParametersUserTemplateOk200() throws Exception {
-		String requestUrl = "/parameters";
-		int expectedStatus = 200;
-		String expectedJson = "{\"timeDiffGroup\":1800,\"resizeWidth\":1000,\"resizeHeight\":1000}";
-		
-		User mockedUser = new User().setUsername(MOCKED_USER_NAME).setGivenName(MOCKED_USER_NAME).setFamilyName(MOCKED_USER_NAME);
-		ProcessingParametersUser parameters = new ProcessingParametersUser().setTimeDiffGroup(1800).setResizeHeight(1000).setResizeWidth(1000).setUser(mockedUser);
-		parameters.setId(1);
-		
+		var mockedUser = new User().setUsername(MOCKED_USER_NAME).setGivenName(MOCKED_USER_NAME).setFamilyName(MOCKED_USER_NAME);
+		var parameters = new ProcessingParametersUser().setTimeDiffGroup(TIME_DIFF_GROUP).setResizeHeight(RESIZE_HEIGHT).setResizeWidth(RESIZE_WIDTH)
+				.setUser(mockedUser);
 		this.given(parametersService.getForCurrentUser()).willReturn(Optional.of(parameters));
+		var expectedJson = jacksonTester.write(parameters.toProcessingParametersUserTemplate()).getJson();
 		
-		ResultActions mvcResult = this.mockMvcPerformGetNoAuthorization(requestUrl);
-		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);		
+		var mvcResult = this.mockMvcPerformGetNoAuthorization(PARAMETERS_URL);
+		this.mockMvcExpectStatusAndContent(mvcResult, HTTP_OK, expectedJson);		
 	}
 	
 	@Test
 	void getProcessingParametersUserTemplateNoParametersNotFound404() throws Exception {
-		String requestUrl = "/parameters";
-		int expectedStatus = 404;
-		String expectedJson = "";
-		
 		this.given(parametersService.getForCurrentUser()).willReturn(Optional.empty());
 		
-		ResultActions mvcResult = this.mockMvcPerformGetNoAuthorization(requestUrl);
-		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
+		var mvcResult = this.mockMvcPerformGetNoAuthorization(PARAMETERS_URL);
+		this.mockMvcExpectStatusAndContent(mvcResult, HTTP_NOT_FOUND, "");
 	}
 
 	@Test
 	void updateProcessingParametersUserTemplateOk200() throws Exception {
-		String requestUrl = "/parameters";
-		String requestJson = "{\"timeDiffGroup\":3600,\"resizeWidth\":1000,\"resizeHeight\":1000}";
-		int expectedStatus = 200;
-		String expectedJson = "{\"timeDiffGroup\":3600,\"resizeWidth\":1000,\"resizeHeight\":1000}";
-		
-		User mockedUser = new User().setUsername(MOCKED_USER_NAME).setGivenName(MOCKED_USER_NAME).setFamilyName(MOCKED_USER_NAME);
-		ProcessingParametersUser parameters = new ProcessingParametersUser().setTimeDiffGroup(3600).setResizeHeight(1000).setResizeWidth(1000).setUser(mockedUser);
-		parameters.setId(1);
-
-		ProcessingParametersUserTemplate template = parameters.toProcessingParametersUserTemplate();
-		
+		var mockedUser = new User().setUsername(MOCKED_USER_NAME).setGivenName(MOCKED_USER_NAME).setFamilyName(MOCKED_USER_NAME);
+		var parameters = new ProcessingParametersUser().setTimeDiffGroup(TIME_DIFF_GROUP).setResizeHeight(RESIZE_HEIGHT).setResizeWidth(RESIZE_WIDTH).setUser(mockedUser);
+		var template = parameters.toProcessingParametersUserTemplate();
 		this.given(parametersService.updateForCurrentUser(template)).willReturn(Optional.of(parameters));
+		var requestJson = jacksonTester.write(template).getJson();
+		var expectedJson = requestJson;
 		
-		ResultActions mvcResult = this.mockMvcPerformPutNoAuthorization(requestUrl, requestJson);
-		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
+		var mvcResult = this.mockMvcPerformPutNoAuthorization(PARAMETERS_URL, requestJson);
+		this.mockMvcExpectStatusAndContent(mvcResult, HTTP_OK, expectedJson);
 	}
 	
 	
 	@Test
 	void updateProcessingParametersDefaultNotFound404() throws Exception {
-		String requestUrl = "/parameters";
-		String requestJson = "{\"timeDiffGroup\":3600,\"resizeWidth\":1000,\"resizeHeight\":1000}";
-		int expectedStatus = 404;
-		String expectedJson = "";
+		var parametersTemplate = new ProcessingParametersUserTemplate().setTimeDiffGroup(TIME_DIFF_GROUP).setResizeHeight(RESIZE_HEIGHT).setResizeWidth(RESIZE_WIDTH);
+		this.given(parametersService.updateForCurrentUser(parametersTemplate)).willReturn(Optional.empty());
+		var requestJson = jacksonTester.write(parametersTemplate).getJson();
 		
-		User mockedUser = new User().setUsername(MOCKED_USER_NAME).setGivenName(MOCKED_USER_NAME).setFamilyName(MOCKED_USER_NAME);
-		ProcessingParametersUser parameters = new ProcessingParametersUser().setTimeDiffGroup(3600).setResizeHeight(1000).setResizeWidth(1000).setUser(mockedUser);
-		parameters.setId(1);
-		
-		ProcessingParametersUserTemplate template = parameters.toProcessingParametersUserTemplate();
-		
-		this.given(parametersService.updateForCurrentUser(template)).willReturn(Optional.empty());
-				
-		ResultActions mvcResult = this.mockMvcPerformPutNoAuthorization(requestUrl, requestJson);
-		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
+		var mvcResult = this.mockMvcPerformPutNoAuthorization(PARAMETERS_URL, requestJson);
+		this.mockMvcExpectStatusAndContent(mvcResult, HTTP_NOT_FOUND, "");
 	}
 	
 	@Test
 	void getResetToDefaultOk204() throws Exception {
-		String requestUrl = "/parameters-reset-to-default";
-		int expectedStatus = 204;
-		String expectedJson = "";
-		
-		ProcessingParametersDefault parameters = new ProcessingParametersDefault().setTimeDiffGroup(3600).setResizeHeight(1000).setResizeWidth(1000);
+		var parameters = new ProcessingParametersDefault().setTimeDiffGroup(TIME_DIFF_GROUP_UPDATED).setResizeHeight(RESIZE_HEIGHT).setResizeWidth(RESIZE_WIDTH);
 		this.given(parametersDefaultRepository.findAll()).willReturn(new ArrayList<ProcessingParametersDefault>(List.of(parameters)));
 		
-		ResultActions mvcResult = this.mockMvcPerformGetNoAuthorization(requestUrl);
-		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
-		
+		var mvcResult = this.mockMvcPerformGetNoAuthorization(PARAMETERS_RESET_TO_DEFAULT_URL);
+		this.mockMvcExpectStatusAndContent(mvcResult, HTTP_NO_CONTENT, "");
 		this.verify(this.parametersService, this.times(1)).resetToDefault();
 	}
 	
 	@Test
 	void getResetToDefaultNoDefaultParametersNotFound404() throws Exception {
-		String requestUrl = "/parameters-reset-to-default";
-		int expectedStatus = 404;
-		String expectedJson = "";
-		
 		this.given(parametersDefaultRepository.findAll()).willReturn(new ArrayList<ProcessingParametersDefault>());
-				
-		ResultActions mvcResult = this.mockMvcPerformGetNoAuthorization(requestUrl);
-		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
 		
+		var mvcResult = this.mockMvcPerformGetNoAuthorization(PARAMETERS_RESET_TO_DEFAULT_URL);
+		this.mockMvcExpectStatusAndContent(mvcResult, HTTP_NOT_FOUND, "");
 		this.verify(this.parametersService, never()).resetToDefault();		
 	}	
 	

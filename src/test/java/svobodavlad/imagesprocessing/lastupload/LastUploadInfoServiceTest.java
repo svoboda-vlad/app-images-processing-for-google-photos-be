@@ -33,9 +33,8 @@ class LastUploadInfoServiceTest extends UnitTestTemplate {
 
 	@Test
 	void getForCurrentUser() {
-		User mockedUser = new User().setUsername(MOCKED_USER_NAME).setGivenName(MOCKED_USER_NAME).setFamilyName(MOCKED_USER_NAME);
-		LastUploadInfo lastUploadInfo = new LastUploadInfo().setLastUploadDateTime(Instant.now()).setUser(mockedUser);
-		
+		var mockedUser = new User().setUsername(MOCKED_USER_NAME).setGivenName(MOCKED_USER_NAME).setFamilyName(MOCKED_USER_NAME);
+		var lastUploadInfo = new LastUploadInfo().setLastUploadDateTime(Instant.now()).setUser(mockedUser);
 		this.given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
 		this.given(lastUploadInfoRepository.findByUser(mockedUser)).willReturn(Optional.of(lastUploadInfo));
 		
@@ -44,25 +43,23 @@ class LastUploadInfoServiceTest extends UnitTestTemplate {
 
 	@Test
 	void updateForCurrentUserWhenInfoExists() {
-		User mockedUser = new User().setUsername(MOCKED_USER_NAME).setGivenName(MOCKED_USER_NAME).setFamilyName(MOCKED_USER_NAME);
-		Instant now = Instant.now();
-		LastUploadInfo lastUploadInfo = new LastUploadInfo().setLastUploadDateTime(now).setUser(mockedUser);
-		
+		var mockedUser = new User().setUsername(MOCKED_USER_NAME).setGivenName(MOCKED_USER_NAME).setFamilyName(MOCKED_USER_NAME);
+		var now = Instant.now();
+		var lastUploadInfo = new LastUploadInfo().setLastUploadDateTime(now).setUser(mockedUser);
 		this.given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
 		this.given(lastUploadInfoRepository.findByUser(mockedUser)).willReturn(Optional.of(lastUploadInfo));
 		this.given(lastUploadInfoRepository.save(lastUploadInfo)).willReturn(lastUploadInfo);
 		this.given(dateTimeUtil.getCurrentDateTime()).willReturn(now);
 		
-		Optional<LastUploadInfo> optLastUploadInfoUpdated = lastUploadInfoService.updateForCurrentUser();
+		var optLastUploadInfoUpdated = lastUploadInfoService.updateForCurrentUser();
 		this.assertThat(optLastUploadInfoUpdated).isEqualTo(Optional.of(lastUploadInfo));
 	}
 	
 	@Test
 	void updateForCurrentUserWhenInfoDoesNotExist() {
-		User mockedUser = new User().setUsername(MOCKED_USER_NAME).setGivenName(MOCKED_USER_NAME).setFamilyName(MOCKED_USER_NAME);
-		Instant now = Instant.now();
-		LastUploadInfo lastUploadInfo = new LastUploadInfo().setLastUploadDateTime(now).setUser(mockedUser);
-		
+		var mockedUser = new User().setUsername(MOCKED_USER_NAME).setGivenName(MOCKED_USER_NAME).setFamilyName(MOCKED_USER_NAME);
+		var now = Instant.now();
+		var lastUploadInfo = new LastUploadInfo().setLastUploadDateTime(now).setUser(mockedUser);
 		this.given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
 		this.given(lastUploadInfoRepository.findByUser(mockedUser)).willReturn(Optional.empty());		
 		this.given(lastUploadInfoRepository.save(this.any(LastUploadInfo.class))).willReturn(lastUploadInfo);

@@ -1,15 +1,14 @@
 package svobodavlad.imagesprocessing.lastupload;
 
 import java.time.Instant;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.web.servlet.ResultActions;
 
 import svobodavlad.imagesprocessing.jpaentities.LastUploadInfo;
 import svobodavlad.imagesprocessing.jpaentities.User;
@@ -21,53 +20,47 @@ public class LastUploadInfoControllerTest extends UnitTestTemplateMockMvc {
 
 	private static final String MOCKED_USER_NAME = "user";
 	
+	private static final String LAST_UPLOAD_INFO_URL = "/last-upload-info";
+	private static final String LAST_UPLOAD_INFO_UPDATE_URL = "/last-upload-info-update";
+	
+	private static final int HTTP_OK = 200;
+	private static final int HTTP_NOT_FOUND = 404;
+	
 	@MockBean
 	private LastUploadInfoService lastUploadInfoService;
+	
+    @Autowired
+    private JacksonTester<LastUploadInfoTemplate> jacksonTester;	
 
 	@Test
 	void getLastUploadInfoOk200() throws Exception {
-		String requestUrl = "/last-upload-info";
-		int expectedStatus = 200;
-		
-		Instant lastUploadDateTime = Instant.now();
-		DateTimeFormatter formatter = DateTimeFormatter.ISO_INSTANT.withZone(ZoneId.systemDefault());		
-		String expectedJson = "{\"lastUploadDateTime\":\"" + formatter.format(lastUploadDateTime) + "\"}";
-		
-		User mockedUser = new User().setUsername(MOCKED_USER_NAME).setGivenName(MOCKED_USER_NAME).setFamilyName(MOCKED_USER_NAME);
-		LastUploadInfo lastUploadInfo = new LastUploadInfo().setLastUploadDateTime(lastUploadDateTime).setUser(mockedUser);
-		
+		var lastUploadDateTime = Instant.now();
+		var mockedUser = new User().setUsername(MOCKED_USER_NAME).setGivenName(MOCKED_USER_NAME).setFamilyName(MOCKED_USER_NAME);
+		var lastUploadInfo = new LastUploadInfo().setLastUploadDateTime(lastUploadDateTime).setUser(mockedUser);
 		this.given(lastUploadInfoService.getForCurrentUser()).willReturn(Optional.of(lastUploadInfo));
+		var expectedJson = jacksonTester.write(lastUploadInfo.toLastUploadInfoTemplate()).getJson();
 		
-		ResultActions mvcResult = this.mockMvcPerformGetNoAuthorization(requestUrl);
-		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);		
+		var mvcResult = this.mockMvcPerformGetNoAuthorization(LAST_UPLOAD_INFO_URL);
+		this.mockMvcExpectStatusAndContent(mvcResult, HTTP_OK, expectedJson);		
 	}
 	
 	@Test
 	void getLastUploadInfoNotFound404() throws Exception {
-		String requestUrl = "/last-upload-info";
-		int expectedStatus = 404;
-		String expectedJson = "";
-		
 		this.given(lastUploadInfoService.getForCurrentUser()).willReturn(Optional.empty());
 		
-		ResultActions mvcResult = this.mockMvcPerformGetNoAuthorization(requestUrl);
-		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
+		var mvcResult = this.mockMvcPerformGetNoAuthorization(LAST_UPLOAD_INFO_URL);
+		this.mockMvcExpectStatusAndContent(mvcResult, HTTP_NOT_FOUND, "");
 	}
 
 	@Test
 	void updateLastUploadInfoOk200() throws Exception {
-		String requestUrl = "/last-upload-info-update";
-		int expectedStatus = 200;
-		Instant lastUploadDateTime = Instant.now();
-		DateTimeFormatter formatter = DateTimeFormatter.ISO_INSTANT.withZone(ZoneId.systemDefault());		
-		String expectedJson = "{\"lastUploadDateTime\":\"" + formatter.format(lastUploadDateTime) +"\"}";
-		
-		User mockedUser = new User().setUsername(MOCKED_USER_NAME).setGivenName(MOCKED_USER_NAME).setFamilyName(MOCKED_USER_NAME);
-		LastUploadInfo lastUploadInfo = new LastUploadInfo().setLastUploadDateTime(lastUploadDateTime).setUser(mockedUser);
-		
+		var lastUploadDateTime = Instant.now();	
+		var mockedUser = new User().setUsername(MOCKED_USER_NAME).setGivenName(MOCKED_USER_NAME).setFamilyName(MOCKED_USER_NAME);
+		var lastUploadInfo = new LastUploadInfo().setLastUploadDateTime(lastUploadDateTime).setUser(mockedUser);
 		this.given(lastUploadInfoService.updateForCurrentUser()).willReturn(Optional.of(lastUploadInfo));
+		var expectedJson = jacksonTester.write(lastUploadInfo.toLastUploadInfoTemplate()).getJson();
 		
-		ResultActions mvcResult = this.mockMvcPerformGetNoAuthorization(requestUrl);
-		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
+		var mvcResult = this.mockMvcPerformGetNoAuthorization(LAST_UPLOAD_INFO_UPDATE_URL);
+		this.mockMvcExpectStatusAndContent(mvcResult, HTTP_OK, expectedJson);
 	}	
 }

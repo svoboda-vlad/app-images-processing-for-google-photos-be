@@ -34,7 +34,7 @@ public class UserServiceTest extends UnitTestTemplate {
 	
 	@Test
 	void registerUserNewUser() {
-		User mockedUser = new User().setUsername(DEFAULT_USERNAME).setGivenName(DEFAULT_USERNAME).setFamilyName(DEFAULT_USERNAME);
+		var mockedUser = new User().setUsername(DEFAULT_USERNAME).setGivenName(DEFAULT_USERNAME).setFamilyName(DEFAULT_USERNAME);
 
 		this.given(userRepository.findByUsername(DEFAULT_USERNAME)).willReturn(Optional.empty());
 		this.given(userRepository.save(mockedUser)).willReturn(mockedUser);
@@ -45,7 +45,7 @@ public class UserServiceTest extends UnitTestTemplate {
 
 	@Test
 	void registerUserAlreadyExistsException() {
-		User mockedUser = new User().setUsername(DEFAULT_USERNAME).setGivenName(DEFAULT_USERNAME).setFamilyName(DEFAULT_USERNAME);
+		var mockedUser = new User().setUsername(DEFAULT_USERNAME).setGivenName(DEFAULT_USERNAME).setFamilyName(DEFAULT_USERNAME);
 
 		this.given(userRepository.findByUsername(DEFAULT_USERNAME)).willReturn(Optional.of(mockedUser));
 		this.assertThatExceptionOfType(EntityExistsException.class).isThrownBy(() -> {
@@ -55,7 +55,7 @@ public class UserServiceTest extends UnitTestTemplate {
 
 	@Test
 	void registerUserDefaultRoleNotFound() {
-		User mockedUser = new User().setUsername(DEFAULT_USERNAME).setGivenName(DEFAULT_USERNAME).setFamilyName(DEFAULT_USERNAME);
+		var mockedUser = new User().setUsername(DEFAULT_USERNAME).setGivenName(DEFAULT_USERNAME).setFamilyName(DEFAULT_USERNAME);
 
 		this.assertThatExceptionOfType(RuntimeException.class).isThrownBy(() -> {
 			userService.registerUser(mockedUser);
@@ -64,8 +64,7 @@ public class UserServiceTest extends UnitTestTemplate {
 	
 	@Test
 	void deleteUserOkUserDeleted() {
-		User mockedUser = new User().setUsername(DEFAULT_USERNAME).setGivenName(DEFAULT_USERNAME).setFamilyName(DEFAULT_USERNAME);
-
+		var mockedUser = new User().setUsername(DEFAULT_USERNAME).setGivenName(DEFAULT_USERNAME).setFamilyName(DEFAULT_USERNAME);
 		this.given(userRepository.findByUsername(DEFAULT_USERNAME)).willReturn(Optional.of(mockedUser));		
 		userService.deleteCurrentUser();
 
@@ -76,8 +75,7 @@ public class UserServiceTest extends UnitTestTemplate {
 	
 	@Test
 	void getCurrentUserOkUserExists() {
-		User mockedUser = new User().setUsername(DEFAULT_USERNAME).setGivenName(DEFAULT_USERNAME).setFamilyName(DEFAULT_USERNAME);
-
+		var mockedUser = new User().setUsername(DEFAULT_USERNAME).setGivenName(DEFAULT_USERNAME).setFamilyName(DEFAULT_USERNAME);
 		this.given(userRepository.findByUsername(DEFAULT_USERNAME)).willReturn(Optional.of(mockedUser));		
 		this.given(userRepository.save(mockedUser)).willReturn(mockedUser);
 		
@@ -86,10 +84,9 @@ public class UserServiceTest extends UnitTestTemplate {
 	
 	@Test
 	void getCurrentUserOkUserDoesNotExists() {
-		Instant now = Instant.now();
-		User mockedUser = new User().setUsername(DEFAULT_USERNAME).setGivenName(DEFAULT_USERNAME).setFamilyName(DEFAULT_USERNAME);
+		var now = Instant.now();
+		var mockedUser = new User().setUsername(DEFAULT_USERNAME).setGivenName(DEFAULT_USERNAME).setFamilyName(DEFAULT_USERNAME);
 		mockedUser.setEmail(DEFAULT_USERNAME);
-
 		this.given(userRepository.findByUsername(DEFAULT_USERNAME))
 		.willReturn(Optional.empty())
 		.willReturn(Optional.empty())

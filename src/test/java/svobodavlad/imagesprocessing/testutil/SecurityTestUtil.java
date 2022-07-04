@@ -1,7 +1,5 @@
 package svobodavlad.imagesprocessing.testutil;
 
-import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -21,7 +19,7 @@ public class SecurityTestUtil {
 	public static final String DEFAULT_USERNAME = "user";
 
 	public User saveDefaultUser() {
-		Optional<User> optUser = userRepository.findByUsername(DEFAULT_USERNAME);
+		var optUser = userRepository.findByUsername(DEFAULT_USERNAME);
 		if (optUser.isPresent()) return optUser.get();
 		return userService.registerUser(new User().setUsername(DEFAULT_USERNAME).setGivenName(DEFAULT_USERNAME).setFamilyName(DEFAULT_USERNAME));
 	}
