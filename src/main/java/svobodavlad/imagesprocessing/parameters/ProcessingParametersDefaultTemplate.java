@@ -25,10 +25,7 @@ public class ProcessingParametersDefaultTemplate {
 	private int resizeHeight;
 	
 	public ProcessingParametersDefault toProcessingParametersDefault(ProcessingParametersDefault parameters) {
-		parameters.setTimeDiffGroup(timeDiffGroup);
-		parameters.setResizeWidth(resizeWidth);
-		parameters.setResizeHeight(resizeHeight);
-		return parameters;
+		return parameters.setTimeDiffGroup(timeDiffGroup).setResizeWidth(resizeWidth).setResizeHeight(resizeHeight);
 	}	
 
 }

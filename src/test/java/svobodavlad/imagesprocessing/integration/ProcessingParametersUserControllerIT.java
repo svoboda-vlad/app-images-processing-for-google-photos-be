@@ -53,16 +53,16 @@ public class ProcessingParametersUserControllerIT extends IntegTestTemplate {
 		var parametersTemplate = new ProcessingParametersUserTemplate().setTimeDiffGroup(TIME_DIFF_GROUP).setResizeHeight(RESIZE_HEIGHT).setResizeWidth(RESIZE_WIDTH);
 		var expectedJson = jacksonTester.write(parametersTemplate).getJson();
 		
-		var mvcResult = this.mockMvcPerformGetAuthorizationDefaultUser(PARAMETERS_URL);
-		this.mockMvcExpectStatusAndContent(mvcResult, HTTP_OK, expectedJson);
+		var mvcResult = mockMvcPerformGetAuthorizationDefaultUser(PARAMETERS_URL);
+		mockMvcExpectStatusAndContent(mvcResult, HTTP_OK, expectedJson);
 	}
 	
 	@Test
 	void getProcessingParametersUserTemplateNotFound404() throws Exception {
 		parametersRepository.deleteAll();
 
-		var mvcResult = this.mockMvcPerformGetAuthorizationDefaultUser(PARAMETERS_URL);
-		this.mockMvcExpectStatusAndContent(mvcResult, HTTP_NOT_FOUND, "");	
+		var mvcResult = mockMvcPerformGetAuthorizationDefaultUser(PARAMETERS_URL);
+		mockMvcExpectStatusAndContent(mvcResult, HTTP_NOT_FOUND, "");	
 	}	
 
 	@Test
@@ -71,8 +71,8 @@ public class ProcessingParametersUserControllerIT extends IntegTestTemplate {
 		var requestJson = jacksonTester.write(parametersTemplate).getJson();
 		var expectedJson = requestJson;
 
-		var mvcResult = this.mockMvcPerformPutAuthorizationDefaultUser(PARAMETERS_URL, requestJson);
-		this.mockMvcExpectStatusAndContent(mvcResult, HTTP_OK, expectedJson);
+		var mvcResult = mockMvcPerformPutAuthorizationDefaultUser(PARAMETERS_URL, requestJson);
+		mockMvcExpectStatusAndContent(mvcResult, HTTP_OK, expectedJson);
 	}
 	
 	@Test
@@ -81,40 +81,40 @@ public class ProcessingParametersUserControllerIT extends IntegTestTemplate {
 		var requestJson = jacksonTester.write(parametersTemplate).getJson();
 		parametersRepository.deleteAll();
 
-		var mvcResult = this.mockMvcPerformPutAuthorizationDefaultUser(PARAMETERS_URL, requestJson);
-		this.mockMvcExpectStatusAndContent(mvcResult, HTTP_NOT_FOUND, "");
+		var mvcResult = mockMvcPerformPutAuthorizationDefaultUser(PARAMETERS_URL, requestJson);
+		mockMvcExpectStatusAndContent(mvcResult, HTTP_NOT_FOUND, "");
 	}
 	
 	@Test
 	void getResetToDefaultOk204() throws Exception {
-		var mvcResult = this.mockMvcPerformGetAuthorizationDefaultUser(PARAMETERS_RESET_TO_DEFAULT_URL);
-		this.mockMvcExpectStatusAndContent(mvcResult, HTTP_NO_CONTENT, "");
+		var mvcResult = mockMvcPerformGetAuthorizationDefaultUser(PARAMETERS_RESET_TO_DEFAULT_URL);
+		mockMvcExpectStatusAndContent(mvcResult, HTTP_NO_CONTENT, "");
 		
 		var parametersTemplate = new ProcessingParametersUserTemplate().setTimeDiffGroup(TIME_DIFF_GROUP).setResizeHeight(RESIZE_HEIGHT).setResizeWidth(RESIZE_WIDTH);
 		var expectedJson = jacksonTester.write(parametersTemplate).getJson();
-		mvcResult = this.mockMvcPerformGetAuthorizationDefaultUser(PARAMETERS_URL);
-		this.mockMvcExpectStatusAndContent(mvcResult, HTTP_OK, expectedJson);
+		mvcResult = mockMvcPerformGetAuthorizationDefaultUser(PARAMETERS_URL);
+		mockMvcExpectStatusAndContent(mvcResult, HTTP_OK, expectedJson);
 	}
 		
 	@Test
 	void getResetToDefaultNoUserParametersOk204() throws Exception {
 		parametersRepository.deleteAll();
 				
-		var mvcResult = this.mockMvcPerformGetAuthorizationDefaultUser(PARAMETERS_RESET_TO_DEFAULT_URL);
-		this.mockMvcExpectStatusAndContent(mvcResult, HTTP_NO_CONTENT, "");
+		var mvcResult = mockMvcPerformGetAuthorizationDefaultUser(PARAMETERS_RESET_TO_DEFAULT_URL);
+		mockMvcExpectStatusAndContent(mvcResult, HTTP_NO_CONTENT, "");
 		
 		var parametersTemplate = new ProcessingParametersUserTemplate().setTimeDiffGroup(TIME_DIFF_GROUP).setResizeHeight(RESIZE_HEIGHT).setResizeWidth(RESIZE_WIDTH);
 		var expectedJson = jacksonTester.write(parametersTemplate).getJson();
-		mvcResult = this.mockMvcPerformGetAuthorizationDefaultUser(PARAMETERS_URL);
-		this.mockMvcExpectStatusAndContent(mvcResult, HTTP_OK, expectedJson);	
+		mvcResult = mockMvcPerformGetAuthorizationDefaultUser(PARAMETERS_URL);
+		mockMvcExpectStatusAndContent(mvcResult, HTTP_OK, expectedJson);	
 	}
 	
 	@Test
 	void getResetToDefaultNoDefaultParametersNotFound404() throws Exception {
 		parametersDefaultRepository.deleteAll();
 		
-		var mvcResult = this.mockMvcPerformGetAuthorizationDefaultUser(PARAMETERS_RESET_TO_DEFAULT_URL);
-		this.mockMvcExpectStatusAndContent(mvcResult, HTTP_NOT_FOUND, "");
+		var mvcResult = mockMvcPerformGetAuthorizationDefaultUser(PARAMETERS_RESET_TO_DEFAULT_URL);
+		mockMvcExpectStatusAndContent(mvcResult, HTTP_NOT_FOUND, "");
 	}	
 	
 }

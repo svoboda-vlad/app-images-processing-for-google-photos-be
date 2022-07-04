@@ -1,7 +1,5 @@
 package svobodavlad.imagesprocessing.security;
 
-import java.util.Optional;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -11,7 +9,6 @@ import org.springframework.web.bind.annotation.RestController;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
-import svobodavlad.imagesprocessing.jpaentities.User;
 
 @RestController
 @RequiredArgsConstructor
@@ -24,7 +21,7 @@ public class UserController {
 	@Operation(security = { @SecurityRequirement(name = "bearer-key") })
 	@GetMapping(USER_URL)
 	public ResponseEntity<UserTemplate> getUserTemplate() {
-		Optional<User> currentUser = userService.getCurrentUser();
+		var currentUser = userService.getCurrentUser();
 		if (currentUser.isEmpty()) return ResponseEntity.notFound().build();
 		return ResponseEntity.ok(currentUser.get().toUserTemplate());
 	}

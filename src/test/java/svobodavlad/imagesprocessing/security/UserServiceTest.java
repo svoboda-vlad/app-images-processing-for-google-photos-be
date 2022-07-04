@@ -36,19 +36,19 @@ public class UserServiceTest extends UnitTestTemplate {
 	void registerUserNewUser() {
 		var mockedUser = new User().setUsername(DEFAULT_USERNAME).setGivenName(DEFAULT_USERNAME).setFamilyName(DEFAULT_USERNAME);
 
-		this.given(userRepository.findByUsername(DEFAULT_USERNAME)).willReturn(Optional.empty());
-		this.given(userRepository.save(mockedUser)).willReturn(mockedUser);
+		given(userRepository.findByUsername(DEFAULT_USERNAME)).willReturn(Optional.empty());
+		given(userRepository.save(mockedUser)).willReturn(mockedUser);
 
-		this.assertThat(userService.registerUser(mockedUser)).isEqualTo(mockedUser);
-		this.verify(parametersService, this.times(1)).setInitialParameters(DEFAULT_USERNAME);
+		assertThat(userService.registerUser(mockedUser)).isEqualTo(mockedUser);
+		verify(parametersService, times(1)).setInitialParameters(DEFAULT_USERNAME);
 	}
 
 	@Test
 	void registerUserAlreadyExistsException() {
 		var mockedUser = new User().setUsername(DEFAULT_USERNAME).setGivenName(DEFAULT_USERNAME).setFamilyName(DEFAULT_USERNAME);
 
-		this.given(userRepository.findByUsername(DEFAULT_USERNAME)).willReturn(Optional.of(mockedUser));
-		this.assertThatExceptionOfType(EntityExistsException.class).isThrownBy(() -> {
+		given(userRepository.findByUsername(DEFAULT_USERNAME)).willReturn(Optional.of(mockedUser));
+		assertThatExceptionOfType(EntityExistsException.class).isThrownBy(() -> {
 			userService.registerUser(mockedUser);
 		});
 	}
@@ -57,7 +57,7 @@ public class UserServiceTest extends UnitTestTemplate {
 	void registerUserDefaultRoleNotFound() {
 		var mockedUser = new User().setUsername(DEFAULT_USERNAME).setGivenName(DEFAULT_USERNAME).setFamilyName(DEFAULT_USERNAME);
 
-		this.assertThatExceptionOfType(RuntimeException.class).isThrownBy(() -> {
+		assertThatExceptionOfType(RuntimeException.class).isThrownBy(() -> {
 			userService.registerUser(mockedUser);
 		});
 	}
@@ -65,21 +65,21 @@ public class UserServiceTest extends UnitTestTemplate {
 	@Test
 	void deleteUserOkUserDeleted() {
 		var mockedUser = new User().setUsername(DEFAULT_USERNAME).setGivenName(DEFAULT_USERNAME).setFamilyName(DEFAULT_USERNAME);
-		this.given(userRepository.findByUsername(DEFAULT_USERNAME)).willReturn(Optional.of(mockedUser));		
+		given(userRepository.findByUsername(DEFAULT_USERNAME)).willReturn(Optional.of(mockedUser));		
 		userService.deleteCurrentUser();
 
-		this.verify(parametersService, this.times(1)).deleteForCurrentUser();
-		this.verify(userRepository, this.times(1)).delete(mockedUser);
-		this.verify(userRepository, this.times(1)).flush();		
+		verify(parametersService, times(1)).deleteForCurrentUser();
+		verify(userRepository, times(1)).delete(mockedUser);
+		verify(userRepository, times(1)).flush();		
 	}
 	
 	@Test
 	void getCurrentUserOkUserExists() {
 		var mockedUser = new User().setUsername(DEFAULT_USERNAME).setGivenName(DEFAULT_USERNAME).setFamilyName(DEFAULT_USERNAME);
-		this.given(userRepository.findByUsername(DEFAULT_USERNAME)).willReturn(Optional.of(mockedUser));		
-		this.given(userRepository.save(mockedUser)).willReturn(mockedUser);
+		given(userRepository.findByUsername(DEFAULT_USERNAME)).willReturn(Optional.of(mockedUser));		
+		given(userRepository.save(mockedUser)).willReturn(mockedUser);
 		
-		this.assertThat(userService.getCurrentUser()).isEqualTo(Optional.of(mockedUser));
+		assertThat(userService.getCurrentUser()).isEqualTo(Optional.of(mockedUser));
 	}
 	
 	@Test
@@ -87,14 +87,14 @@ public class UserServiceTest extends UnitTestTemplate {
 		var now = Instant.now();
 		var mockedUser = new User().setUsername(DEFAULT_USERNAME).setGivenName(DEFAULT_USERNAME).setFamilyName(DEFAULT_USERNAME);
 		mockedUser.setEmail(DEFAULT_USERNAME);
-		this.given(userRepository.findByUsername(DEFAULT_USERNAME))
+		given(userRepository.findByUsername(DEFAULT_USERNAME))
 		.willReturn(Optional.empty())
 		.willReturn(Optional.empty())
 		.willReturn(Optional.of(mockedUser));
-		this.given(dateTimeUtil.getCurrentDateTime()).willReturn(now);
-		this.given(userRepository.save(mockedUser)).willReturn(mockedUser);		
-		
-		this.assertThat(userService.getCurrentUser()).isEqualTo(Optional.of(mockedUser));
+		given(dateTimeUtil.getCurrentDateTime()).willReturn(now);
+		given(userRepository.save(mockedUser)).willReturn(mockedUser);		
+
+		assertThat(userService.getCurrentUser()).isEqualTo(Optional.of(mockedUser));
 	}
 	
 }

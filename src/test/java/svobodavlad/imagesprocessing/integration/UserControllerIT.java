@@ -40,35 +40,35 @@ public class UserControllerIT extends IntegTestTemplate {
 	
 	@Test
 	void getUserTemplateOk200() throws Exception {
-		var mvcResult = this.mockMvcPerformGetAuthorizationDefaultUser(USER_URL);
+		var mvcResult = mockMvcPerformGetAuthorizationDefaultUser(USER_URL);
 		
 		var userTemplate = userRepository.findByUsername(SecurityTestUtil.DEFAULT_USERNAME).get().toUserTemplate();
 		var expectedJson = jacksonTester.write(userTemplate).getJson();
-		this.mockMvcExpectStatusAndContent(mvcResult, HTTP_OK, expectedJson);
+		mockMvcExpectStatusAndContent(mvcResult, HTTP_OK, expectedJson);
 	}
 	
 	@Test
 	void getUserTemplateOk200NewUser() throws Exception {
 		parametersRepository.deleteAll();
 		userRepository.deleteAll();
-		var mvcResult = this.mockMvcPerformGetAuthorizationDefaultUser(USER_URL);
+		var mvcResult = mockMvcPerformGetAuthorizationDefaultUser(USER_URL);
 		
 		var userTemplate = new UserTemplate().setUsername(DEFAULT_USERNAME).setGivenName(DEFAULT_USERNAME).setFamilyName(DEFAULT_USERNAME)
 				.setEmail(DEFAULT_USERNAME);
 		var expectedJson = jacksonTester.write(userTemplate).getJson();
-		this.mockMvcExpectStatusAndContent(mvcResult, HTTP_OK, expectedJson);
+		mockMvcExpectStatusAndContent(mvcResult, HTTP_OK, expectedJson);
 	}	
 
 	@Test
 	void getUserTemplateMissingAuthroizationHeaderUnauthorized401() throws Exception {
-		var mvcResult = this.mockMvcPerformGetNoAuthorization(USER_URL);
-		this.mockMvcExpectStatusAndContent(mvcResult, HTTP_UNAUTHORIZED, "");
+		var mvcResult = mockMvcPerformGetNoAuthorization(USER_URL);
+		mockMvcExpectStatusAndContent(mvcResult, HTTP_UNAUTHORIZED, "");
 	}
 
 	@Test	
 	void deleteUserNoContent204() throws Exception {
-		var mvcResult = this.mockMvcPerformDeleteAuthorizationDefaultUser(USER_URL);	
-		this.mockMvcExpectStatusAndContent(mvcResult, HTTP_NO_CONTENT, "");
+		var mvcResult = mockMvcPerformDeleteAuthorizationDefaultUser(USER_URL);	
+		mockMvcExpectStatusAndContent(mvcResult, HTTP_NO_CONTENT, "");
 	}
 
 }

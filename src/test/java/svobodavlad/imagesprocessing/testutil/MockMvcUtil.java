@@ -21,19 +21,19 @@ public abstract class MockMvcUtil {
 	private MockMvc mockMvc;
 
 	public ResultActions mockMvcPerformGetNoAuthorization(String requestUrl) throws Exception {
-		return this.mockMvc.perform(get(requestUrl).accept(MediaType.APPLICATION_JSON));
+		return mockMvc.perform(get(requestUrl).accept(MediaType.APPLICATION_JSON));
 	}
 
 	public ResultActions mockMvcPerformPostNoAuthorization(String requestUrl, String requestJson) throws Exception {
-		return this.mockMvc.perform(post(requestUrl).content(requestJson).contentType(MediaType.APPLICATION_JSON));
+		return mockMvc.perform(post(requestUrl).content(requestJson).contentType(MediaType.APPLICATION_JSON));
 	}
 	
 	public ResultActions mockMvcPerformPutNoAuthorization(String requestUrl, String requestJson) throws Exception {
-		return this.mockMvc.perform(put(requestUrl).content(requestJson).contentType(MediaType.APPLICATION_JSON));
+		return mockMvc.perform(put(requestUrl).content(requestJson).contentType(MediaType.APPLICATION_JSON));
 	}	
 	
 	public ResultActions mockMvcPerformDeleteNoAuthorization(String requestUrl) throws Exception {
-		return this.mockMvc.perform(delete(requestUrl));
+		return mockMvc.perform(delete(requestUrl));
 	}
 
 	public ResultActions mockMvcExpectStatusAndContent(ResultActions result, int expectedStatus, String expectedJson)

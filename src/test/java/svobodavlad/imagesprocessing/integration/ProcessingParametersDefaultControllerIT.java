@@ -41,16 +41,16 @@ public class ProcessingParametersDefaultControllerIT extends IntegTestTemplate {
 		var template = new ProcessingParametersDefaultTemplate().setTimeDiffGroup(TIME_DIFF_GROUP).setResizeHeight(RESIZE_HEIGHT).setResizeWidth(RESIZE_WIDTH);
 		var expectedJson = jacksonTester.write(template).getJson();
 		
-		var mvcResult = this.mockMvcPerformGetAuthorizationAdminUser(ADMIN_PARAMETERS_DEFAULT_URL);
-		this.mockMvcExpectStatusAndContent(mvcResult, HTTP_OK, expectedJson);
+		var mvcResult = mockMvcPerformGetAuthorizationAdminUser(ADMIN_PARAMETERS_DEFAULT_URL);
+		mockMvcExpectStatusAndContent(mvcResult, HTTP_OK, expectedJson);
 	}
 	
 	@Test
 	void getProcessingParametersDefaultTemplateNotFound404() throws Exception {
 		parametersRepository.deleteAll();		
 
-		var mvcResult = this.mockMvcPerformGetAuthorizationAdminUser(ADMIN_PARAMETERS_DEFAULT_URL);
-		this.mockMvcExpectStatusAndContent(mvcResult, HTTP_NOT_FOUND, "");		
+		var mvcResult = mockMvcPerformGetAuthorizationAdminUser(ADMIN_PARAMETERS_DEFAULT_URL);
+		mockMvcExpectStatusAndContent(mvcResult, HTTP_NOT_FOUND, "");		
 	}	
 
 	@Test
@@ -59,8 +59,8 @@ public class ProcessingParametersDefaultControllerIT extends IntegTestTemplate {
 		var requestJson = jacksonTester.write(template).getJson();
 		var expectedJson = requestJson;
 
-		var mvcResult = this.mockMvcPerformPutAuthorizationAdminUser(ADMIN_PARAMETERS_DEFAULT_URL, requestJson);
-		this.mockMvcExpectStatusAndContent(mvcResult, HTTP_OK, expectedJson);
+		var mvcResult = mockMvcPerformPutAuthorizationAdminUser(ADMIN_PARAMETERS_DEFAULT_URL, requestJson);
+		mockMvcExpectStatusAndContent(mvcResult, HTTP_OK, expectedJson);
 	}
 	
 	@Test
@@ -69,7 +69,7 @@ public class ProcessingParametersDefaultControllerIT extends IntegTestTemplate {
 		var requestJson = jacksonTester.write(template).getJson();
 		parametersRepository.deleteAll();
 
-		var mvcResult = this.mockMvcPerformPutAuthorizationAdminUser(ADMIN_PARAMETERS_DEFAULT_URL, requestJson);
-		this.mockMvcExpectStatusAndContent(mvcResult, HTTP_NOT_FOUND, "");
+		var mvcResult = mockMvcPerformPutAuthorizationAdminUser(ADMIN_PARAMETERS_DEFAULT_URL, requestJson);
+		mockMvcExpectStatusAndContent(mvcResult, HTTP_NOT_FOUND, "");
 	}	
 }

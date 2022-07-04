@@ -42,29 +42,29 @@ class ProcessingParametersUserServiceTest extends UnitTestTemplate {
 	void resetToDefaultReturnsDefault() {
 		var mockedUser = new User().setUsername(MOCKED_USER_NAME).setGivenName(MOCKED_USER_NAME).setFamilyName(MOCKED_USER_NAME);
 		var parameters = new ProcessingParametersUser().setTimeDiffGroup(TIME_DIFF_GROUP).setResizeHeight(RESIZE_HEIGHT).setResizeWidth(RESIZE_WIDTH).setUser(mockedUser);
-		this.given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
-		this.given(parametersRepository.findByUser(mockedUser)).willReturn(Optional.of(parameters));
+		given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
+		given(parametersRepository.findByUser(mockedUser)).willReturn(Optional.of(parameters));
 		var parametersDefault = new ProcessingParametersDefault().setTimeDiffGroup(TIME_DIFF_GROUP_UPDATED).setResizeHeight(RESIZE_HEIGHT).setResizeWidth(RESIZE_WIDTH);
-		this.given(parametersDefaultRepository.findAll()).willReturn(new ArrayList<ProcessingParametersDefault>(List.of(parametersDefault)));
+		given(parametersDefaultRepository.findAll()).willReturn(new ArrayList<ProcessingParametersDefault>(List.of(parametersDefault)));
 		var parametersAfterReset = new ProcessingParametersUser()
 				.setTimeDiffGroup(parametersDefault.getTimeDiffGroup())
 				.setResizeWidth(parametersDefault.getResizeWidth())
 				.setResizeHeight(parametersDefault.getResizeHeight())
 				.setUser(mockedUser);
-		this.given(parametersRepository.save(parametersAfterReset)).willReturn(parametersAfterReset);
+		given(parametersRepository.save(parametersAfterReset)).willReturn(parametersAfterReset);
 		
-		this.assertThat(parametersService.resetToDefault()).isEqualTo(parametersAfterReset);
+		assertThat(parametersService.resetToDefault()).isEqualTo(parametersAfterReset);
 	}
 	
 	@Test
 	void resetToDefaultThrowsError() {
 		var mockedUser = new User().setUsername(MOCKED_USER_NAME).setGivenName(MOCKED_USER_NAME).setFamilyName(MOCKED_USER_NAME);
 		var parameters = new ProcessingParametersUser().setTimeDiffGroup(TIME_DIFF_GROUP).setResizeHeight(RESIZE_HEIGHT).setResizeWidth(RESIZE_WIDTH).setUser(mockedUser);
-		this.given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
-		this.given(parametersRepository.findByUser(mockedUser)).willReturn(Optional.of(parameters));
-		this.given(parametersDefaultRepository.findAll()).willReturn(new ArrayList<ProcessingParametersDefault>());
+		given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
+		given(parametersRepository.findByUser(mockedUser)).willReturn(Optional.of(parameters));
+		given(parametersDefaultRepository.findAll()).willReturn(new ArrayList<ProcessingParametersDefault>());
 		
-		this.assertThatExceptionOfType(RuntimeException.class)
+		assertThatExceptionOfType(RuntimeException.class)
 		  .isThrownBy(() -> {
 			  parametersService.resetToDefault();
 		});
@@ -73,45 +73,45 @@ class ProcessingParametersUserServiceTest extends UnitTestTemplate {
 	@Test
 	void resetToDefaultReturnsDefaultWhenParametersUserNotFound() {
 		var mockedUser = new User().setUsername(MOCKED_USER_NAME).setGivenName(MOCKED_USER_NAME).setFamilyName(MOCKED_USER_NAME);
-		this.given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
-		this.given(parametersRepository.findByUser(mockedUser)).willReturn(Optional.empty());
+		given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
+		given(parametersRepository.findByUser(mockedUser)).willReturn(Optional.empty());
 		var parametersDefault = new ProcessingParametersDefault().setTimeDiffGroup(TIME_DIFF_GROUP_UPDATED).setResizeHeight(RESIZE_HEIGHT).setResizeWidth(RESIZE_WIDTH);
-		this.given(parametersDefaultRepository.findAll()).willReturn(new ArrayList<ProcessingParametersDefault>(List.of(parametersDefault)));
+		given(parametersDefaultRepository.findAll()).willReturn(new ArrayList<ProcessingParametersDefault>(List.of(parametersDefault)));
 		var parametersAfterReset = new ProcessingParametersUser()
 				.setTimeDiffGroup(parametersDefault.getTimeDiffGroup())
 				.setResizeWidth(parametersDefault.getResizeWidth())
 				.setResizeHeight(parametersDefault.getResizeHeight())
 				.setUser(mockedUser);
-		this.given(parametersRepository.save(parametersAfterReset)).willReturn(parametersAfterReset);
+		given(parametersRepository.save(parametersAfterReset)).willReturn(parametersAfterReset);
 		
-		this.assertThat(parametersService.resetToDefault()).isEqualTo(parametersAfterReset);
+		assertThat(parametersService.resetToDefault()).isEqualTo(parametersAfterReset);
 	}
 	
 	@Test
 	void setInitialParameters() {
 		var mockedUser = new User().setUsername(MOCKED_USER_NAME).setGivenName(MOCKED_USER_NAME).setFamilyName(MOCKED_USER_NAME);
-		this.given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
-		this.given(parametersRepository.findByUser(mockedUser)).willReturn(Optional.empty());
+		given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
+		given(parametersRepository.findByUser(mockedUser)).willReturn(Optional.empty());
 		var parametersDefault = new ProcessingParametersDefault().setTimeDiffGroup(TIME_DIFF_GROUP_UPDATED).setResizeHeight(RESIZE_HEIGHT).setResizeWidth(RESIZE_WIDTH);
-		this.given(parametersDefaultRepository.findAll()).willReturn(new ArrayList<ProcessingParametersDefault>(List.of(parametersDefault)));
+		given(parametersDefaultRepository.findAll()).willReturn(new ArrayList<ProcessingParametersDefault>(List.of(parametersDefault)));
 		var initialParameters = new ProcessingParametersUser()
 				.setTimeDiffGroup(parametersDefault.getTimeDiffGroup())
 				.setResizeWidth(parametersDefault.getResizeWidth())
 				.setResizeHeight(parametersDefault.getResizeHeight())
 				.setUser(mockedUser);		
-		this.given(parametersRepository.save(initialParameters)).willReturn(initialParameters);
+		given(parametersRepository.save(initialParameters)).willReturn(initialParameters);
 		
-		this.assertThat(parametersService.setInitialParameters(mockedUser.getUsername())).isEqualTo(Optional.of(initialParameters));
+		assertThat(parametersService.setInitialParameters(mockedUser.getUsername())).isEqualTo(Optional.of(initialParameters));
 	}
 	
 	@Test
 	void setInitialParametersThrowsError() {
 		var mockedUser = new User().setUsername(MOCKED_USER_NAME).setGivenName(MOCKED_USER_NAME).setFamilyName(MOCKED_USER_NAME);
-		this.given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
-		this.given(parametersRepository.findByUser(mockedUser)).willReturn(Optional.empty());
-		this.given(parametersDefaultRepository.findAll()).willReturn(new ArrayList<ProcessingParametersDefault>());
+		given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
+		given(parametersRepository.findByUser(mockedUser)).willReturn(Optional.empty());
+		given(parametersDefaultRepository.findAll()).willReturn(new ArrayList<ProcessingParametersDefault>());
 		
-		this.assertThatExceptionOfType(RuntimeException.class)
+		assertThatExceptionOfType(RuntimeException.class)
 		  .isThrownBy(() -> {
 			  parametersService.setInitialParameters(mockedUser.getUsername());
 		});		
@@ -120,16 +120,16 @@ class ProcessingParametersUserServiceTest extends UnitTestTemplate {
 	@Test
 	void testSetInitialParametersDefaultParametersNotFound() {
 		var mockedUser = new User().setUsername(MOCKED_USER_NAME).setGivenName(MOCKED_USER_NAME).setFamilyName(MOCKED_USER_NAME);
-		this.given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
+		given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
 		var parametersDefault = new ProcessingParametersDefault().setTimeDiffGroup(TIME_DIFF_GROUP_UPDATED).setResizeHeight(RESIZE_HEIGHT).setResizeWidth(RESIZE_WIDTH);
 		var parameters = new ProcessingParametersUser()
 				.setTimeDiffGroup(parametersDefault.getTimeDiffGroup())
 				.setResizeWidth(parametersDefault.getResizeWidth())
 				.setResizeHeight(parametersDefault.getResizeHeight())
 				.setUser(mockedUser);
-		this.given(parametersRepository.findByUser(mockedUser)).willReturn(Optional.of(parameters));
+		given(parametersRepository.findByUser(mockedUser)).willReturn(Optional.of(parameters));
 		
-		this.assertThat(parametersService.setInitialParameters(mockedUser.getUsername())).isEqualTo(Optional.empty());	
+		assertThat(parametersService.setInitialParameters(mockedUser.getUsername())).isEqualTo(Optional.empty());	
 	}
 	
 	@Test
@@ -137,22 +137,22 @@ class ProcessingParametersUserServiceTest extends UnitTestTemplate {
 		var mockedUser = new User().setUsername(MOCKED_USER_NAME).setGivenName(MOCKED_USER_NAME).setFamilyName(MOCKED_USER_NAME);
 		var parameters = new ProcessingParametersUser().setTimeDiffGroup(TIME_DIFF_GROUP).setResizeHeight(RESIZE_HEIGHT).setResizeWidth(RESIZE_WIDTH).setUser(mockedUser);
 		parameters.setId(1L);
-		this.given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
-		this.given(parametersRepository.findByUser(mockedUser)).willReturn(Optional.of(parameters));
+		given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
+		given(parametersRepository.findByUser(mockedUser)).willReturn(Optional.of(parameters));
 		parametersService.deleteForCurrentUser();
 		
-		this.verify(parametersRepository, this.times(1)).delete(parameters);
-		this.verify(parametersRepository, this.times(1)).flush();
+		verify(parametersRepository, times(1)).delete(parameters);
+		verify(parametersRepository, times(1)).flush();
 	}
 
 	@Test
 	void testGetForCurrentUser() {
 		var mockedUser = new User().setUsername(MOCKED_USER_NAME).setGivenName(MOCKED_USER_NAME).setFamilyName(MOCKED_USER_NAME);
 		var parameters = new ProcessingParametersUser().setTimeDiffGroup(TIME_DIFF_GROUP).setResizeHeight(RESIZE_HEIGHT).setResizeWidth(RESIZE_WIDTH).setUser(mockedUser);
-		this.given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
-		this.given(parametersRepository.findByUser(mockedUser)).willReturn(Optional.of(parameters));
+		given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
+		given(parametersRepository.findByUser(mockedUser)).willReturn(Optional.of(parameters));
 		
-		this.assertThat(parametersService.getForCurrentUser()).isEqualTo(Optional.of(parameters));
+		assertThat(parametersService.getForCurrentUser()).isEqualTo(Optional.of(parameters));
 	}
 
 	@Test
@@ -161,10 +161,10 @@ class ProcessingParametersUserServiceTest extends UnitTestTemplate {
 		var parameters = new ProcessingParametersUser().setTimeDiffGroup(TIME_DIFF_GROUP).setResizeHeight(RESIZE_HEIGHT).setResizeWidth(RESIZE_WIDTH).setUser(mockedUser);
 		var parametersUpdated = new ProcessingParametersUser().setTimeDiffGroup(TIME_DIFF_GROUP_UPDATED).setResizeHeight(RESIZE_HEIGHT).setResizeWidth(RESIZE_WIDTH).setUser(mockedUser);		
 		var parametersTemplate = parametersUpdated.toProcessingParametersUserTemplate();
-		this.given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
-		this.given(parametersRepository.findByUser(mockedUser)).willReturn(Optional.of(parameters));
-		this.given(parametersRepository.save(parametersUpdated)).willReturn(parametersUpdated);
+		given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
+		given(parametersRepository.findByUser(mockedUser)).willReturn(Optional.of(parameters));
+		given(parametersRepository.save(parametersUpdated)).willReturn(parametersUpdated);
 		
-		this.assertThat(parametersService.updateForCurrentUser(parametersTemplate)).isEqualTo(Optional.of(parametersUpdated));
+		assertThat(parametersService.updateForCurrentUser(parametersTemplate)).isEqualTo(Optional.of(parametersUpdated));
 	}
 }

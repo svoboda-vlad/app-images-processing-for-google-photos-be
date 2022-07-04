@@ -9,7 +9,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.web.servlet.ResultActions;
 
 import svobodavlad.imagesprocessing.jpaentities.User;
 import svobodavlad.imagesprocessing.testutil.UnitTestTemplateMockMvc;
@@ -42,12 +41,12 @@ class UserAdminControllerTest extends UnitTestTemplateMockMvc {
 				.setEmail(MOCKED_USER_EMAIL);
 		var mockedUserAdmin = new User().setUsername(MOCKED_USER_ADMIN_NAME).setGivenName(MOCKED_USER_ADMIN_NAME).setFamilyName(MOCKED_USER_ADMIN_NAME)
 				.setEmail(MOCKED_USER_ADMIN_EMAIL);
-		this.given(userRepository.findAll()).willReturn(new ArrayList<User>(List.of(mockedUser, mockedUserAdmin)));
+		given(userRepository.findAll()).willReturn(new ArrayList<User>(List.of(mockedUser, mockedUserAdmin)));
 		var userTemplateList = List.of(mockedUser.toUserTemplate(), mockedUserAdmin.toUserTemplate());
-		String expectedJson = jacksonTester.write(userTemplateList).getJson();
+		var expectedJson = jacksonTester.write(userTemplateList).getJson();
 		
-		ResultActions mvcResult = this.mockMvcPerformGetNoAuthorization(ADMIN_USERS_URL);
-		this.mockMvcExpectStatusAndContent(mvcResult, HTTP_OK, expectedJson);
+		var mvcResult = mockMvcPerformGetNoAuthorization(ADMIN_USERS_URL);
+		mockMvcExpectStatusAndContent(mvcResult, HTTP_OK, expectedJson);
 	}
 	
 }

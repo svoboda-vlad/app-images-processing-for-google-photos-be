@@ -36,8 +36,8 @@ public class UserAdminControllerIT extends IntegTestTemplate {
 		var userTemplateList = List.of(userTemplate);
 		var expectedJson = jacksonTester.write(userTemplateList).getJson();		
 		
-		var mvcResult = this.mockMvcPerformGetAuthorizationAdminUser(ADMIN_USERS_URL);
-		this.mockMvcExpectStatusAndContent(mvcResult, HTTP_OK, expectedJson);
+		var mvcResult = mockMvcPerformGetAuthorizationAdminUser(ADMIN_USERS_URL);
+		mockMvcExpectStatusAndContent(mvcResult, HTTP_OK, expectedJson);
 	}
 
 }

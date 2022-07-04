@@ -29,10 +29,7 @@ public class UserTemplate {
 	private String email;
 
 	public User toUser(User user) {
-		user.setFamilyName(familyName);
-		user.setGivenName(givenName);
-		user.setEmail(email);
-		return user;
+		return user.setFamilyName(familyName).setGivenName(givenName).setEmail(email);
 	}
 
 }

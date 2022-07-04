@@ -50,16 +50,14 @@ public class ProcessingParametersUser extends JpaEntityTemplate {
 	}
 	
 	public ProcessingParametersUser resetToDefault(ProcessingParametersDefault parametersDefault) {
-		this.setTimeDiffGroup(parametersDefault.getTimeDiffGroup());
-		this.setResizeHeight(parametersDefault.getResizeHeight());
-		this.setResizeWidth(parametersDefault.getResizeWidth());
+		this.setTimeDiffGroup(parametersDefault.getTimeDiffGroup()).setResizeHeight(parametersDefault.getResizeHeight())
+		.setResizeWidth(parametersDefault.getResizeWidth());
 		return this;
 	}
 	
 	public ProcessingParametersUser updateFromTemplate(ProcessingParametersUserTemplate template) {
-		this.setTimeDiffGroup(template.getTimeDiffGroup());
-		this.setResizeHeight(template.getResizeHeight());
-		this.setResizeWidth(template.getResizeWidth());
+		this.setTimeDiffGroup(template.getTimeDiffGroup()).setResizeHeight(template.getResizeHeight())
+		.setResizeWidth(template.getResizeWidth());
 		return this;
 	}
 

@@ -36,21 +36,18 @@ class UserControllerTest extends UnitTestTemplateMockMvc {
 	void getUserTemplateOk200() throws Exception {
 		var mockedUser = new User().setUsername(MOCKED_USER_NAME).setGivenName(MOCKED_USER_NAME).setFamilyName(MOCKED_USER_NAME)
 				.setEmail(MOCKED_USER_EMAIL);
-		this.given(userService.getCurrentUser()).willReturn(Optional.of(mockedUser));
+		given(userService.getCurrentUser()).willReturn(Optional.of(mockedUser));
 		var expectedJson = jacksonTester.write(mockedUser.toUserTemplate()).getJson();
 		
-		var mvcResult = this.mockMvcPerformGetNoAuthorization(USER_URL);
-		this.mockMvcExpectStatusAndContent(mvcResult, HTTP_OK, expectedJson);
+		var mvcResult = mockMvcPerformGetNoAuthorization(USER_URL);
+		mockMvcExpectStatusAndContent(mvcResult, HTTP_OK, expectedJson);
 	}
 
 	@Test
-	void deleteUserNoContent204() throws Exception {
-		var mockedUser = new User().setUsername(MOCKED_USER_NAME).setGivenName(MOCKED_USER_NAME).setFamilyName(MOCKED_USER_NAME);
-		mockedUser.setId(1L);
-		
-		var mvcResult = this.mockMvcPerformDeleteNoAuthorization(USER_URL);
-		this.mockMvcExpectStatusAndContent(mvcResult, HTTP_NO_CONTENT, "");
-		this.verify(userService, this.times(1)).deleteCurrentUser();
+	void deleteUserNoContent204() throws Exception {		
+		var mvcResult = mockMvcPerformDeleteNoAuthorization(USER_URL);
+		mockMvcExpectStatusAndContent(mvcResult, HTTP_NO_CONTENT, "");
+		verify(userService, times(1)).deleteCurrentUser();
 	}
 
 }

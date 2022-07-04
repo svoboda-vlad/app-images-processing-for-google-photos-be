@@ -23,30 +23,30 @@ public abstract class MockMvcUtilWithSecurity extends MockMvcUtil {
 	private MockMvc mockMvc;
 
 	public ResultActions mockMvcPerformGetAuthorizationAdminUser(String requestUrl) throws Exception {
-		return this.mockMvc.perform(get(requestUrl)
+		return mockMvc.perform(get(requestUrl)
 				.with(jwt().jwt(jwt -> jwt.subject(ADMIN_USERNAME)).authorities(new SimpleGrantedAuthority(ADMIN_USERNAME)))
 				.accept(MediaType.APPLICATION_JSON));
 	}
 
 	public ResultActions mockMvcPerformGetAuthorizationDefaultUser(String requestUrl) throws Exception {
-		return this.mockMvc.perform(get(requestUrl)
+		return mockMvc.perform(get(requestUrl)
 				.with(jwt()).accept(MediaType.APPLICATION_JSON));
 	}
 	
 	public ResultActions mockMvcPerformPutAuthorizationAdminUser(String requestUrl, String requestJson)
 			throws Exception {
-		return this.mockMvc.perform(put(requestUrl)
+		return mockMvc.perform(put(requestUrl)
 				.with(jwt().jwt(jwt -> jwt.subject(ADMIN_USERNAME)).authorities(new SimpleGrantedAuthority(ADMIN_USERNAME)))
 				.content(requestJson).contentType(MediaType.APPLICATION_JSON));
 	}
 
 	public ResultActions mockMvcPerformPutAuthorizationDefaultUser(String requestUrl, String requestJson)
 			throws Exception {
-		return this.mockMvc.perform(put(requestUrl)
+		return mockMvc.perform(put(requestUrl)
 				.with(jwt()).content(requestJson).contentType(MediaType.APPLICATION_JSON));
 	}
 
 	public ResultActions mockMvcPerformDeleteAuthorizationDefaultUser(String requestUrl) throws Exception {
-		return this.mockMvc.perform(delete(requestUrl).with(jwt()));
+		return mockMvc.perform(delete(requestUrl).with(jwt()));
 	}
 }

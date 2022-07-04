@@ -37,19 +37,19 @@ public class LastUploadInfoControllerTest extends UnitTestTemplateMockMvc {
 		var lastUploadDateTime = Instant.now();
 		var mockedUser = new User().setUsername(MOCKED_USER_NAME).setGivenName(MOCKED_USER_NAME).setFamilyName(MOCKED_USER_NAME);
 		var lastUploadInfo = new LastUploadInfo().setLastUploadDateTime(lastUploadDateTime).setUser(mockedUser);
-		this.given(lastUploadInfoService.getForCurrentUser()).willReturn(Optional.of(lastUploadInfo));
+		given(lastUploadInfoService.getForCurrentUser()).willReturn(Optional.of(lastUploadInfo));
 		var expectedJson = jacksonTester.write(lastUploadInfo.toLastUploadInfoTemplate()).getJson();
 		
-		var mvcResult = this.mockMvcPerformGetNoAuthorization(LAST_UPLOAD_INFO_URL);
-		this.mockMvcExpectStatusAndContent(mvcResult, HTTP_OK, expectedJson);		
+		var mvcResult = mockMvcPerformGetNoAuthorization(LAST_UPLOAD_INFO_URL);
+		mockMvcExpectStatusAndContent(mvcResult, HTTP_OK, expectedJson);		
 	}
 	
 	@Test
 	void getLastUploadInfoNotFound404() throws Exception {
-		this.given(lastUploadInfoService.getForCurrentUser()).willReturn(Optional.empty());
+		given(lastUploadInfoService.getForCurrentUser()).willReturn(Optional.empty());
 		
-		var mvcResult = this.mockMvcPerformGetNoAuthorization(LAST_UPLOAD_INFO_URL);
-		this.mockMvcExpectStatusAndContent(mvcResult, HTTP_NOT_FOUND, "");
+		var mvcResult = mockMvcPerformGetNoAuthorization(LAST_UPLOAD_INFO_URL);
+		mockMvcExpectStatusAndContent(mvcResult, HTTP_NOT_FOUND, "");
 	}
 
 	@Test
@@ -57,10 +57,10 @@ public class LastUploadInfoControllerTest extends UnitTestTemplateMockMvc {
 		var lastUploadDateTime = Instant.now();	
 		var mockedUser = new User().setUsername(MOCKED_USER_NAME).setGivenName(MOCKED_USER_NAME).setFamilyName(MOCKED_USER_NAME);
 		var lastUploadInfo = new LastUploadInfo().setLastUploadDateTime(lastUploadDateTime).setUser(mockedUser);
-		this.given(lastUploadInfoService.updateForCurrentUser()).willReturn(Optional.of(lastUploadInfo));
+		given(lastUploadInfoService.updateForCurrentUser()).willReturn(Optional.of(lastUploadInfo));
 		var expectedJson = jacksonTester.write(lastUploadInfo.toLastUploadInfoTemplate()).getJson();
 		
-		var mvcResult = this.mockMvcPerformGetNoAuthorization(LAST_UPLOAD_INFO_UPDATE_URL);
-		this.mockMvcExpectStatusAndContent(mvcResult, HTTP_OK, expectedJson);
+		var mvcResult = mockMvcPerformGetNoAuthorization(LAST_UPLOAD_INFO_UPDATE_URL);
+		mockMvcExpectStatusAndContent(mvcResult, HTTP_OK, expectedJson);
 	}	
 }
