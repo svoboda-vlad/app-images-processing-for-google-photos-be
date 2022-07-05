@@ -21,13 +21,10 @@ class LastUploadInfoServiceTest extends UnitTestTemplate {
 
 	@Mock
 	private LastUploadInfoRepository lastUploadInfoRepository;
-	
 	@Mock
 	private UserRepository userRepository;
-	
 	@Mock
 	private DateTimeUtil dateTimeUtil;
-	
 	@InjectMocks
 	private LastUploadInfoService lastUploadInfoService;
 
@@ -35,8 +32,8 @@ class LastUploadInfoServiceTest extends UnitTestTemplate {
 	void getForCurrentUser() {
 		var mockedUser = new User().setUsername(MOCKED_USER_NAME).setGivenName(MOCKED_USER_NAME).setFamilyName(MOCKED_USER_NAME);
 		var lastUploadInfo = new LastUploadInfo().setLastUploadDateTime(Instant.now()).setUser(mockedUser);
-		given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
-		given(lastUploadInfoRepository.findByUser(mockedUser)).willReturn(Optional.of(lastUploadInfo));
+		when(userRepository.findByUsername(mockedUser.getUsername())).thenReturn(Optional.of(mockedUser));
+		when(lastUploadInfoRepository.findByUser(mockedUser)).thenReturn(Optional.of(lastUploadInfo));
 		
 		assertThat(lastUploadInfoService.getForCurrentUser()).isEqualTo(Optional.of(lastUploadInfo));
 	}
@@ -46,10 +43,10 @@ class LastUploadInfoServiceTest extends UnitTestTemplate {
 		var mockedUser = new User().setUsername(MOCKED_USER_NAME).setGivenName(MOCKED_USER_NAME).setFamilyName(MOCKED_USER_NAME);
 		var now = Instant.now();
 		var lastUploadInfo = new LastUploadInfo().setLastUploadDateTime(now).setUser(mockedUser);
-		given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
-		given(lastUploadInfoRepository.findByUser(mockedUser)).willReturn(Optional.of(lastUploadInfo));
-		given(lastUploadInfoRepository.save(lastUploadInfo)).willReturn(lastUploadInfo);
-		given(dateTimeUtil.getCurrentDateTime()).willReturn(now);
+		when(userRepository.findByUsername(mockedUser.getUsername())).thenReturn(Optional.of(mockedUser));
+		when(lastUploadInfoRepository.findByUser(mockedUser)).thenReturn(Optional.of(lastUploadInfo));
+		when(lastUploadInfoRepository.save(lastUploadInfo)).thenReturn(lastUploadInfo);
+		when(dateTimeUtil.getCurrentDateTime()).thenReturn(now);
 		
 		var optLastUploadInfoUpdated = lastUploadInfoService.updateForCurrentUser();
 		assertThat(optLastUploadInfoUpdated).isEqualTo(Optional.of(lastUploadInfo));
@@ -60,10 +57,10 @@ class LastUploadInfoServiceTest extends UnitTestTemplate {
 		var mockedUser = new User().setUsername(MOCKED_USER_NAME).setGivenName(MOCKED_USER_NAME).setFamilyName(MOCKED_USER_NAME);
 		var now = Instant.now();
 		var lastUploadInfo = new LastUploadInfo().setLastUploadDateTime(now).setUser(mockedUser);
-		given(userRepository.findByUsername(mockedUser.getUsername())).willReturn(Optional.of(mockedUser));
-		given(lastUploadInfoRepository.findByUser(mockedUser)).willReturn(Optional.empty());		
-		given(lastUploadInfoRepository.save(any(LastUploadInfo.class))).willReturn(lastUploadInfo);
-		given(dateTimeUtil.getCurrentDateTime()).willReturn(now);
+		when(userRepository.findByUsername(mockedUser.getUsername())).thenReturn(Optional.of(mockedUser));
+		when(lastUploadInfoRepository.findByUser(mockedUser)).thenReturn(Optional.empty());		
+		when(lastUploadInfoRepository.save(any(LastUploadInfo.class))).thenReturn(lastUploadInfo);
+		when(dateTimeUtil.getCurrentDateTime()).thenReturn(now);
 				
 		assertThat(lastUploadInfoService.updateForCurrentUser()).isEqualTo(Optional.of(lastUploadInfo));
 	}	

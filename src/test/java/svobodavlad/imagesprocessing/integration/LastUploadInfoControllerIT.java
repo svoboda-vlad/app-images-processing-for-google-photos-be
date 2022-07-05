@@ -18,15 +18,10 @@ public class LastUploadInfoControllerIT extends IntegTestTemplate {
 	private static final String LAST_UPLOAD_INFO_URL = "/last-upload-info";
 	private static final String LAST_UPLOAD_INFO_UPDATE_URL = "/last-upload-info-update";
 	
-	private static final int HTTP_OK = 200;
-	private static final int HTTP_NOT_FOUND = 404;
-	
 	@Autowired
 	private LastUploadInfoRepository lastUploadInfoRepository;
-	
 	@Autowired
 	private SecurityTestUtil securityTestUtil;
-			
     @Autowired
     private JacksonTester<LastUploadInfoTemplate> jacksonTester;	
 	

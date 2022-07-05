@@ -31,16 +31,10 @@ public class ProcessingParametersUserControllerTest extends UnitTestTemplateMock
 	private static final String PARAMETERS_URL = "/parameters";
 	private static final String PARAMETERS_RESET_TO_DEFAULT_URL = "/parameters-reset-to-default";
 	
-	private static final int HTTP_OK = 200;
-	private static final int HTTP_NO_CONTENT = 204;
-	private static final int HTTP_NOT_FOUND = 404;	
-	
 	@MockBean
 	private ProcessingParametersDefaultRepository parametersDefaultRepository;
-	
 	@MockBean
 	private ProcessingParametersUserService parametersService;
-	
     @Autowired
     private JacksonTester<ProcessingParametersUserTemplate> jacksonTester;		
 
@@ -49,7 +43,7 @@ public class ProcessingParametersUserControllerTest extends UnitTestTemplateMock
 		var mockedUser = new User().setUsername(MOCKED_USER_NAME).setGivenName(MOCKED_USER_NAME).setFamilyName(MOCKED_USER_NAME);
 		var parameters = new ProcessingParametersUser().setTimeDiffGroup(TIME_DIFF_GROUP).setResizeHeight(RESIZE_HEIGHT).setResizeWidth(RESIZE_WIDTH)
 				.setUser(mockedUser);
-		given(parametersService.getForCurrentUser()).willReturn(Optional.of(parameters));
+		when(parametersService.getForCurrentUser()).thenReturn(Optional.of(parameters));
 		var expectedJson = jacksonTester.write(parameters.toProcessingParametersUserTemplate()).getJson();
 		
 		var mvcResult = mockMvcPerformGetNoAuthorization(PARAMETERS_URL);
@@ -58,7 +52,7 @@ public class ProcessingParametersUserControllerTest extends UnitTestTemplateMock
 	
 	@Test
 	void getProcessingParametersUserTemplateNoParametersNotFound404() throws Exception {
-		given(parametersService.getForCurrentUser()).willReturn(Optional.empty());
+		when(parametersService.getForCurrentUser()).thenReturn(Optional.empty());
 		
 		var mvcResult = mockMvcPerformGetNoAuthorization(PARAMETERS_URL);
 		mockMvcExpectStatusAndContent(mvcResult, HTTP_NOT_FOUND, "");
@@ -69,7 +63,7 @@ public class ProcessingParametersUserControllerTest extends UnitTestTemplateMock
 		var mockedUser = new User().setUsername(MOCKED_USER_NAME).setGivenName(MOCKED_USER_NAME).setFamilyName(MOCKED_USER_NAME);
 		var parameters = new ProcessingParametersUser().setTimeDiffGroup(TIME_DIFF_GROUP).setResizeHeight(RESIZE_HEIGHT).setResizeWidth(RESIZE_WIDTH).setUser(mockedUser);
 		var template = parameters.toProcessingParametersUserTemplate();
-		given(parametersService.updateForCurrentUser(template)).willReturn(Optional.of(parameters));
+		when(parametersService.updateForCurrentUser(template)).thenReturn(Optional.of(parameters));
 		var requestJson = jacksonTester.write(template).getJson();
 		var expectedJson = requestJson;
 		
@@ -81,7 +75,7 @@ public class ProcessingParametersUserControllerTest extends UnitTestTemplateMock
 	@Test
 	void updateProcessingParametersDefaultNotFound404() throws Exception {
 		var parametersTemplate = new ProcessingParametersUserTemplate().setTimeDiffGroup(TIME_DIFF_GROUP).setResizeHeight(RESIZE_HEIGHT).setResizeWidth(RESIZE_WIDTH);
-		given(parametersService.updateForCurrentUser(parametersTemplate)).willReturn(Optional.empty());
+		when(parametersService.updateForCurrentUser(parametersTemplate)).thenReturn(Optional.empty());
 		var requestJson = jacksonTester.write(parametersTemplate).getJson();
 		
 		var mvcResult = mockMvcPerformPutNoAuthorization(PARAMETERS_URL, requestJson);
@@ -91,7 +85,7 @@ public class ProcessingParametersUserControllerTest extends UnitTestTemplateMock
 	@Test
 	void getResetToDefaultOk204() throws Exception {
 		var parameters = new ProcessingParametersDefault().setTimeDiffGroup(TIME_DIFF_GROUP_UPDATED).setResizeHeight(RESIZE_HEIGHT).setResizeWidth(RESIZE_WIDTH);
-		given(parametersDefaultRepository.findAll()).willReturn(new ArrayList<ProcessingParametersDefault>(List.of(parameters)));
+		when(parametersDefaultRepository.findAll()).thenReturn(new ArrayList<ProcessingParametersDefault>(List.of(parameters)));
 		
 		var mvcResult = mockMvcPerformGetNoAuthorization(PARAMETERS_RESET_TO_DEFAULT_URL);
 		mockMvcExpectStatusAndContent(mvcResult, HTTP_NO_CONTENT, "");
@@ -100,7 +94,7 @@ public class ProcessingParametersUserControllerTest extends UnitTestTemplateMock
 	
 	@Test
 	void getResetToDefaultNoDefaultParametersNotFound404() throws Exception {
-		given(parametersDefaultRepository.findAll()).willReturn(new ArrayList<ProcessingParametersDefault>());
+		when(parametersDefaultRepository.findAll()).thenReturn(new ArrayList<ProcessingParametersDefault>());
 		
 		var mvcResult = mockMvcPerformGetNoAuthorization(PARAMETERS_RESET_TO_DEFAULT_URL);
 		mockMvcExpectStatusAndContent(mvcResult, HTTP_NOT_FOUND, "");

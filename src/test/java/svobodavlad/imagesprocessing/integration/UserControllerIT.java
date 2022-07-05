@@ -17,22 +17,15 @@ public class UserControllerIT extends IntegTestTemplate {
 	
 	private static final String USER_URL = "/user";
 	
-	private static final int HTTP_OK = 200;
-	private static final int HTTP_NO_CONTENT = 204;
-	private static final int HTTP_UNAUTHORIZED = 401;	
-	
 	@Autowired
 	private UserRepository userRepository;
-	
 	@Autowired
 	private ProcessingParametersUserRepository parametersRepository;	
-	
 	@Autowired
 	private SecurityTestUtil securityTestUtil;
-	
     @Autowired
     private JacksonTester<UserTemplate> jacksonTester;	
-	
+
 	@BeforeEach
 	void initData() {
 		securityTestUtil.saveDefaultUser();

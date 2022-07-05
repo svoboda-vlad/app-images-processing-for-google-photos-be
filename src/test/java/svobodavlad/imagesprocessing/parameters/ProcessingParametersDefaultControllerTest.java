@@ -25,12 +25,8 @@ public class ProcessingParametersDefaultControllerTest extends UnitTestTemplateM
 	
 	private static final int TIME_DIFF_GROUP_UPDATED = 3600;
 	
-	private static final int HTTP_OK = 200;
-	private static final int HTTP_NOT_FOUND = 404;
-	
 	@MockBean
 	private ProcessingParametersDefaultRepository parametersRepository;
-	
     @Autowired
     private JacksonTester<ProcessingParametersDefaultTemplate> jacksonTester;	
 	
@@ -39,7 +35,7 @@ public class ProcessingParametersDefaultControllerTest extends UnitTestTemplateM
 		var parametersList = new ArrayList<ProcessingParametersDefault>();
 		var parameters = new ProcessingParametersDefault().setTimeDiffGroup(TIME_DIFF_GROUP).setResizeHeight(RESIZE_HEIGHT).setResizeWidth(RESIZE_WIDTH);
 		parametersList.add(parameters);
-		given(parametersRepository.findAll()).willReturn(parametersList);
+		when(parametersRepository.findAll()).thenReturn(parametersList);
 		var expectedJson = jacksonTester.write(parameters.toProcessingParametersDefaultTemplate()).getJson();
 		
 		var mvcResult = mockMvcPerformGetNoAuthorization(ADMIN_PARAMETERS_DEFAULT_URL);
@@ -48,7 +44,7 @@ public class ProcessingParametersDefaultControllerTest extends UnitTestTemplateM
 	
 	@Test
 	void getProcessingParametersDefaultTemplateNotFound404() throws Exception {
-		given(parametersRepository.findAll()).willReturn(new ArrayList<ProcessingParametersDefault>());
+		when(parametersRepository.findAll()).thenReturn(new ArrayList<ProcessingParametersDefault>());
 		
 		var mvcResult = mockMvcPerformGetNoAuthorization(ADMIN_PARAMETERS_DEFAULT_URL);
 		mockMvcExpectStatusAndContent(mvcResult, HTTP_NOT_FOUND, "");
@@ -57,8 +53,8 @@ public class ProcessingParametersDefaultControllerTest extends UnitTestTemplateM
 	@Test
 	void updateProcessingParametersDefaultTemplateOk200() throws Exception {
 		var parameters = new ProcessingParametersDefault().setTimeDiffGroup(TIME_DIFF_GROUP_UPDATED).setResizeHeight(RESIZE_HEIGHT).setResizeWidth(RESIZE_WIDTH);
-		given(parametersRepository.findAll()).willReturn(new ArrayList<ProcessingParametersDefault>(List.of(parameters)));
-		given(parametersRepository.save(parameters)).willReturn(parameters);
+		when(parametersRepository.findAll()).thenReturn(new ArrayList<ProcessingParametersDefault>(List.of(parameters)));
+		when(parametersRepository.save(parameters)).thenReturn(parameters);
 		var requestJson = jacksonTester.write(parameters.toProcessingParametersDefaultTemplate()).getJson();
 		var expectedJson = requestJson;
 		
@@ -68,7 +64,7 @@ public class ProcessingParametersDefaultControllerTest extends UnitTestTemplateM
 	
 	@Test
 	void updateProcessingParametersDefaultTemplateNotFound404() throws Exception {
-		given(parametersRepository.findAll()).willReturn(new ArrayList<ProcessingParametersDefault>());
+		when(parametersRepository.findAll()).thenReturn(new ArrayList<ProcessingParametersDefault>());
 		var template = new ProcessingParametersDefaultTemplate().setTimeDiffGroup(TIME_DIFF_GROUP_UPDATED).setResizeHeight(RESIZE_HEIGHT).setResizeWidth(RESIZE_WIDTH);
 		var requestJson = jacksonTester.write(template).getJson();
 		

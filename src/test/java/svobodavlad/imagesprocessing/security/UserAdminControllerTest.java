@@ -24,14 +24,10 @@ class UserAdminControllerTest extends UnitTestTemplateMockMvc {
 	
 	private static final String ADMIN_USERS_URL = "/admin/users";
 	
-	private static final int HTTP_OK = 200;
-	
 	@MockBean
 	private UserRepository userRepository;
-	
 	@MockBean
 	private UserService userService;
-	
     @Autowired
     private JacksonTester<List<UserTemplate>> jacksonTester;
 	
@@ -41,7 +37,7 @@ class UserAdminControllerTest extends UnitTestTemplateMockMvc {
 				.setEmail(MOCKED_USER_EMAIL);
 		var mockedUserAdmin = new User().setUsername(MOCKED_USER_ADMIN_NAME).setGivenName(MOCKED_USER_ADMIN_NAME).setFamilyName(MOCKED_USER_ADMIN_NAME)
 				.setEmail(MOCKED_USER_ADMIN_EMAIL);
-		given(userRepository.findAll()).willReturn(new ArrayList<User>(List.of(mockedUser, mockedUserAdmin)));
+		when(userRepository.findAll()).thenReturn(new ArrayList<User>(List.of(mockedUser, mockedUserAdmin)));
 		var userTemplateList = List.of(mockedUser.toUserTemplate(), mockedUserAdmin.toUserTemplate());
 		var expectedJson = jacksonTester.write(userTemplateList).getJson();
 		

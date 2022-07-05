@@ -17,6 +17,11 @@ import org.springframework.test.web.servlet.ResultActions;
 @AutoConfigureJsonTesters
 public abstract class MockMvcUtil {
 
+	protected static final int HTTP_OK = 200;
+	protected static final int HTTP_NO_CONTENT = 204;
+	protected static final int HTTP_UNAUTHORIZED = 401;
+	protected static final int HTTP_NOT_FOUND = 404;
+	
 	@Autowired
 	private MockMvc mockMvc;
 

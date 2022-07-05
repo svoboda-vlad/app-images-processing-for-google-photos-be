@@ -10,5 +10,4 @@ public class DateTimeUtil {
 	public Instant getCurrentDateTime() {
 		return Instant.now();
 	}
-	
 }

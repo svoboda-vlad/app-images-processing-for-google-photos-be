@@ -17,11 +17,9 @@ public class UserAdminControllerIT extends IntegTestTemplate {
 	private static final String EMAIL = null;
 	
 	private static final String ADMIN_USERS_URL = "/admin/users";
-	private static final int HTTP_OK = 200;
 	
 	@Autowired
 	private SecurityTestUtil securityTestUtil;
-		
     @Autowired
     private JacksonTester<List<UserTemplate>> jacksonTester;
 	

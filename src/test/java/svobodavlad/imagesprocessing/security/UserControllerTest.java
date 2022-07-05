@@ -20,15 +20,10 @@ class UserControllerTest extends UnitTestTemplateMockMvc {
 	private static final String MOCKED_USER_EMAIL = "user@example.com";
 	private static final String USER_URL = "/user";
 
-	private static final int HTTP_OK = 200;
-	private static final int HTTP_NO_CONTENT = 204;
-
 	@MockBean
 	private UserRepository userRepository;
-
 	@MockBean
 	private UserService userService;
-	
     @Autowired
     private JacksonTester<UserTemplate> jacksonTester;	
 	
@@ -36,7 +31,7 @@ class UserControllerTest extends UnitTestTemplateMockMvc {
 	void getUserTemplateOk200() throws Exception {
 		var mockedUser = new User().setUsername(MOCKED_USER_NAME).setGivenName(MOCKED_USER_NAME).setFamilyName(MOCKED_USER_NAME)
 				.setEmail(MOCKED_USER_EMAIL);
-		given(userService.getCurrentUser()).willReturn(Optional.of(mockedUser));
+		when(userService.getCurrentUser()).thenReturn(Optional.of(mockedUser));
 		var expectedJson = jacksonTester.write(mockedUser.toUserTemplate()).getJson();
 		
 		var mvcResult = mockMvcPerformGetNoAuthorization(USER_URL);

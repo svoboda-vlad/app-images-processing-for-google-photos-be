@@ -19,13 +19,9 @@ public class ProcessingParametersDefaultControllerIT extends IntegTestTemplate {
 	private static final int TIME_DIFF_GROUP_UPDATED = 3600;	
 	
 	private static final String ADMIN_PARAMETERS_DEFAULT_URL = "/admin/parameters-default";
-	
-	private static final int HTTP_OK = 200;
-	private static final int HTTP_NOT_FOUND = 404;	
 		
 	@Autowired
 	private ProcessingParametersDefaultRepository parametersRepository;
-	
     @Autowired
     private JacksonTester<ProcessingParametersDefaultTemplate> jacksonTester;	
 	

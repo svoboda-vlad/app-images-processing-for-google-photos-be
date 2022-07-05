@@ -22,23 +22,15 @@ public class ProcessingParametersUserControllerIT extends IntegTestTemplate {
 	
 	private static final String PARAMETERS_URL = "/parameters";
 	private static final String PARAMETERS_RESET_TO_DEFAULT_URL = "/parameters-reset-to-default";
-	
-	private static final int HTTP_OK = 200;
-	private static final int HTTP_NO_CONTENT = 204;
-	private static final int HTTP_NOT_FOUND = 404;	
-	
+
 	@Autowired
 	private ProcessingParametersUserRepository parametersRepository;
-	
 	@Autowired
 	private ProcessingParametersDefaultRepository parametersDefaultRepository;
-	
 	@Autowired
 	private SecurityTestUtil securityTestUtil;
-	
 	@Autowired
 	private ProcessingParametersUserService parametersService;
-	
     @Autowired
     private JacksonTester<ProcessingParametersUserTemplate> jacksonTester;	
 	

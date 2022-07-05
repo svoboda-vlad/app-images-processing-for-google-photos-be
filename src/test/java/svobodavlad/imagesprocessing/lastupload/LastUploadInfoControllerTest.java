@@ -23,12 +23,8 @@ public class LastUploadInfoControllerTest extends UnitTestTemplateMockMvc {
 	private static final String LAST_UPLOAD_INFO_URL = "/last-upload-info";
 	private static final String LAST_UPLOAD_INFO_UPDATE_URL = "/last-upload-info-update";
 	
-	private static final int HTTP_OK = 200;
-	private static final int HTTP_NOT_FOUND = 404;
-	
 	@MockBean
 	private LastUploadInfoService lastUploadInfoService;
-	
     @Autowired
     private JacksonTester<LastUploadInfoTemplate> jacksonTester;	
 
@@ -37,7 +33,7 @@ public class LastUploadInfoControllerTest extends UnitTestTemplateMockMvc {
 		var lastUploadDateTime = Instant.now();
 		var mockedUser = new User().setUsername(MOCKED_USER_NAME).setGivenName(MOCKED_USER_NAME).setFamilyName(MOCKED_USER_NAME);
 		var lastUploadInfo = new LastUploadInfo().setLastUploadDateTime(lastUploadDateTime).setUser(mockedUser);
-		given(lastUploadInfoService.getForCurrentUser()).willReturn(Optional.of(lastUploadInfo));
+		when(lastUploadInfoService.getForCurrentUser()).thenReturn(Optional.of(lastUploadInfo));
 		var expectedJson = jacksonTester.write(lastUploadInfo.toLastUploadInfoTemplate()).getJson();
 		
 		var mvcResult = mockMvcPerformGetNoAuthorization(LAST_UPLOAD_INFO_URL);
@@ -46,7 +42,7 @@ public class LastUploadInfoControllerTest extends UnitTestTemplateMockMvc {
 	
 	@Test
 	void getLastUploadInfoNotFound404() throws Exception {
-		given(lastUploadInfoService.getForCurrentUser()).willReturn(Optional.empty());
+		when(lastUploadInfoService.getForCurrentUser()).thenReturn(Optional.empty());
 		
 		var mvcResult = mockMvcPerformGetNoAuthorization(LAST_UPLOAD_INFO_URL);
 		mockMvcExpectStatusAndContent(mvcResult, HTTP_NOT_FOUND, "");
@@ -57,7 +53,7 @@ public class LastUploadInfoControllerTest extends UnitTestTemplateMockMvc {
 		var lastUploadDateTime = Instant.now();	
 		var mockedUser = new User().setUsername(MOCKED_USER_NAME).setGivenName(MOCKED_USER_NAME).setFamilyName(MOCKED_USER_NAME);
 		var lastUploadInfo = new LastUploadInfo().setLastUploadDateTime(lastUploadDateTime).setUser(mockedUser);
-		given(lastUploadInfoService.updateForCurrentUser()).willReturn(Optional.of(lastUploadInfo));
+		when(lastUploadInfoService.updateForCurrentUser()).thenReturn(Optional.of(lastUploadInfo));
 		var expectedJson = jacksonTester.write(lastUploadInfo.toLastUploadInfoTemplate()).getJson();
 		
 		var mvcResult = mockMvcPerformGetNoAuthorization(LAST_UPLOAD_INFO_UPDATE_URL);

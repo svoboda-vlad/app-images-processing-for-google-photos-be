@@ -22,13 +22,10 @@ public class UserServiceTest extends UnitTestTemplate {
 
 	@Mock
 	private UserRepository userRepository;
-	
 	@Mock
 	private ProcessingParametersUserService parametersService;
-	
 	@Mock
 	private DateTimeUtil dateTimeUtil;
-
 	@InjectMocks
 	private UserService userService;
 	
@@ -36,8 +33,8 @@ public class UserServiceTest extends UnitTestTemplate {
 	void registerUserNewUser() {
 		var mockedUser = new User().setUsername(DEFAULT_USERNAME).setGivenName(DEFAULT_USERNAME).setFamilyName(DEFAULT_USERNAME);
 
-		given(userRepository.findByUsername(DEFAULT_USERNAME)).willReturn(Optional.empty());
-		given(userRepository.save(mockedUser)).willReturn(mockedUser);
+		when(userRepository.findByUsername(DEFAULT_USERNAME)).thenReturn(Optional.empty());
+		when(userRepository.save(mockedUser)).thenReturn(mockedUser);
 
 		assertThat(userService.registerUser(mockedUser)).isEqualTo(mockedUser);
 		verify(parametersService, times(1)).setInitialParameters(DEFAULT_USERNAME);
@@ -47,7 +44,7 @@ public class UserServiceTest extends UnitTestTemplate {
 	void registerUserAlreadyExistsException() {
 		var mockedUser = new User().setUsername(DEFAULT_USERNAME).setGivenName(DEFAULT_USERNAME).setFamilyName(DEFAULT_USERNAME);
 
-		given(userRepository.findByUsername(DEFAULT_USERNAME)).willReturn(Optional.of(mockedUser));
+		when(userRepository.findByUsername(DEFAULT_USERNAME)).thenReturn(Optional.of(mockedUser));
 		assertThatExceptionOfType(EntityExistsException.class).isThrownBy(() -> {
 			userService.registerUser(mockedUser);
 		});
@@ -65,7 +62,7 @@ public class UserServiceTest extends UnitTestTemplate {
 	@Test
 	void deleteUserOkUserDeleted() {
 		var mockedUser = new User().setUsername(DEFAULT_USERNAME).setGivenName(DEFAULT_USERNAME).setFamilyName(DEFAULT_USERNAME);
-		given(userRepository.findByUsername(DEFAULT_USERNAME)).willReturn(Optional.of(mockedUser));		
+		when(userRepository.findByUsername(DEFAULT_USERNAME)).thenReturn(Optional.of(mockedUser));		
 		userService.deleteCurrentUser();
 
 		verify(parametersService, times(1)).deleteForCurrentUser();
@@ -76,8 +73,8 @@ public class UserServiceTest extends UnitTestTemplate {
 	@Test
 	void getCurrentUserOkUserExists() {
 		var mockedUser = new User().setUsername(DEFAULT_USERNAME).setGivenName(DEFAULT_USERNAME).setFamilyName(DEFAULT_USERNAME);
-		given(userRepository.findByUsername(DEFAULT_USERNAME)).willReturn(Optional.of(mockedUser));		
-		given(userRepository.save(mockedUser)).willReturn(mockedUser);
+		when(userRepository.findByUsername(DEFAULT_USERNAME)).thenReturn(Optional.of(mockedUser));		
+		when(userRepository.save(mockedUser)).thenReturn(mockedUser);
 		
 		assertThat(userService.getCurrentUser()).isEqualTo(Optional.of(mockedUser));
 	}
@@ -87,12 +84,12 @@ public class UserServiceTest extends UnitTestTemplate {
 		var now = Instant.now();
 		var mockedUser = new User().setUsername(DEFAULT_USERNAME).setGivenName(DEFAULT_USERNAME).setFamilyName(DEFAULT_USERNAME);
 		mockedUser.setEmail(DEFAULT_USERNAME);
-		given(userRepository.findByUsername(DEFAULT_USERNAME))
-		.willReturn(Optional.empty())
-		.willReturn(Optional.empty())
-		.willReturn(Optional.of(mockedUser));
-		given(dateTimeUtil.getCurrentDateTime()).willReturn(now);
-		given(userRepository.save(mockedUser)).willReturn(mockedUser);		
+		when(userRepository.findByUsername(DEFAULT_USERNAME))
+		.thenReturn(Optional.empty())
+		.thenReturn(Optional.empty())
+		.thenReturn(Optional.of(mockedUser));
+		when(dateTimeUtil.getCurrentDateTime()).thenReturn(now);
+		when(userRepository.save(mockedUser)).thenReturn(mockedUser);		
 
 		assertThat(userService.getCurrentUser()).isEqualTo(Optional.of(mockedUser));
 	}

@@ -9,16 +9,16 @@ import org.assertj.core.api.Assertions;
 import org.assertj.core.api.ObjectAssert;
 import org.assertj.core.api.ThrowableTypeAssert;
 import org.mockito.ArgumentMatchers;
-import org.mockito.BDDMockito;
 import org.mockito.Mockito;
+import org.mockito.stubbing.OngoingStubbing;
 import org.mockito.verification.VerificationMode;
 import org.springframework.test.context.ActiveProfiles;
 
 @ActiveProfiles(value = {"dev", "noliquibase"})
 public class UnitTestTemplateMockMvc extends MockMvcUtil {
 
-	public <T> BDDMockito.BDDMyOngoingStubbing<T> given(T methodCall) {
-		return BDDMockito.given(methodCall);
+	public <T> OngoingStubbing<T> when(T methodCall) {
+		return Mockito.when(methodCall);
 	}
 
 	public <T> T verify(T mock, VerificationMode mode) {

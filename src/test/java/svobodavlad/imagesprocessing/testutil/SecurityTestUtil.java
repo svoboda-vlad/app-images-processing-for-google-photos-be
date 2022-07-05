@@ -12,7 +12,6 @@ public class SecurityTestUtil {
 
 	@Autowired
 	private UserService userService;
-	
 	@Autowired
 	private UserRepository userRepository;	
 
