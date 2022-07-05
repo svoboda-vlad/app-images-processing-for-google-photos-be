@@ -1,7 +1,5 @@
 package svobodavlad.imagesprocessing.parameters;
 
-import java.util.List;
-
 import javax.validation.Valid;
 
 import org.springframework.http.ResponseEntity;
@@ -14,7 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
-import svobodavlad.imagesprocessing.jpaentities.ProcessingParametersDefault;
 
 @RestController
 @RequiredArgsConstructor
@@ -27,7 +24,7 @@ public class ProcessingParametersDefaultController {
 	@Operation(security = { @SecurityRequirement(name = "bearer-key") })
 	@GetMapping(PARAMETERS_DEFAULT_URL)
 	public ResponseEntity<ProcessingParametersDefaultTemplate> getProcessingParametersDefaultTemplate() {
-		List<ProcessingParametersDefault> parametersList = parametersRepository.findAll();
+		var parametersList = parametersRepository.findAll();
 		if (parametersList.isEmpty()) return ResponseEntity.notFound().build();
 		return ResponseEntity.ok(parametersList.get(0).toProcessingParametersDefaultTemplate());
 	}
@@ -35,9 +32,9 @@ public class ProcessingParametersDefaultController {
 	@Operation(security = { @SecurityRequirement(name = "bearer-key") })
 	@PutMapping(PARAMETERS_DEFAULT_URL)
 	public ResponseEntity<ProcessingParametersDefaultTemplate> updateProcessingParametersDefaultTemplate(@Valid @RequestBody ProcessingParametersDefaultTemplate parametersTemplate) {
-		List<ProcessingParametersDefault> parametersList = parametersRepository.findAll();
+		var parametersList = parametersRepository.findAll();
 		if (parametersList.isEmpty()) return ResponseEntity.notFound().build();
-		ProcessingParametersDefault parameters = parametersTemplate.toProcessingParametersDefault(parametersList.get(0));
+		var parameters = parametersTemplate.toProcessingParametersDefault(parametersList.get(0));
 		parameters = parametersRepository.save(parameters);
 		return ResponseEntity.ok(parameters.toProcessingParametersDefaultTemplate());		
 	}

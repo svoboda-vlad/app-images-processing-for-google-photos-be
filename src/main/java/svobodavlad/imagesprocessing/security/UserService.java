@@ -34,17 +34,17 @@ public class UserService {
 	}
 	
 	public Optional<User> updateCurrentUser(UserTemplate userTemplate) {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		var authentication = SecurityContextHolder.getContext().getAuthentication();
 		if (!authentication.getName().equals(userTemplate.getUsername())) return Optional.empty();
-		Optional<User> optUser = userRepository.findByUsername(userTemplate.getUsername());
+		var optUser = userRepository.findByUsername(userTemplate.getUsername());
 		if (optUser.isEmpty()) return Optional.empty();
-		User user = optUser.get();
+		var user = optUser.get();
 		return Optional.of(userRepository.save(userTemplate.toUser(user)));
 	}	
 	
 	public void deleteCurrentUser() {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		Optional<User> optUser = userRepository.findByUsername(authentication.getName());
+		var authentication = SecurityContextHolder.getContext().getAuthentication();
+		var optUser = userRepository.findByUsername(authentication.getName());
 		optUser.ifPresent(user -> {
 			parametersService.deleteForCurrentUser();
 			userRepository.delete(user);
@@ -53,26 +53,23 @@ public class UserService {
 	}
 	
 	public Optional<User> getCurrentUser() {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		Optional<User> optUser = userRepository.findByUsername(authentication.getName());
+		var authentication = SecurityContextHolder.getContext().getAuthentication();
+		var optUser = userRepository.findByUsername(authentication.getName());
 		if (optUser.isPresent()) {
 			return updateCurrentUser(getUserTemplateWithAttributes(authentication));
 		} else {
-			UserTemplate userTemplate = getUserTemplateWithAttributes(authentication);
-			User user = new User().setUsername(userTemplate.getUsername()).setGivenName(userTemplate.getGivenName()).setFamilyName(userTemplate.getFamilyName());
+			var userTemplate = getUserTemplateWithAttributes(authentication);
+			var user = new User().setUsername(userTemplate.getUsername()).setGivenName(userTemplate.getGivenName()).setFamilyName(userTemplate.getFamilyName());
 			user.setEmail(userTemplate.getEmail());
 			return Optional.of(registerUser(user));
 		}
 	}
 	
 	private UserTemplate getUserTemplateWithAttributes(Authentication authentication) {
-		UserTemplate userTemplate = new UserTemplate();
-		userTemplate.setUsername(authentication.getName());
-		userTemplate.setGivenName(authentication.getName());
-		userTemplate.setFamilyName(authentication.getName());
-		userTemplate.setEmail(authentication.getName());
+		var userTemplate = new UserTemplate().setUsername(authentication.getName()).setGivenName(authentication.getName())
+				.setFamilyName(authentication.getName()).setEmail(authentication.getName());
 		if (authentication instanceof AbstractAuthenticationToken) {
-			AbstractAuthenticationToken authToken = (AbstractAuthenticationToken) authentication;
+			var authToken = (AbstractAuthenticationToken) authentication;
 			Map<String, Object> attributes = new HashMap<>();
 			if (authToken instanceof JwtAuthenticationToken) {
 	            attributes = ((JwtAuthenticationToken) authToken).getTokenAttributes();

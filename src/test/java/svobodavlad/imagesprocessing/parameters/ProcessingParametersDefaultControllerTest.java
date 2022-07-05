@@ -4,10 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.web.servlet.ResultActions;
 
 import svobodavlad.imagesprocessing.jpaentities.ProcessingParametersDefault;
 import svobodavlad.imagesprocessing.testutil.UnitTestTemplateMockMvc;
@@ -16,65 +17,59 @@ import svobodavlad.imagesprocessing.testutil.UnitTestTemplateMockMvc;
 @AutoConfigureMockMvc(addFilters = false)
 public class ProcessingParametersDefaultControllerTest extends UnitTestTemplateMockMvc {
 	
+	private static final String ADMIN_PARAMETERS_DEFAULT_URL = "/admin/parameters-default";
+	
+	private static final int TIME_DIFF_GROUP = 1800;
+	private static final int RESIZE_HEIGHT = 1000;
+	private static final int RESIZE_WIDTH = 1000;
+	
+	private static final int TIME_DIFF_GROUP_UPDATED = 3600;
+	
 	@MockBean
 	private ProcessingParametersDefaultRepository parametersRepository;
+    @Autowired
+    private JacksonTester<ProcessingParametersDefaultTemplate> jacksonTester;	
 	
 	@Test
 	void getProcessingParametersDefaultTemplateOk200() throws Exception {
-		String requestUrl = "/admin/parameters-default";
-		int expectedStatus = 200;
-		String expectedJson = "{\"timeDiffGroup\":1800,\"resizeWidth\":1000,\"resizeHeight\":1000}";
-		
-		List<ProcessingParametersDefault> parametersList = new ArrayList<ProcessingParametersDefault>();
-		ProcessingParametersDefault parameters = new ProcessingParametersDefault().setTimeDiffGroup(1800).setResizeHeight(1000).setResizeWidth(1000);
-		parameters.setId(1);
+		var parametersList = new ArrayList<ProcessingParametersDefault>();
+		var parameters = new ProcessingParametersDefault().setTimeDiffGroup(TIME_DIFF_GROUP).setResizeHeight(RESIZE_HEIGHT).setResizeWidth(RESIZE_WIDTH);
 		parametersList.add(parameters);
+		when(parametersRepository.findAll()).thenReturn(parametersList);
+		var expectedJson = jacksonTester.write(parameters.toProcessingParametersDefaultTemplate()).getJson();
 		
-		this.given(parametersRepository.findAll()).willReturn(parametersList);
-		
-		ResultActions mvcResult = this.mockMvcPerformGetNoAuthorization(requestUrl);
-		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
+		var mvcResult = mockMvcPerformGetNoAuthorization(ADMIN_PARAMETERS_DEFAULT_URL);
+		mockMvcExpectStatusAndContent(mvcResult, HTTP_OK, expectedJson);
 	}
 	
 	@Test
 	void getProcessingParametersDefaultTemplateNotFound404() throws Exception {
-		String requestUrl = "/admin/parameters-default";
-		int expectedStatus = 404;
-		String expectedJson = "";
+		when(parametersRepository.findAll()).thenReturn(new ArrayList<ProcessingParametersDefault>());
 		
-		this.given(parametersRepository.findAll()).willReturn(new ArrayList<ProcessingParametersDefault>());
-		
-		ResultActions mvcResult = this.mockMvcPerformGetNoAuthorization(requestUrl);
-		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
+		var mvcResult = mockMvcPerformGetNoAuthorization(ADMIN_PARAMETERS_DEFAULT_URL);
+		mockMvcExpectStatusAndContent(mvcResult, HTTP_NOT_FOUND, "");
 	}	
 	
 	@Test
 	void updateProcessingParametersDefaultTemplateOk200() throws Exception {
-		String requestUrl = "/admin/parameters-default";
-		String requestJson = "{\"timeDiffGroup\":3600,\"resizeWidth\":1000,\"resizeHeight\":1000}";
-		int expectedStatus = 200;
-		String expectedJson = "{\"timeDiffGroup\":3600,\"resizeWidth\":1000,\"resizeHeight\":1000}";
+		var parameters = new ProcessingParametersDefault().setTimeDiffGroup(TIME_DIFF_GROUP_UPDATED).setResizeHeight(RESIZE_HEIGHT).setResizeWidth(RESIZE_WIDTH);
+		when(parametersRepository.findAll()).thenReturn(new ArrayList<ProcessingParametersDefault>(List.of(parameters)));
+		when(parametersRepository.save(parameters)).thenReturn(parameters);
+		var requestJson = jacksonTester.write(parameters.toProcessingParametersDefaultTemplate()).getJson();
+		var expectedJson = requestJson;
 		
-		ProcessingParametersDefault parameters = new ProcessingParametersDefault().setTimeDiffGroup(3600).setResizeHeight(1000).setResizeWidth(1000);
-		parameters.setId(1);
-		this.given(parametersRepository.findAll()).willReturn(new ArrayList<ProcessingParametersDefault>(List.of(parameters)));
-		this.given(parametersRepository.save(parameters)).willReturn(parameters);
-		
-		ResultActions mvcResult = this.mockMvcPerformPutNoAuthorization(requestUrl, requestJson);
-		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
+		var mvcResult = mockMvcPerformPutNoAuthorization(ADMIN_PARAMETERS_DEFAULT_URL, requestJson);
+		mockMvcExpectStatusAndContent(mvcResult, HTTP_OK, expectedJson);
 	}	
 	
 	@Test
 	void updateProcessingParametersDefaultTemplateNotFound404() throws Exception {
-		String requestUrl = "/admin/parameters-default";
-		String requestJson = "{\"timeDiffGroup\":3600,\"resizeWidth\":1000,\"resizeHeight\":1000}";
-		int expectedStatus = 404;
-		String expectedJson = "";
+		when(parametersRepository.findAll()).thenReturn(new ArrayList<ProcessingParametersDefault>());
+		var template = new ProcessingParametersDefaultTemplate().setTimeDiffGroup(TIME_DIFF_GROUP_UPDATED).setResizeHeight(RESIZE_HEIGHT).setResizeWidth(RESIZE_WIDTH);
+		var requestJson = jacksonTester.write(template).getJson();
 		
-		this.given(parametersRepository.findAll()).willReturn(new ArrayList<ProcessingParametersDefault>());
-		
-		ResultActions mvcResult = this.mockMvcPerformPutNoAuthorization(requestUrl, requestJson);
-		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
+		var mvcResult = mockMvcPerformPutNoAuthorization(ADMIN_PARAMETERS_DEFAULT_URL, requestJson);
+		mockMvcExpectStatusAndContent(mvcResult, HTTP_NOT_FOUND, "");
 	}
 	
 }

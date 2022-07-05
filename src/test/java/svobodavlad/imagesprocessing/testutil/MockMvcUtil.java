@@ -9,29 +9,36 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.json.AutoConfigureJsonTesters;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
+@AutoConfigureJsonTesters
 public abstract class MockMvcUtil {
 
+	protected static final int HTTP_OK = 200;
+	protected static final int HTTP_NO_CONTENT = 204;
+	protected static final int HTTP_UNAUTHORIZED = 401;
+	protected static final int HTTP_NOT_FOUND = 404;
+	
 	@Autowired
 	private MockMvc mockMvc;
 
 	public ResultActions mockMvcPerformGetNoAuthorization(String requestUrl) throws Exception {
-		return this.mockMvc.perform(get(requestUrl).accept(MediaType.APPLICATION_JSON));
+		return mockMvc.perform(get(requestUrl).accept(MediaType.APPLICATION_JSON));
 	}
 
 	public ResultActions mockMvcPerformPostNoAuthorization(String requestUrl, String requestJson) throws Exception {
-		return this.mockMvc.perform(post(requestUrl).content(requestJson).contentType(MediaType.APPLICATION_JSON));
+		return mockMvc.perform(post(requestUrl).content(requestJson).contentType(MediaType.APPLICATION_JSON));
 	}
 	
 	public ResultActions mockMvcPerformPutNoAuthorization(String requestUrl, String requestJson) throws Exception {
-		return this.mockMvc.perform(put(requestUrl).content(requestJson).contentType(MediaType.APPLICATION_JSON));
+		return mockMvc.perform(put(requestUrl).content(requestJson).contentType(MediaType.APPLICATION_JSON));
 	}	
 	
 	public ResultActions mockMvcPerformDeleteNoAuthorization(String requestUrl) throws Exception {
-		return this.mockMvc.perform(delete(requestUrl));
+		return mockMvc.perform(delete(requestUrl));
 	}
 
 	public ResultActions mockMvcExpectStatusAndContent(ResultActions result, int expectedStatus, String expectedJson)

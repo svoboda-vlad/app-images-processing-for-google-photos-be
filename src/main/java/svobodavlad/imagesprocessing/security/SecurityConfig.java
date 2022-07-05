@@ -55,11 +55,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	
 	@Bean
 	public JwtAuthenticationConverter jwtAuthenticationConverter() {
-	    JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
+	    var grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
 	    grantedAuthoritiesConverter.setAuthoritiesClaimName("sub");
 	    grantedAuthoritiesConverter.setAuthorityPrefix("");
 
-	    JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
+	    var jwtAuthenticationConverter = new JwtAuthenticationConverter();
 	    jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
 	    return jwtAuthenticationConverter;
 	}

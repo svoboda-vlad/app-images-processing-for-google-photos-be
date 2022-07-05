@@ -10,8 +10,8 @@ import org.assertj.core.api.ObjectAssert;
 import org.assertj.core.api.ThrowableTypeAssert;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatchers;
-import org.mockito.BDDMockito;
 import org.mockito.Mockito;
+import org.mockito.stubbing.OngoingStubbing;
 import org.mockito.verification.VerificationMode;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -20,8 +20,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ActiveProfiles(value = {"dev", "noliquibase"})
 public class UnitTestTemplate {
 
-	public <T> BDDMockito.BDDMyOngoingStubbing<T> given(T methodCall) {
-		return BDDMockito.given(methodCall);
+	public <T> OngoingStubbing<T> when(T methodCall) {
+		return Mockito.when(methodCall);
 	}
 
 	public <T> T verify(T mock, VerificationMode mode) {

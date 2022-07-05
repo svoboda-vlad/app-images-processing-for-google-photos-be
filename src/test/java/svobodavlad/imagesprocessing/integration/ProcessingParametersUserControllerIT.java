@@ -3,127 +3,110 @@ package svobodavlad.imagesprocessing.integration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.boot.test.json.JacksonTester;
 
-import svobodavlad.imagesprocessing.jpaentities.User;
 import svobodavlad.imagesprocessing.parameters.ProcessingParametersDefaultRepository;
 import svobodavlad.imagesprocessing.parameters.ProcessingParametersUserRepository;
 import svobodavlad.imagesprocessing.parameters.ProcessingParametersUserService;
+import svobodavlad.imagesprocessing.parameters.ProcessingParametersUserTemplate;
 import svobodavlad.imagesprocessing.testutil.IntegTestTemplate;
 import svobodavlad.imagesprocessing.testutil.SecurityTestUtil;
 
 public class ProcessingParametersUserControllerIT extends IntegTestTemplate {
 	
+	private static final int TIME_DIFF_GROUP = 1800;
+	private static final int RESIZE_HEIGHT = 1000;
+	private static final int RESIZE_WIDTH = 1000;
+	
+	private static final int TIME_DIFF_GROUP_UPDATED = 3600;
+	
+	private static final String PARAMETERS_URL = "/parameters";
+	private static final String PARAMETERS_RESET_TO_DEFAULT_URL = "/parameters-reset-to-default";
+
 	@Autowired
 	private ProcessingParametersUserRepository parametersRepository;
-	
 	@Autowired
 	private ProcessingParametersDefaultRepository parametersDefaultRepository;
-	
 	@Autowired
 	private SecurityTestUtil securityTestUtil;
-	
 	@Autowired
 	private ProcessingParametersUserService parametersService;
+    @Autowired
+    private JacksonTester<ProcessingParametersUserTemplate> jacksonTester;	
 	
 	@BeforeEach
 	void initData() {
-		User defaultUser = securityTestUtil.saveDefaultUser();
+		var defaultUser = securityTestUtil.saveDefaultUser();
 		parametersService.setInitialParameters(defaultUser.getUsername());
 	}
 		
 	@Test
-	void getProcessingParametersUserTemplateOk200() throws Exception {		
-		String requestUrl = "/parameters";
-		int expectedStatus = 200;
-		String expectedJson = "{\"timeDiffGroup\":1800,\"resizeWidth\":1000,\"resizeHeight\":1000}";
+	void getProcessingParametersUserTemplateOk200() throws Exception {
+		var parametersTemplate = new ProcessingParametersUserTemplate().setTimeDiffGroup(TIME_DIFF_GROUP).setResizeHeight(RESIZE_HEIGHT).setResizeWidth(RESIZE_WIDTH);
+		var expectedJson = jacksonTester.write(parametersTemplate).getJson();
 		
-		ResultActions mvcResult = this.mockMvcPerformGetAuthorizationDefaultUser(requestUrl);
-		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
+		var mvcResult = mockMvcPerformGetAuthorizationDefaultUser(PARAMETERS_URL);
+		mockMvcExpectStatusAndContent(mvcResult, HTTP_OK, expectedJson);
 	}
 	
 	@Test
 	void getProcessingParametersUserTemplateNotFound404() throws Exception {
-		String requestUrl = "/parameters";
-		int expectedStatus = 404;
-		String expectedJson = "";
-		
 		parametersRepository.deleteAll();
 
-		ResultActions mvcResult = this.mockMvcPerformGetAuthorizationDefaultUser(requestUrl);
-		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);	
+		var mvcResult = mockMvcPerformGetAuthorizationDefaultUser(PARAMETERS_URL);
+		mockMvcExpectStatusAndContent(mvcResult, HTTP_NOT_FOUND, "");	
 	}	
 
 	@Test
 	void updateProcessingParametersUserTemplateOk200() throws Exception {
-		String requestUrl = "/parameters";
-		String requestJson = "{\"timeDiffGroup\":7200,\"resizeWidth\":1000,\"resizeHeight\":1000}";
-		int expectedStatus = 200;
-		String expectedJson = "{\"timeDiffGroup\":7200,\"resizeWidth\":1000,\"resizeHeight\":1000}";
+		var parametersTemplate = new ProcessingParametersUserTemplate().setTimeDiffGroup(TIME_DIFF_GROUP_UPDATED).setResizeHeight(RESIZE_HEIGHT).setResizeWidth(RESIZE_WIDTH);
+		var requestJson = jacksonTester.write(parametersTemplate).getJson();
+		var expectedJson = requestJson;
 
-		ResultActions mvcResult = this.mockMvcPerformPutAuthorizationDefaultUser(requestUrl, requestJson);
-		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
+		var mvcResult = mockMvcPerformPutAuthorizationDefaultUser(PARAMETERS_URL, requestJson);
+		mockMvcExpectStatusAndContent(mvcResult, HTTP_OK, expectedJson);
 	}
 	
 	@Test
 	void updateProcessingParametersUserTemplateNotFound404() throws Exception {
-		String requestUrl = "/parameters";
-		String requestJson = "{\"timeDiffGroup\":3600,\"resizeWidth\":1000,\"resizeHeight\":1000}";
-		int expectedStatus = 404;
-		String expectedJson = "";
-		
+		var parametersTemplate = new ProcessingParametersUserTemplate().setTimeDiffGroup(TIME_DIFF_GROUP_UPDATED).setResizeHeight(RESIZE_HEIGHT).setResizeWidth(RESIZE_WIDTH);
+		var requestJson = jacksonTester.write(parametersTemplate).getJson();
 		parametersRepository.deleteAll();
 
-		ResultActions mvcResult = this.mockMvcPerformPutAuthorizationDefaultUser(requestUrl, requestJson);
-		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
+		var mvcResult = mockMvcPerformPutAuthorizationDefaultUser(PARAMETERS_URL, requestJson);
+		mockMvcExpectStatusAndContent(mvcResult, HTTP_NOT_FOUND, "");
 	}
 	
 	@Test
 	void getResetToDefaultOk204() throws Exception {
-		String requestUrl = "/parameters-reset-to-default";
-		int expectedStatus = 204;
-		String expectedJson = "";
-				
-		ResultActions mvcResult = this.mockMvcPerformGetAuthorizationDefaultUser(requestUrl);
-		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
+		var mvcResult = mockMvcPerformGetAuthorizationDefaultUser(PARAMETERS_RESET_TO_DEFAULT_URL);
+		mockMvcExpectStatusAndContent(mvcResult, HTTP_NO_CONTENT, "");
 		
-		requestUrl = "/parameters";
-		expectedStatus = 200;
-		expectedJson = "{\"timeDiffGroup\":1800,\"resizeWidth\":1000,\"resizeHeight\":1000}";
-
-		mvcResult = this.mockMvcPerformGetAuthorizationDefaultUser(requestUrl);
-		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
+		var parametersTemplate = new ProcessingParametersUserTemplate().setTimeDiffGroup(TIME_DIFF_GROUP).setResizeHeight(RESIZE_HEIGHT).setResizeWidth(RESIZE_WIDTH);
+		var expectedJson = jacksonTester.write(parametersTemplate).getJson();
+		mvcResult = mockMvcPerformGetAuthorizationDefaultUser(PARAMETERS_URL);
+		mockMvcExpectStatusAndContent(mvcResult, HTTP_OK, expectedJson);
 	}
 		
 	@Test
 	void getResetToDefaultNoUserParametersOk204() throws Exception {
-		String requestUrl = "/parameters-reset-to-default";
-		int expectedStatus = 204;
-		String expectedJson = "";
-		
 		parametersRepository.deleteAll();
 				
-		ResultActions mvcResult = this.mockMvcPerformGetAuthorizationDefaultUser(requestUrl);
-		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
+		var mvcResult = mockMvcPerformGetAuthorizationDefaultUser(PARAMETERS_RESET_TO_DEFAULT_URL);
+		mockMvcExpectStatusAndContent(mvcResult, HTTP_NO_CONTENT, "");
 		
-		requestUrl = "/parameters";
-		expectedStatus = 200;
-		expectedJson = "{\"timeDiffGroup\":1800,\"resizeWidth\":1000,\"resizeHeight\":1000}";
-
-		mvcResult = this.mockMvcPerformGetAuthorizationDefaultUser(requestUrl);
-		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);	
+		var parametersTemplate = new ProcessingParametersUserTemplate().setTimeDiffGroup(TIME_DIFF_GROUP).setResizeHeight(RESIZE_HEIGHT).setResizeWidth(RESIZE_WIDTH);
+		var expectedJson = jacksonTester.write(parametersTemplate).getJson();
+		mvcResult = mockMvcPerformGetAuthorizationDefaultUser(PARAMETERS_URL);
+		mockMvcExpectStatusAndContent(mvcResult, HTTP_OK, expectedJson);	
 	}
 	
 	@Test
 	void getResetToDefaultNoDefaultParametersNotFound404() throws Exception {
-		String requestUrl = "/parameters-reset-to-default";
-		int expectedStatus = 404;
-		String expectedJson = "";
-		
 		parametersDefaultRepository.deleteAll();
 		
-		ResultActions mvcResult = this.mockMvcPerformGetAuthorizationDefaultUser(requestUrl);
-		this.mockMvcExpectStatusAndContent(mvcResult, expectedStatus, expectedJson);
+		var mvcResult = mockMvcPerformGetAuthorizationDefaultUser(PARAMETERS_RESET_TO_DEFAULT_URL);
+		mockMvcExpectStatusAndContent(mvcResult, HTTP_NOT_FOUND, "");
 	}	
 	
 }

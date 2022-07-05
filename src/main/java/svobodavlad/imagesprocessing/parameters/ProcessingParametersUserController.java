@@ -1,7 +1,5 @@
 package svobodavlad.imagesprocessing.parameters;
 
-import java.util.Optional;
-
 import javax.validation.Valid;
 
 import org.springframework.http.ResponseEntity;
@@ -14,7 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
-import svobodavlad.imagesprocessing.jpaentities.ProcessingParametersUser;
 
 @RestController
 @RequiredArgsConstructor
@@ -29,7 +26,7 @@ public class ProcessingParametersUserController {
 	@Operation(security = { @SecurityRequirement(name = "bearer-key") })
 	@GetMapping(PARAMETERS_USER_URL)
 	public ResponseEntity<ProcessingParametersUserTemplate> getProcessingParametersUserTemplate() {
-		Optional<ProcessingParametersUser> parameters = parametersService.getForCurrentUser();
+		var parameters = parametersService.getForCurrentUser();
 		if (parameters.isEmpty()) return ResponseEntity.notFound().build();
 		return ResponseEntity.ok(parameters.get().toProcessingParametersUserTemplate());
 	}
@@ -37,7 +34,7 @@ public class ProcessingParametersUserController {
 	@Operation(security = { @SecurityRequirement(name = "bearer-key") })
 	@PutMapping(PARAMETERS_USER_URL)
 	public ResponseEntity<ProcessingParametersUserTemplate> updateProcessingParametersUserTemplate(@Valid @RequestBody ProcessingParametersUserTemplate parametersTemplate) {		
-		Optional<ProcessingParametersUser> optParameters = parametersService.updateForCurrentUser(parametersTemplate);
+		var optParameters = parametersService.updateForCurrentUser(parametersTemplate);
 		if (optParameters.isEmpty()) return ResponseEntity.notFound().build();
 		return ResponseEntity.ok(optParameters.get().toProcessingParametersUserTemplate());
 	}
