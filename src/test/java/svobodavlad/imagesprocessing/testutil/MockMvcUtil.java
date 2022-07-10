@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.json.AutoConfigureJsonTesters;
@@ -26,15 +27,15 @@ public abstract class MockMvcUtil {
 	private MockMvc mockMvc;
 
 	public ResultActions mockMvcPerformGetNoAuthorization(String requestUrl) throws Exception {
-		return mockMvc.perform(get(requestUrl).accept(MediaType.APPLICATION_JSON));
+		return mockMvc.perform(get(requestUrl).accept(MediaType.APPLICATION_JSON)).andDo(print());
 	}
 
 	public ResultActions mockMvcPerformPostNoAuthorization(String requestUrl, String requestJson) throws Exception {
-		return mockMvc.perform(post(requestUrl).content(requestJson).contentType(MediaType.APPLICATION_JSON));
+		return mockMvc.perform(post(requestUrl).content(requestJson).contentType(MediaType.APPLICATION_JSON)).andDo(print());
 	}
 	
 	public ResultActions mockMvcPerformPutNoAuthorization(String requestUrl, String requestJson) throws Exception {
-		return mockMvc.perform(put(requestUrl).content(requestJson).contentType(MediaType.APPLICATION_JSON));
+		return mockMvc.perform(put(requestUrl).content(requestJson).contentType(MediaType.APPLICATION_JSON)).andDo(print());
 	}	
 	
 	public ResultActions mockMvcPerformDeleteNoAuthorization(String requestUrl) throws Exception {
